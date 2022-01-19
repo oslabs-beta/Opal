@@ -2,7 +2,8 @@
 
 # A Cloud Monitoring Tool
 <p style="text-align:center"><img src="assets/images/opalheader.png"></p>
-## Table of Contents
+
+# Table of Contents
 
 - [Features](#features)
 
