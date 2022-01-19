@@ -30,7 +30,7 @@ A cloud monitoring tool focused on improving access to performance and financial
 We'd love for you to test Opal out and submit any issues you encounter. Also feel free to fork to your own repo and submit pull requests!
 
 ## Authors
-Alma Eyre
-Marcel Palmer
-Hussein Hamade
-Bill O'Connell
+Alma Eyre<br>
+Marcel Palmer<br>
+Hussein Hamade<br>
+Bill O'Connell<br>
