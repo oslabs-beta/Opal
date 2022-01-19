@@ -17,9 +17,9 @@
   "scripts": {
     "build-dev": "cross-env NODE_ENV=development && webpack --mode development",
     "build-prod": "cross-env NODE_ENV=production && webpack --mode production",
-    "client": "cross-env NODE_ENV=development && webpack serve --hot --mode development",
+    "client": "cross-env NODE_ENV=development && webpack serve --hot --open --mode development",
     "server": "nodemon server/server.js",
-    "start": "nodemon server/server.js & webpack serve --hot --open"
+    "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\" --hot"
   },
   "eslintConfig": {
     "extends": [
@@ -51,6 +51,7 @@
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "html-webpack-plugin": "^5.5.0",
     "webpack-cli": "^4.9.1"
   }
 }

@@ -2,26 +2,27 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
-const config = {
+module.exports = {
   entry: ['./src/index.js'],
+  // Enable importing JS and TSX files without identifying their extension.
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.tsx', '.ts'],
   },
+
+  // Set output directory.
   output: {
-    path: path.resolve(__dirname, 'client/dist'),
+    path: path.resolve(__dirname, './dist'),
+    publicPath: '/dist',
     filename: 'bundle.js',
   },
-  devtool: 'source-map',
+
+  // Strongly consider adding cleanwebpack plugin here to clean build directory.
   module: {
     rules: [
       {
         test: /\.tsx?/,
         use: 'ts-loader',
         exclude: /node_modules/,
-      },
-      { test: /\.js$/,
-        enforce: 'pre',
-        use: ['source-map-loader'],
       },
       {
         test: /\.(js|jsx)$/,
@@ -30,8 +31,8 @@ const config = {
           loader: 'babel-loader',
           options: {
             presets: [
-              ['@babel/preset-env', {targets: 'defaults' }],
-              ['@babel/preset-react', {targets: 'defaults'}]
+              ['@babel/preset-env', { targets: 'defaults' }],
+              ['@babel/preset-react', { targets: 'defaults' }],
             ],
           },
         },
@@ -85,22 +86,30 @@ const config = {
   devServer: {
     historyApiFallback: true,
     static: {
-      directory: './client/dist',
+      directory: './dist',
     },
+    // Can change the proxy below as needed.
+    proxy: {
+      '/app': 'http://localhost:3000',
+    },
+    compress: true,
     port: 8080,
   },
+  // consider putting template back in htmlwebpackplugin if needed.
   plugins: [
     new HtmlWebpackPlugin({
-      template: __dirname + '/client/index.html',
+      template: __dirname + '/src/index.html',
       filename: 'index.html',
-      inject: 'body',
+      inject: 'body'
     }),
-  ],
-  plugins: [
     new webpack.ProvidePlugin({
       React: 'react',
     }),
   ],
 };
-
-module.exports = config;
+/*
+new HtmlWebpackPlugin({
+  template: __dirname + '/client/index.html',
+  filename: 'index.html',
+  inject: 'body',
+}),*/

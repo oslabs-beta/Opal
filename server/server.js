@@ -17,7 +17,7 @@ const port = 3000
 // BASE route
 app.get('/', (req, res) => {
   res.status(200);
-  res.sendFile(path.join(__dirname, './index.html'));
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
 // Serve static files (css, js).
