@@ -11,8 +11,8 @@ module.exports = {
 
   // Set output directory.
   output: {
-    path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
     filename: 'bundle.js',
   },
 
@@ -86,11 +86,12 @@ module.exports = {
   devServer: {
     historyApiFallback: true,
     static: {
-      directory: './dist',
+      directory: path.join(__dirname),
+      publicPath: '/'
     },
     // Can change the proxy below as needed.
     proxy: {
-      '/app': 'http://localhost:3000',
+      '/api': 'http://localhost:3000',
     },
     compress: true,
     port: 8080,
@@ -98,18 +99,9 @@ module.exports = {
   // consider putting template back in htmlwebpackplugin if needed.
   plugins: [
     new HtmlWebpackPlugin({
-      template: __dirname + '/src/index.html',
-      filename: 'index.html',
-      inject: 'body'
-    }),
-    new webpack.ProvidePlugin({
-      React: 'react',
-    }),
+      template: './public/index.html',
+      // filename: './public/index.html',
+      // inject: 'body'
+    })
   ],
 };
-/*
-new HtmlWebpackPlugin({
-  template: __dirname + '/client/index.html',
-  filename: 'index.html',
-  inject: 'body',
-}),*/
