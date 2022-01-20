@@ -1,9 +1,14 @@
-import { DefaultAzureCredential } from "@azure/identity";
-import { Durations, /*Metric,*/ MetricsQueryClient } from "@azure/monitor-query";
-import * as dotenv from "dotenv";
+import { DefaultAzureCredential } from '@azure/identity';
+import {
+  Durations,
+  /* Metric, */ MetricsQueryClient,
+} from '@azure/monitor-query';
+import * as dotenv from 'dotenv';
+
 dotenv.config();
 
-const metricsResourceId = '/subscriptions/4693f16d-2d8c-429a-b738-1ccf85469450/resourceGroups/mogwai2/providers/Microsoft.Web/sites/mogwai2';
+const metricsResourceId =
+  '/subscriptions/4693f16d-2d8c-429a-b738-1ccf85469450/resourceGroups/mogwai2/providers/Microsoft.Web/sites/mogwai2';
 
 export async function main() {
   const tokenCredential = new DefaultAzureCredential();
@@ -11,11 +16,11 @@ export async function main() {
 
   if (!metricsResourceId) {
     throw new Error(
-      "METRICS_RESOURCE_ID for an Azure Metrics Advisor subscription must be set in the environment for this sample"
+      'METRICS_RESOURCE_ID for an Azure Metrics Advisor subscription must be set in the environment for this sample'
     );
   }
 
-  let event = 'FunctionExecutionCount';
+  const event = 'FunctionExecutionCount';
   console.log(`Picking an example metric to query: ${event}`);
 
   const metricsResponse = await metricsQueryClient.queryResource(
@@ -23,10 +28,10 @@ export async function main() {
     [event],
     {
       timespan: {
-        duration: Durations.fiveMinutes
+        duration: Durations.fiveMinutes,
       },
-      granularity: "PT1M",
-      aggregations: ["Count"]
+      granularity: 'PT1M',
+      aggregations: ['Count'],
     }
   );
 
@@ -36,16 +41,18 @@ export async function main() {
 
   console.log(metricsResponse.timespan);
 
-  const metrics/*: Metric[]*/ = metricsResponse.metrics;
+  const metrics /*: Metric[] */ = metricsResponse.metrics;
   console.log(metrics);
   for (const metric of metrics) {
     console.log(metric.name);
     console.log(metric.timeseries[0].data);
     console.log(metric.timeseries);
     for (const timeseriesElement of metric.timeseries) {
-      for (const metricValue of timeseriesElement.data/*!*/) {
+      for (const metricValue of timeseriesElement.data /*!*/) {
         if (metricValue.count !== 0) {
-          console.log(`There are ${metricValue.count} matched events at ${metricValue.timeStamp}`);
+          console.log(
+            `There are ${metricValue.count} matched events at ${metricValue.timeStamp}`
+          );
         }
       }
     }
@@ -53,6 +60,6 @@ export async function main() {
 }
 
 main().catch((err) => {
-  console.error("The sample encountered an error:", err);
+  console.error('The sample encountered an error:', err);
   process.exit(1);
 });
