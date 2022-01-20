@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Set port to 3000.
-const port = 3000
+const port = 3000;
 
 // BASE route
 app.get('/', (req, res) => {
