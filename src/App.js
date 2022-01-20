@@ -1,23 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+// Components
+import AzurePage from './Pages/AzurePage.js';
+import GooglePage from './Pages/GooglePage.js';
+import AwsPage from './Pages/AwsPage.js';
+import HomePage from './Pages/HomePage.js';
+import Unauthorized from './Pages/Unauthorized.js';
+import NotFound from './Pages/NotFound.js';
+import { useSelector } from 'react-redux';
 
 function App() {
+
+  const user = useSelector(state => state.user.user);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <Routes>
+          <Route path='/' element={<HomePage />} />
+          { user ?
+            <>
+              <Route path='/azure' element={<AzurePage />} />
+              <Route path='/aws' element={<AwsPage />} />
+              <Route path='/google' element={<GooglePage />} />
+            </>
+          : 
+            <>
+              <Route path='/azure' element={<Unauthorized />} />
+              <Route path='/aws' element={<Unauthorized />} />
+              <Route path='/google' element={<Unauthorized />} />
+            </>
+          }
+          <Route path='/unauthorized' element={<Unauthorized />} />
+          <Route path='/*' element={<NotFound />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
