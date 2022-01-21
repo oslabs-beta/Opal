@@ -18,10 +18,9 @@ export async function main() {
       'METRICS_RESOURCE_ID must be set in the environment for this sample'
     );
   }
-
   const iterator = metricsQueryClient.listMetricDefinitions(metricsResourceId);
   const result = await iterator.next();
-  const metricNames = [];
+  const metricNames/*: string[]*/ = [];
   for await (const result of iterator) {
     console.log(` metricDefinitions - ${result.id}, ${result.name}`);
     if (result.name) {
@@ -47,6 +46,7 @@ export async function main() {
       `Query cost: ${metricsResponse.cost}, interval: ${metricsResponse.granularity}, time span: ${metricsResponse.timespan}`
     );
 
+        // const metrics: Metric[] = metricsResponse.metrics;
     const { metrics } = metricsResponse;
     console.log(`Metrics:`, JSON.stringify(metrics, undefined, 2));
     const metric = metricsResponse.getMetricByName(firstMetricName);
