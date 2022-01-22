@@ -14,11 +14,11 @@
 .open {
   position: relative;
   left: 0;
-  width: 50px;
-  transition: all 150ms ease-in-out;
+  width: 100px;
+  transition: width 600ms ease-in-out;
 }
 
 .open:hover {
-  width: 200px;
-  transition: all 150ms ease-in-out;
+  width: 400px;
+  transition: width 600ms ease-in-out;
 }
