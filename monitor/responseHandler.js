@@ -1,3 +1,4 @@
+// Function Execution Count for FunctionApp. Can also be used for any other metrics in the Microsoft.Web/sites namespace
 import { DefaultAzureCredential } from '@azure/identity';
 import {
   Durations,
@@ -8,7 +9,9 @@ import /** as*/ dotenv from 'dotenv';
 dotenv.config();
 
 const metricsResourceId =
-  process.env.RESOURCE_ID;
+  process.env.RESOURCE_ID_PER_FUNCTION;
+
+  console.log("metricsResourceId", metricsResourceId);
 
 export async function main() {
   const tokenCredential = new DefaultAzureCredential();

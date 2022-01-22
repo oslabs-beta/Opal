@@ -1,3 +1,4 @@
+//Bytes received.
 import { DefaultAzureCredential } from '@azure/identity';
 import {
   Durations,

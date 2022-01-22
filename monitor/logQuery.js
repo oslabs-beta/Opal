@@ -1,3 +1,4 @@
+//Logs but not what we are looking for.
 import { DefaultAzureCredential } from '@azure/identity';
 import {
   Durations,
