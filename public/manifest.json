@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Opal",
+  "name": "Opal Serverless monitoring application",
   "icons": [
     {
       "src": "favicon.ico",
