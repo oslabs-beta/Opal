@@ -1,0 +1,24 @@
+.rotate {
+  animation: spin 7.5s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.open {
+  position: relative;
+  left: 0;
+  width: 100px;
+  transition: width 600ms ease-in-out;
+}
+
+.open:hover {
+  width: 400px;
+  transition: width 600ms ease-in-out;
+}
