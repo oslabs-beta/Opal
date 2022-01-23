@@ -1,7 +1,9 @@
-//Gets all Function Apps from a single Azure subscription. This version uses @azure/arm-resources-subscriptions
+//Gets all Function Apps from a single Azure subscription. This version uses @azure/arm-subscriptions. Work in progress. 
+//Does not work according to the documentation (https://docs.microsoft.com/en-us/azure/developer/javascript/core/nodejs-sdk-azure-authenticate?tabs=azure-sdk-for-javascript#3-list-azure-subscriptions-with-service-principal)
+// because .list() does not result in something iterable. For something that works see getAllFunctionApp.js
 import { InteractiveBrowserCredential, DefaultAzureCredential, AzureCliCredential, ChainedTokenCredential }  from "@azure/identity";
 import { ResourceManagementClient } from "@azure/arm-resources";
-import { SubscriptionClient } from "@azure/arm-resources-subscriptions";
+import { SubscriptionClient } from "@azure/arm-subscriptions";
 import dotenv from "dotenv";
 // import { KeysClient } from "@azure/keyvault-keys";
 // import { nodeModuleNameResolver } from "typescript";
@@ -16,19 +18,47 @@ const credentialChain = new ChainedTokenCredential(credentialDefault, credential
 
 // const subscriptionId = process.env.SUBSCRIPTION_ID;
 
-const subscription = new SubscriptionClient(credentialChain);
+const client = new SubscriptionClient(credentialChain);
 
-const subscriptionList = async () => {
-    const subscriptions = subscription.subscriptions.list().byPage();
-    const nextSubscription = await subscriptions.next();
-    return nextSubscription;
-}
+const subscriptions = async() =>{
 
-// console.log("subscription", subscription.subscriptions.list().byPage().next());
+    // get list of Azure subscriptions
+    const listOfSubscriptions = client.subscriptions.list();
+    
+    const containerOfSubscriptions = [];
 
-const newSubscriptionId = await subscriptionList();
+    // get details of each subscription
+    for (const item of listOfSubscriptions) {
+    
+        const subscriptionDetails = await client.subscriptions.get(item.subscriptionId);
+    
+        /*
+      
+        Each item looks like:
+      
+        {
+          id: '/subscriptions/123456',
+          subscriptionId: '123456',
+          displayName: 'YOUR-SUBSCRIPTION-NAME',
+          state: 'Enabled',
+          subscriptionPolicies: {
+            locationPlacementId: 'Internal_2014-09-01',
+            quotaId: 'Internal_2014-09-01',
+            spendingLimit: 'Off'
+          },
+          authorizationSource: 'RoleBased'
+        },
+      
+        */
+    
+        console.log(subscriptionDetails)
+        containerOfSubscriptions.push(subscriptionDetails);
+    }
+    return containerOfSubscriptions;
+  }
 
-console.log(newSubscriptionId.value[0].subscriptionId);
+const newSubscriptionId = subscriptions();
+console.log(newSubscriptionId);
 
 //Gets first subscription in a tenant.
 const subscriptionId = newSubscriptionId.value[0].subscriptionId;

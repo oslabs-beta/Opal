@@ -1,4 +1,4 @@
-//Bytes received.
+//Bytes received per function.
 import { DefaultAzureCredential } from '@azure/identity';
 import {
   Durations,
