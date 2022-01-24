@@ -1,5 +1,5 @@
 .rotate {
-  animation: spin 7.5s linear infinite;
+  animation: spin 17s linear infinite;
 }
 
 @keyframes spin {
