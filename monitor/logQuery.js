@@ -1,3 +1,4 @@
+//Logs but not what we are looking for.
 import { DefaultAzureCredential } from '@azure/identity';
 import {
   Durations,
@@ -36,4 +37,5 @@ const response = await logsQueryClient.queryWorkspace(
   }
 );
 
-console.log(response /* .tables[0].columns[0].type */);
+console.log(response);
+console.log(response.tables[0].columns[0]);
