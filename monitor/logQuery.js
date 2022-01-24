@@ -37,4 +37,5 @@ const response = await logsQueryClient.queryWorkspace(
   }
 );
 
-console.log(response /* .tables[0].columns[0].type */);
+console.log(response);
+console.log(response.tables[0].columns[0]);
