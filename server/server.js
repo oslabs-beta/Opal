@@ -11,17 +11,30 @@ const userRoutes = require('./routes/userRoutes.js');
 const app = express();
 app.use(express.json());
 app.use(cors());
+import performanceController from './controllers/performanceController.js';
+const moduleURL = new URL(import.meta.url);
+const __dirname = path.dirname(moduleURL.pathname);
+
 app.use(cookieParser());
 
-// Set port to 3000.
+// Set listening port to 3000.
 const port = 3000;
 
 //define router handlers
 app.use('/user', userRoutes);
 
-// Serve static files (css, js).
-// app.use(express.static) should set content type of css and js files automatically.
-app.use(express.static(path.resolve(__dirname, '../assets')));
+// Route for retrieving standard metrics on homepage.
+app.get('/baseMetrics', performanceController.getWebData, performanceController.getInsightsData, performanceController.getStorageData, (req, res) => {
+  // Three controllers are used to retrieve metrics from 3 APIs. Response object will contain three sub-objects.
+  res.locals.baseMetrics = {
+    storage: res.locals.webData,
+    web: res.locals.storageData,
+    insights: res.locals.insightsData
+  }
+  res.status(200);
+  res.json(res.locals.baseMetrics);
+});
+
 
 // Default error handler.
 app.use((err, req, res, next) => {
