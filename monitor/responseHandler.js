@@ -9,7 +9,7 @@ import /** as*/ dotenv from 'dotenv';
 dotenv.config();
 
 const metricsResourceId =
-  process.env.RESOURCE_ID_PER_FUNCTION;
+  process.env.RESOURCE_ID;
 
   console.log("metricsResourceId", metricsResourceId);
 

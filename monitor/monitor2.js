@@ -16,7 +16,7 @@ export async function main() {
 
   if (!metricsResourceId) {
     throw new Error(
-      'METRICS_RESOURCE_ID must be set in the environment for this sample'
+      'RESOURCE_ID must be set in the environment for this sample'
     );
   }
   const iterator = metricsQueryClient.listMetricDefinitions(metricsResourceId);
