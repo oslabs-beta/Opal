@@ -1,4 +1,4 @@
-const db = require('../models/UserModel.js');
+import db from '../models/UserModel.js';
 
 const userController = {};
 
@@ -61,4 +61,4 @@ userController.login = async (req, res, next) => {
   }
 };
 
-module.exports = userController;
+export default userController;

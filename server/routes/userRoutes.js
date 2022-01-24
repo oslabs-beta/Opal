@@ -1,5 +1,5 @@
-const express = require('express');
-const userController = require('../controllers/userController.js');
+import express from 'express';
+import userController from '../controllers/userController.js';
 const router = express.Router();
 
 router.post(
@@ -16,4 +16,4 @@ router.post('/login', userController.login, (req, res) => {
   res.status(200).json(res.locals.user);
 });
 
-module.exports = router;
+export default router;

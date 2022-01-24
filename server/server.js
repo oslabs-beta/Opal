@@ -1,11 +1,11 @@
 // Import statements.
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const path = require('path');
-const cors = require('cors');
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import path from 'path';
+import cors from 'cors';
 
 // Import routers
-const userRoutes = require('./routes/userRoutes.js');
+import userRoutes from './routes/userRoutes.js';
 
 // Standard imports.
 const app = express();
@@ -24,17 +24,22 @@ const port = 3000;
 app.use('/user', userRoutes);
 
 // Route for retrieving standard metrics on homepage.
-app.get('/baseMetrics', performanceController.getWebData, performanceController.getInsightsData, performanceController.getStorageData, (req, res) => {
-  // Three controllers are used to retrieve metrics from 3 APIs. Response object will contain three sub-objects.
-  res.locals.baseMetrics = {
-    storage: res.locals.webData,
-    web: res.locals.storageData,
-    insights: res.locals.insightsData
+app.get(
+  '/baseMetrics',
+  performanceController.getWebData,
+  performanceController.getInsightsData,
+  performanceController.getStorageData,
+  (req, res) => {
+    // Three controllers are used to retrieve metrics from 3 APIs. Response object will contain three sub-objects.
+    res.locals.baseMetrics = {
+      storage: res.locals.webData,
+      web: res.locals.storageData,
+      insights: res.locals.insightsData,
+    };
+    res.status(200);
+    res.json(res.locals.baseMetrics);
   }
-  res.status(200);
-  res.json(res.locals.baseMetrics);
-});
-
+);
 
 // Default error handler.
 app.use((err, req, res, next) => {
