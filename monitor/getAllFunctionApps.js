@@ -68,9 +68,9 @@ console.log("gl", gl);
 
 // gl.value.forEach(group => console.log(group.name));
 
-const getFunctionAppsInSingleRG = async (rg) => {
+const getFunctionAppsInSingleRG = async (rgName) => {
     console.log('in getFunctionAppsInSingleRG');
-    const rl = resourceClient.resources.listByResourceGroup(rg);
+    const rl = resourceClient.resources.listByResourceGroup(rgName);
     const byPage = rl.byPage();
     const next = await byPage.next();
     console.log("next", next);
@@ -113,7 +113,8 @@ const listAllFunctionApps = async () => {
 
     // })
     for (let i = 0; i < gl.length; i++){
-        let fal = await getFunctionAppsInSingleRG( gl[i].id );
+        console.log("gl[i].name", gl[i].name)
+        let fal = await getFunctionAppsInSingleRG( gl[i].name );
         fal.forEach(fa => allFunctionApps.push(fa));
     }
     // console.log(allFunctionApps);
