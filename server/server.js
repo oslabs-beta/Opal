@@ -3,6 +3,8 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import cors from 'cors';
+import performanceController from './controllers/performanceController.js';
+import sdkController from './controllers/testsdkcontroller.js';
 
 // Import routers
 import userRoutes from './routes/userRoutes.js';
@@ -11,7 +13,7 @@ import userRoutes from './routes/userRoutes.js';
 const app = express();
 app.use(express.json());
 app.use(cors());
-import performanceController from './controllers/performanceController.js';
+
 const moduleURL = new URL(import.meta.url);
 const __dirname = path.dirname(moduleURL.pathname);
 
@@ -38,6 +40,11 @@ app.get(
     };
     res.status(200);
     res.json(res.locals.baseMetrics);
+  }
+);
+
+app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, (req, res) => {
+    console.log('Completed');
   }
 );
 
