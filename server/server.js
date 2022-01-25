@@ -8,7 +8,7 @@ import sdkController from './controllers/testsdkcontroller.js';
 
 // Import routers
 import userRoutes from './routes/userRoutes.js';
-import performanceController from './controllers/performanceController.js';
+// import performanceController from './controllers/performanceController.js';
 
 // Standard imports.
 const app = express();
