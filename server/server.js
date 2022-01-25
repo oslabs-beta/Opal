@@ -3,6 +3,8 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import cors from 'cors';
+import performanceController from './controllers/performanceController.js';
+import sdkController from './controllers/testsdkcontroller.js';
 
 // Import routers
 import userRoutes from './routes/userRoutes.js';
@@ -38,6 +40,14 @@ app.get(
     };
     res.status(200);
     res.json(res.locals.baseMetrics);
+  }
+);
+
+app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, (req, res) => {
+  //console.log('this is back on the frontend');
+  //console.log(res.locals.subscriptions);
+  //res.json(res.locals.subscriptions);
+  res.json(res.locals.functionApps);
   }
 );
 
