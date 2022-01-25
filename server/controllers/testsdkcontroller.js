@@ -1,6 +1,7 @@
-import fetch from 'node-fetch';
 import { config } from 'dotenv';
+// No longer need simulators for now.
 import { MSWebSimulator, MSStorageSimulator, MSInsightsSimulator } from '../constants/frontendSimulator.js';
+// Could possibly dispense with other identities.
 import { InteractiveBrowserCredential, DefaultAzureCredential, AzureCliCredential, ChainedTokenCredential } from '@azure/identity';
 import { ResourceManagementClient } from '@azure/arm-resources';
 import { SubscriptionClient } from '@azure/arm-resources-subscriptions';
@@ -35,16 +36,12 @@ sdkController.fetchSubscriptionIds = async (req, res, next) => {
   // each subscritpion will in turn contain a resource group.
   // each resource group property will in turn contain a list of resources.
   // each resource will in turn contain a list of function applications.
-  console.log('res.locals.subscriptions');
-  console.log(res.locals.subscriptions);
   return next();
 };
 
 // Discuss whether this is the best way to handle.
 sdkController.fetchResourceGroups = async (req, res, next) => {
   for (let id in res.locals.subscriptions) {
-    console.log('subscriptions');
-    console.log(id);
     res.locals.subscriptions[id].rmc = new ResourceManagementClient(credential, id);
     const groups = res.locals.subscriptions[id].rmc.resourceGroups.list({ top: null });
     const groupsByPage = groups.byPage();
@@ -55,38 +52,51 @@ sdkController.fetchResourceGroups = async (req, res, next) => {
 };
 
 sdkController.fetchResources = async (req, res, next) => {
+
+  const functionAppArray = [];
   // for every resource group.
   // NOTE: cannot use foreach with async-await.
-  console.log('entering fetchResources');
   for (let id in res.locals.subscriptions) {
-    console.log('current id');
-    console.log(res.locals.subscriptions[id]);
     // resource groups are presented as arrays
-
-    console.log('here are teh resource groups associated with the subscription');
-    console.log(res.locals.subscriptions[id]);
-
     for (let group in res.locals.subscriptions[id].resourceGroups) {
-      console.log('current resource group');
-      console.log(res.locals.subscriptions[id].resourceGroups[group]);
-      console.log('getting the specific resources associated');
       const rmc = res.locals.subscriptions[id].rmc;
-      //console.log('here is the rmc');
-      //console.log(rmc);
-      const resources = rmc.resources.listByResourceGroup(group);
+      const resources = rmc.resources.listByResourceGroup(res.locals.subscriptions[id].resourceGroups[group].name);
       const resourcesByPage = resources.byPage();
       // assume only one page
       const allResources = await resourcesByPage.next();
       const functionList = [];
       allResources.value.forEach((app) => {
-        if ((app.kind === 'functionapp' || app.kind === 'functionapp, linux') && app.type === 'Microsoft.Web/sites') {
+        if ((app.kind === 'functionapp' || app.kind === 'functionapp,linux') && app.type === 'Microsoft.Web/sites') {
           functionList.push(app);
         }
       });
       res.locals.subscriptions[id].resourceGroups[group].functionList = functionList;
     }
   }
+  //  console.log('subscriptions');
+  for (const sub in res.locals.subscriptions) {
+    for (const resourceGroup in res.locals.subscriptions[sub].resourceGroups) {
+      console.log('contents of current resource group');
+      console.log(res.locals.subscriptions[sub].resourceGroups[resourceGroup]);
+      for (const functionApp in res.locals.subscriptions[sub].resourceGroups[resourceGroup].functionList) {
+        let currentApp = res.locals.subscriptions[sub].resourceGroups[resourceGroup].functionList[functionApp];
+        console.log(currentApp);
+        functionAppArray.push(currentApp);
+      }
+    }
+  }
+  console.log('subscriptions');
+  console.log(res.locals.subscriptions);
+
+  for (const sub in res.locals.subscriptions) {
+    delete res.locals.subscriptions[sub].rmc;
+  }
+
+  res.locals.functionApps = functionAppArray;
+
+  console.log('subscriptions');
+  console.log(res.locals.subscriptions);
+
   return next();
 };
-
 export default sdkController;

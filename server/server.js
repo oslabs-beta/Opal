@@ -13,7 +13,6 @@ import userRoutes from './routes/userRoutes.js';
 const app = express();
 app.use(express.json());
 app.use(cors());
-
 const moduleURL = new URL(import.meta.url);
 const __dirname = path.dirname(moduleURL.pathname);
 
@@ -44,7 +43,10 @@ app.get(
 );
 
 app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, (req, res) => {
-    console.log('Completed');
+  //console.log('this is back on the frontend');
+  //console.log(res.locals.subscriptions);
+  //res.json(res.locals.subscriptions);
+  res.json(res.locals.functionApps);
   }
 );
 
