@@ -6,12 +6,12 @@ import cors from 'cors';
 
 // Import routers
 import userRoutes from './routes/userRoutes.js';
+import performanceController from './controllers/performanceController.js';
 
 // Standard imports.
 const app = express();
 app.use(express.json());
 app.use(cors());
-import performanceController from './controllers/performanceController.js';
 const moduleURL = new URL(import.meta.url);
 const __dirname = path.dirname(moduleURL.pathname);
 
