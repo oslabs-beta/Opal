@@ -71,12 +71,12 @@ console.log("gl", gl);
 const getFunctionAppsInSingleRG = async (rgName) => {
     console.log('in getFunctionAppsInSingleRG');
     const rl = resourceClient.resources.listByResourceGroup(rgName);
-    const byPage = rl.byPage();
-    const next = await byPage.next();
-    console.log("next", next);
+    // const byPage = rl.byPage();
+    // const next = await byPage.next();
+    // console.log("next", next);
     // return next;
     const functionAppList = [];
-    for await (const resource of next){
+    for await (const resource of rl){
         if ((resource.kind === 'functionapp' || resource.kind === 'functionapp,linux') && resource.type === 'Microsoft.Web/sites'){
             functionAppList.push(resource);
         }
@@ -87,7 +87,7 @@ const getFunctionAppsInSingleRG = async (rgName) => {
 
 
 // console.log(gl.value[3].name)
-getFunctionAppsInSingleRG(gl[0]);
+// getFunctionAppsInSingleRG(gl[0]);
 // console.log(resourceClient.resources.listByResourceGroup(gl.value[0].id))
 
 // console.log(await getFunctionAppsInSingleRG(gl.value[3].name))
@@ -125,4 +125,4 @@ console.log(await listAllFunctionApps());
 
 export const allFunctionAppsForExport =  await listAllFunctionApps();
 
-console.log(allFunctionAppsForExport);
+console.log("allFunctionAppsForExport", allFunctionAppsForExport);
