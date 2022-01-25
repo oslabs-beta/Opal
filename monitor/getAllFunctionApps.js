@@ -86,7 +86,7 @@ const getFunctionAppsInSingleRG = async (rg) => {
 
 
 // console.log(gl.value[3].name)
-// getFunctionAppsInSingleRG(gl.value[3].name);
+getFunctionAppsInSingleRG(gl[0]);
 // console.log(resourceClient.resources.listByResourceGroup(gl.value[0].id))
 
 // console.log(await getFunctionAppsInSingleRG(gl.value[3].name))
