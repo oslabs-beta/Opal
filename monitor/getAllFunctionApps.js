@@ -69,6 +69,7 @@ console.log("gl", gl);
 // gl.value.forEach(group => console.log(group.name));
 
 const getFunctionAppsInSingleRG = async (rg) => {
+    console.log('in getFunctionAppsInSingleRG');
     const rl = resourceClient.resources.listByResourceGroup(rg);
     const byPage = rl.byPage();
     const next = await byPage.next();
@@ -80,7 +81,7 @@ const getFunctionAppsInSingleRG = async (rg) => {
             functionAppList.push(resource);
         }
     }
-    // console.log("This is functionAppList", functionAppList);
+    console.log("This is functionAppList", functionAppList);
     return functionAppList;
 };
 
