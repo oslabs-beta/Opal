@@ -12,6 +12,11 @@ const credential = new DefaultAzureCredential();
 
 const sdkController = {};
 
+sdkController.executionOnly = async (req, res, next) => {
+  res.locals.executionOnly = true;
+  return next();
+};
+
 sdkController.fetchSubscriptionIds = async (req, res, next) => {
   // get all subscriptions associated with the given credential.
   // look up iterator functionality in relation to promise use.
@@ -53,7 +58,6 @@ sdkController.fetchResourceGroups = async (req, res, next) => {
 };
 
 sdkController.fetchResources = async (req, res, next) => {
-
   const functionAppArray = [];
   const insightsList = [];
   // for every resource group.
@@ -74,25 +78,21 @@ sdkController.fetchResources = async (req, res, next) => {
         }
       });
 
-      console.log("allResources.value", allResources.value);
-      console.log("functionList", functionList);
+      // console.log('allResources.value', allResources.value);
+      // console.log('functionList', functionList);
 
       await allResources.value.forEach((app) => {
-        console.log("forEach loop for insights");
-        if(app.type === "Microsoft.Insights/components"){
-
-
-          for (const functionApp of functionList){
-            console.log("functionApp", functionApp);
-            console.log("app", app);
+        // console.log('forEach loop for insights');
+        if (app.type === 'Microsoft.Insights/components') {
+          for (const functionApp of functionList) {
+            console.log('functionApp', functionApp);
+            console.log('app', app);
             if (functionApp.name === app.name) insightsList.push(app);
           }
         }
       });
 
       res.locals.subscriptions[id].resourceGroups[group].functionList = functionList;
-
-
     }
   }
   //  console.log('subscriptions');
@@ -115,14 +115,71 @@ sdkController.fetchResources = async (req, res, next) => {
     delete res.locals.subscriptions[sub].rmc;
   }
 
-
-  console.log("insightsList", insightsList);
+  // console.log('insightsList', insightsList);
   res.locals.functionApps = functionAppArray;
   res.locals.insights = insightsList;
 
   // console.log('subscriptions');
-  console.log(res.locals.subscriptions);
-
   return next();
 };
+
+sdkController.formatExecutions = (req, res, next) => {
+  //console.log('SUBSCRIPTIONS OBJECT');
+  //console.log(res.locals.subscriptions['eb87b3ba-9c9c-4950-aa5d-6e60e18877ad']);
+  const executionObj = {};
+  for (let sub in res.locals.subscriptions) {
+    // console.log('here is what is in res.locals.subscriptions');
+    // console.log(res.locals.subscriptions);
+    // console.log('here is what this sub is');
+    // console.log(sub);
+    executionObj[sub] = {};
+    console.log('res.locals.subscriptions[sub].resourceGroups', res.locals.subscriptions[sub].resourceGroups);
+    for (let group of res.locals.subscriptions[sub].resourceGroups) {
+      // I am available for voice call now, I don't know if you are.
+      console.log('group.name', group.name);
+      //executionObj[sub].resourceGroups[group.name] = {};
+      if (group.functionList.length) {
+        executionObj[sub][group.name] = {};
+        let currentFuncArray = group.functionList;
+        //console.log('currentFuncArray');
+        //console.log(currentFuncArray);
+        //console.log('webmetrics');
+        //console.log(res.locals.webMetrics);
+        // executionObj[sub].resourceGroups[group.name]
+        currentFuncArray.forEach((func) => {
+          //console.log("in the forEach loop");
+          //console.log("res.locals.webMetrics[func.name].metrics[0].timeseries[0].data", res.locals.webMetrics[func.name].metrics[0].timeseries[0].data);
+          let functionCount = {
+            name: func.name,
+            id: func.id,
+            metricName: 'ExecutionCount',
+            timeseries: res.locals.webMetrics[func.name].metrics[0].timeseries[0].data
+          }
+          //console.log('functionCount')
+          //console.log(functionCount);
+          executionObj[sub][group.name][functionCount.name] = functionCount;
+        });
+      } else {
+        // do nothing
+      }
+      /*let currentFuncs = res.locals.subscriptions[sub].resourceGroups[group][group.name].functionList;
+      if (currentFuncs.length) {
+        console.log('function list');
+        console.log(currentFuncs);
+        executionObj[sub][group.name] = currentFuncs;
+        console.log('here lies the gloomily named execution object'); //lol
+        console.log(executionObj);
+      }*/
+    }
+  }
+  console.log("executionObj");
+  console.log(executionObj);
+  res.locals.executionObj = executionObj;
+  return next();
+};
+
+sdkController.formatAppDetail = (req, res, next) => {
+  return next();
+};
+
 export default sdkController;
