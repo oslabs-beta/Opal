@@ -89,15 +89,6 @@ performanceController.convertFrontEndToSDK = (req, res, next) => {
 };
 
 performanceController.convertSDKToFrontEnd = (req, res, next) => {
-  /*{
-    id: '/subscriptions/eb87b3ba-9c9c-4950-aa5d-6e60e18877ad/resourceGroups/triggertestmogwais/providers/Microsoft.Web/sites/triggerTestMogwais/providers/Microsoft.Insights/metrics/FunctionExecutionCount',
-    type: 'Microsoft.Insights/metrics',
-    name: 'FunctionExecutionCount',
-    errorCode: 'Success',
-    unit: 'Count',
-    timeseries: [ { data: [Array], metadataValues: [] } ],
-    description: 'Function Execution Count. For FunctionApps only.'
-  }*/
   try {
     res.locals.sdkData.forEach((metric) => {
       const { id, name, errorCode, unit, timeseries, description } = metric;
@@ -118,10 +109,6 @@ performanceController.convertSDKToFrontEnd = (req, res, next) => {
   return next();
 }
 
-// this one probably doesnt need to be asynchronous
-performanceController.getFunctionSummary = (req, res, next) => {};
-
-performanceController.displayAllFunctions = (req, res, next) => {};
 
 // Work on asynchronous function calls: all three can be handled at once, instead of awaiting
 // the results of a prior controller's call. Check BPs.
