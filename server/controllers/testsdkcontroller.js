@@ -183,7 +183,10 @@ sdkController.formatExecutions = (req, res, next) => {
           if (func.insightId !== undefined) {
             functionCount.insightId = func.insightId
           }
-
+          functionCount.totalCount = 0;
+          functionCount.timeseries.forEach((time) => {
+            functionCount.totalCount += time.total;
+          });
           console.log('functionCount');
           console.log(functionCount);
           executionObj[sub][group.name][functionCount.name] = functionCount;
