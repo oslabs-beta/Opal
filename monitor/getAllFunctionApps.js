@@ -80,6 +80,7 @@ const getFunctionAppsInSingleRG = async (rgName) => {
     const functionAppList = [];
     for await (const resource of rl){
         if ((resource.kind === 'functionapp' || resource.kind === 'functionapp,linux') && resource.type === 'Microsoft.Web/sites'){
+            console.log("resource", resource)
             functionAppList.push(resource);
         }
     }
