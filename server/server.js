@@ -67,6 +67,15 @@ app.get('/getInsights', sdkController.fetchSubscriptionIds, sdkController.fetchR
   res.json(res.locals.insightsMetrics);
 });
 
+app.get('/executionOnly', sdkController.executionOnly, sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, functionMetricsController.getMSWebMetrics, sdkController.formatExecutions, (req, res) => {
+  res.json(res.locals.executionObj);
+});
+
+app.get('/getAppDetails', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, functionMetricsController.getMSWebMetrics, insightsController.getInsights, (req, res) => {
+
+});
+
+
 // Default error handler.
 app.use((err, req, res, next) => {
   const defaultErr = {

@@ -16,8 +16,21 @@ const metricQuery = new MetricsQueryClient(credential);
 functionMetricsController.getMSWebMetrics = async (req, res, next) => {
   // functionMetricsController.getMetrics gets all MS Web apps from function apps
   // based on the criteria selected in frontendSimulator.js
-  const metrics = functionMetricsController.generateMetric1D(MSWebSimulator);
-  const metricsArray = [];
+  let metrics;
+  if (res.locals.executionOnly === true) {
+    metrics = ['FunctionExecutionCount'];
+  } else {
+    metrics = functionMetricsController.generateMetric1D(MSWebSimulator);
+  }
+  const metricsObj = {};
+
+  // Two cases are needed.
+  // Case One: If res.locals.execution only === true, loop through everything.
+  // Case Two: If res.locals.execution only == false, dont loop, just retrieve
+  // ALL of the metrics for a single function application.
+  // easy way to do this: keep code here the same, but set res.locals.functionapps = one function.
+  // That would let us skip all of the middleware involved in retrieving subscription data.
+
   for await (let app of res.locals.functionApps) {
     const resId = app.id;
     if (!resId) {
@@ -26,13 +39,15 @@ functionMetricsController.getMSWebMetrics = async (req, res, next) => {
       });
     }
     const result = await metricQuery.queryResource(resId, metrics, {
-      granularity: 'PT6H',
-      timespan: {duration: 'PT48H'},
+      granularity: 'PT5M',
+      timespan: {duration: 'PT24H'},
       //aggregations: ['Count']
     });
-    metricsArray.push(result);
+    metricsObj[app.name] = result;
+    //metricsArray.push(result);
   }
-  res.locals.webMetrics = metricsArray;
+  //res.locals.webMetrics = metricsArray;
+  res.locals.webMetrics = metricsObj;
   return next();
 };
 
