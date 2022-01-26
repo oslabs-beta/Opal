@@ -38,7 +38,7 @@ functionMetricsController.getMSWebMetrics = async (req, res, next) => {
       });
     }
     const result = await metricQuery.queryResource(resId, metrics, {
-      granularity: 'PT5M',
+      granularity: 'PT1H',
       timespan: { duration: 'PT24H' },
       //aggregations: ['Count']
     });
@@ -80,7 +80,7 @@ functionMetricsController.getMSInsightsMetrics = async (req, res, next) => {
       });
     }
     const result = await metricQuery.queryResource(resId, metrics, {
-      granularity: 'PT5M',
+      granularity: 'PT1H',
       timespan: { duration: 'PT24H' },
       //aggregations: ['Count']
     });
