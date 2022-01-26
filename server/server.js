@@ -5,7 +5,7 @@ import path from 'path';
 import cors from 'cors';
 import performanceController from './controllers/performanceController.js';
 import sdkController from './controllers/testsdkcontroller.js';
-import functionMetricsController from './controllers/functionmetricscontroller.js';
+import functionMetricsController from './controllers/functionMetricsController.js';
 import insightsController from './controllers/insightscontrollertest.js';
 
 // Import routers
