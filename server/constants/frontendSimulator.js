@@ -42,7 +42,7 @@ const MSStorageSimulator = {
   Egress: false,
   SuccessServerLatency: false,
   SuccessE2ELatency: false,
-  Availability: true,
+  Availability: false,
 };
 
 const MSInsightsSimulator = {
@@ -79,14 +79,14 @@ const MSInsightsSimulator = {
   },
   requests: {
     duration: true,
-    count: true,
+    count: false,
     failed: true,
     rate: false,
   },
   exceptions: {
-    count: true,
-    browser: true,
-    server: true,
+    count: false,
+    browser: false,
+    server: false,
   },
   traces: {
     count: false,

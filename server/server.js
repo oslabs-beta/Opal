@@ -6,6 +6,8 @@ import cors from 'cors';
 import performanceController from './controllers/performanceController.js';
 import sdkController from './controllers/testsdkcontroller.js';
 import functionMetricsController from './controllers/functionmetricscontroller.js'
+import insightsController from './controllers/insightscontrollertest.js';
+
 
 // Import routers
 import userRoutes from './routes/userRoutes.js';
@@ -53,10 +55,16 @@ app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchReso
   }
 );
 
-app.get('/getMetrics', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, functionMetricsController.getMetrics, (req, res) => {
-  console.log('completed');
+app.get('/getMetrics', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, functionMetricsController.getMSWebMetrics, (req, res) => {
+  console.log('completed getting MS Web metrics');
   console.log(res.locals.metrics);
-  res.json(res.locals.metrics);
+  // Need to combine into a JSON object.
+  res.json(res.locals.webMetrics);
+});
+
+app.get('/getInsights', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, insightsController.getInsights, (req, res) => {
+  console.log('completed getting application insights metrics');
+  res.json(res.locals.insightsMetrics);
 });
 
 // Default error handler.
