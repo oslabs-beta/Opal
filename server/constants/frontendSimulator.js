@@ -9,8 +9,8 @@ const MSWebSimulator = {
   Http403: false,
   Http404: false,
   Http406: false,
-  Http4xx: false,
-  Http5xx: false,
+  Http4xx: true,
+  Http5xx: true,
   MemoryWorkingSet: false,
   AverageMemoryWorkingSet: false,
   AverageResponseTime: false,
@@ -19,7 +19,7 @@ const MSWebSimulator = {
   FunctionExecutionCount: true,
   AppConnections: false,
   Handles: false,
-  Threads: true,
+  Threads: false,
   PrivateBytes: false,
   IoReadBytesPerSecond: false,
   IoWriteBytesPerSecond: false,
@@ -32,7 +32,7 @@ const MSWebSimulator = {
   Gen1Collections: false,
   Gen2Collections: false,
   HealthCheckStatus: false,
-  FileSystemUsage: true,
+  FileSystemUsage: false,
 };
 
 const MSStorageSimulator = {
@@ -42,7 +42,7 @@ const MSStorageSimulator = {
   Egress: false,
   SuccessServerLatency: false,
   SuccessE2ELatency: false,
-  Availability: true,
+  Availability: false,
 };
 
 const MSInsightsSimulator = {
@@ -79,14 +79,14 @@ const MSInsightsSimulator = {
   },
   requests: {
     duration: true,
-    count: true,
+    count: false,
     failed: true,
     rate: false,
   },
   exceptions: {
-    count: true,
-    browser: true,
-    server: true,
+    count: false,
+    browser: false,
+    server: false,
   },
   traces: {
     count: false,
