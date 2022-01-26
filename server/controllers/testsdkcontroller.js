@@ -48,55 +48,79 @@ sdkController.fetchResourceGroups = async (req, res, next) => {
     const groupsPerSub = await groupsByPage.next();
     res.locals.subscriptions[id].resourceGroups = groupsPerSub.value;
   }
-  console.log('THIS IS ALL OF THE RESOURCE GROUPS');
+  // console.log('THIS IS ALL OF THE RESOURCE GROUPS');
   return next();
 };
 
 sdkController.fetchResources = async (req, res, next) => {
 
   const functionAppArray = [];
+  const insightsList = [];
   // for every resource group.
   // NOTE: cannot use foreach with async-await.
   for (let id in res.locals.subscriptions) {
     // resource groups are presented as arrays
     for (let group in res.locals.subscriptions[id].resourceGroups) {
       const rmc = res.locals.subscriptions[id].rmc;
-      const resources = rmc.resources.listByResourceGroup(res.locals.subscriptions[id].resourceGroups[group].name);
+      const resources = await rmc.resources.listByResourceGroup(res.locals.subscriptions[id].resourceGroups[group].name);
       const resourcesByPage = resources.byPage();
       // assume only one page
       const allResources = await resourcesByPage.next();
       const functionList = [];
-      allResources.value.forEach((app) => {
+
+      await allResources.value.forEach((app) => {
         if ((app.kind === 'functionapp' || app.kind === 'functionapp,linux') && app.type === 'Microsoft.Web/sites') {
           functionList.push(app);
         }
       });
+
+      console.log("allResources.value", allResources.value);
+      console.log("functionList", functionList);
+
+      await allResources.value.forEach((app) => {
+        console.log("forEach loop for insights");
+        if(app.type === "Microsoft.Insights/components"){
+
+
+          for (const functionApp of functionList){
+            console.log("functionApp", functionApp);
+            console.log("app", app);
+            if (functionApp.name === app.name) insightsList.push(app);
+          }
+        }
+      });
+
       res.locals.subscriptions[id].resourceGroups[group].functionList = functionList;
+
+
     }
   }
   //  console.log('subscriptions');
   for (const sub in res.locals.subscriptions) {
     for (const resourceGroup in res.locals.subscriptions[sub].resourceGroups) {
-      console.log('contents of current resource group');
-      console.log(res.locals.subscriptions[sub].resourceGroups[resourceGroup]);
+      // console.log('contents of current resource group');
+      // console.log(res.locals.subscriptions[sub].resourceGroups[resourceGroup]);
       for (const functionApp in res.locals.subscriptions[sub].resourceGroups[resourceGroup].functionList) {
         let currentApp = res.locals.subscriptions[sub].resourceGroups[resourceGroup].functionList[functionApp];
         //let currentApp = res.locals.subscriptions[sub].resourceGroups[resourceGroup];
-        console.log(currentApp);
+        // console.log(currentApp);
         functionAppArray.push(currentApp);
       }
     }
   }
-  console.log('subscriptions');
-  console.log(res.locals.subscriptions);
+  // console.log('subscriptions');
+  // console.log(res.locals.subscriptions);
 
   for (const sub in res.locals.subscriptions) {
     delete res.locals.subscriptions[sub].rmc;
   }
 
-  res.locals.functionApps = functionAppArray;
 
-  console.log('subscriptions');
+  console.log("insightsList", insightsList);
+  res.locals.functionApps = functionAppArray;
+  res.locals.insights = insightsList;
+
+  // console.log('subscriptions');
   console.log(res.locals.subscriptions);
 
   return next();

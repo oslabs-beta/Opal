@@ -47,12 +47,13 @@ const subscriptionId = newSubscriptionId[0].subscriptionId;
 const resourceClient = new ResourceManagementClient(credentialChain, subscriptionId);
 
 const groupList = async () => {
-    // rsg2 Has keys of next, byPage, and [Symbol(Symbol.asyncIterator)]    
-    const rsg2 = resourceClient.resourceGroups.list({top: null});
+    // rsg2 Has keys of next, byPage, and [Symbol(Symbol.asyncIterator)]  
+    //This await needs to be here or it won't work.  
+    const rsg2 = await resourceClient.resourceGroups.list({top: null});
     // console.log(rsg2);
-    for await (const result of rsg2){
-        console.log("result", result);
-    };
+    // for await (const result of rsg2){
+    //     console.log("result", result);
+    // };
     // // nextInList only shows one resource group
     // const nextInList = await rsg2.next();
     // console.log(nextInList);
@@ -79,7 +80,7 @@ const getFunctionAppsInSingleRG = async (rgName) => {
     // return next;
     const functionAppList = [];
     for await (const resource of rl){
-        if ((resource.kind === 'functionapp' || resource.kind === 'functionapp,linux') && resource.type === 'Microsoft.Web/sites'){
+        if ((resource.kind === 'functionapp' || resource.kind === 'functionapp,linux')){
             console.log("resource", resource)
             functionAppList.push(resource);
         }
