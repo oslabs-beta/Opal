@@ -1,19 +1,34 @@
 import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LockClosedIcon } from '@heroicons/react/solid';
 import './animation.css';
 
 function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-  function handleSubmit(e) {
-    e.preventDefault();
-  }
-
+  const User = useRef(null);
   const Password = useRef(null);
-  const Username = useRef(null);
+
+  const navigate = useNavigate();
+
+  async function handleSubmit(e) {
+    const data = {
+      User: User.current.value,
+      Password: Password.current.value,
+    };
+
+    const response = await fetch('http://localhost:3000/user/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }).then((res) => res.json());
+
+    if (response === true) {
+      //redux add to state for user
+      navigate('/azure');
+    } else alert('Incorrect credentials entered, please try again or sign up!');
+  }
 
   return (
     <div className='min-h-full h-screen w-full bg-[#363740] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
@@ -37,10 +52,10 @@ function Login() {
             EMAIL OR USERNAME
           </label>
           <input
-            ref={Username}
+            ref={User}
             className='border-2 px-4 mb-3 py-3 rounded-lg font-light focus:outline-none focus:border-rose-500 focus:border-3'
             type='text'
-            placeholder='Email address or Username'
+            placeholder='Email Address or Username'
           />
 
           <label className='text-sm mb-1.5 text-gray-400'>PASSWORD</label>
@@ -53,8 +68,8 @@ function Login() {
           <motion.button
             type='button'
             onClick={() => {
-              Password.current.value.length > 6 && Username.current.value
-                ? alert('success')
+              Password.current.value.length > 6 && User.current.value
+                ? handleSubmit()
                 : alert('what the *****');
             }}
             whileTap={{ scale: 0.9 }}
@@ -62,9 +77,9 @@ function Login() {
             className='bg-rose-500 mt-4 mb-4 w-full p-4 rounded-lg text-white'
           >
             {Password.current &&
-            Username.current &&
+            User.current &&
             Password.current.value.length > 6 &&
-            Username.current.value ? (
+            User.current.value ? (
               ''
             ) : (
               <span className='absolute left-0 inset-y-0 flex items-center pl-3'>

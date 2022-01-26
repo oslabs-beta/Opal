@@ -8,6 +8,7 @@ import /** as*/ dotenv from 'dotenv';
 
 dotenv.config();
 
+//When we pass in a metricsResourceId equal to an individual function, we get a BadRequest returned.
 const metricsResourceId =
   process.env.RESOURCE_ID;
 
@@ -28,12 +29,13 @@ export async function main() {
 
   const metricsResponse = await metricsQueryClient.queryResource(
     metricsResourceId,
-    [event],
+    [event, 'BytesSent'],
     {
       timespan: {
-        duration: Durations.fiveMinutes,
+        duration: /*Durations.fiveMinutes,*/ 'PT25M'
       },
-      granularity: 'PT1M',
+      //supported granularities are: PT1M,PT5M,PT15M,PT30M,PT1H,PT6H,PT12H,P1D,
+      granularity: 'PT5M',
       aggregations: ['Count'],
     }
   );

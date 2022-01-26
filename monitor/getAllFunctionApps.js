@@ -2,11 +2,9 @@
 import { InteractiveBrowserCredential, DefaultAzureCredential, AzureCliCredential, ChainedTokenCredential }  from "@azure/identity";
 import { ResourceManagementClient } from "@azure/arm-resources";
 import { SubscriptionClient } from "@azure/arm-resources-subscriptions";
-import dotenv from "dotenv";
-// import { KeysClient } from "@azure/keyvault-keys";
-// import { nodeModuleNameResolver } from "typescript";
+// import dotenv from "dotenv";
 
-dotenv.config();
+// dotenv.config();
 
 const credentialBrowser = new InteractiveBrowserCredential();
 const credentialDefault = new DefaultAzureCredential();
@@ -50,7 +48,11 @@ const resourceClient = new ResourceManagementClient(credentialChain, subscriptio
 
 const groupList = async () => {
     // rsg2 Has keys of next, byPage, and [Symbol(Symbol.asyncIterator)]    
-    const rsg2 = await resourceClient.resourceGroups.list({top: null});
+    const rsg2 = resourceClient.resourceGroups.list({top: null});
+    // console.log(rsg2);
+    for await (const result of rsg2){
+        console.log("result", result);
+    };
     // // nextInList only shows one resource group
     // const nextInList = await rsg2.next();
     // console.log(nextInList);

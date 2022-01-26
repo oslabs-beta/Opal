@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LockClosedIcon } from '@heroicons/react/solid';
 import './animation.css';
@@ -11,6 +11,36 @@ function Signup() {
   const LastName = useRef(null);
   const Password = useRef(null);
   const ConfirmPass = useRef(null);
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    const data = {
+      Username: Username.current.value,
+      Email: Email.current.value,
+      FirstName: FirstName.current.value,
+      LastName: LastName.current.value,
+      Password: Password.current.value,
+    };
+
+    await fetch('http://localhost:3000/user/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Success: ', data);
+        //if data == true then add that to state and login the user/redirect to azure page. Redux question for Marcel
+        if (data === true) navigate('/azure');
+        else alert('Sign up failed, credentials are already in use!');
+      })
+      .catch((error) => {
+        console.log('Error: ', error);
+      });
+  };
 
   return (
     <div className='min-h-full h-screen w-full bg-[#363740] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
@@ -35,7 +65,7 @@ function Signup() {
             ref={Username}
             className='border-2 px-4 mb-3 py-3 rounded-lg font-light focus:outline-none focus:border-rose-500 focus:border-3'
             type='text'
-            placeholder='Username'
+            placeholder='Min. of 4 characters'
           />
 
           <label className='text-sm mb-1.5 text-gray-400'>EMAIL</label>
@@ -74,7 +104,7 @@ function Signup() {
               ref={Password}
               className='border-2 mb-4 px-4 py-3 font-light rounded-lg focus:outline-none focus:border-rose-500 focus:border-3'
               type='password'
-              placeholder='Password'
+              placeholder='Min. of 6 characters'
             />
           </div>
 
@@ -102,7 +132,9 @@ function Signup() {
                 ConfirmPass.current.value !== Password.current.value
               )
                 alert('Input fields were not filled out correctly.');
-              else alert('This is working!');
+              else {
+                handleSubmit();
+              }
             }}
             whileTap={{ scale: 0.9 }}
             animate={{ y: 10 }}

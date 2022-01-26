@@ -1,28 +1,62 @@
 // Import statements.
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const path = require('path');
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import path from 'path';
+import cors from 'cors';
+import performanceController from './controllers/performanceController.js';
+import sdkController from './controllers/testsdkcontroller.js';
+import functionMetricsController from './controllers/functionMetricsController.js'
 
-// Import controllers.
+// Import routers
+import userRoutes from './routes/userRoutes.js';
+// import performanceController from './controllers/performanceController.js';
 
 // Standard imports.
 const app = express();
 app.use(express.json());
-//const router = express.Router();
+app.use(cors());
+const moduleURL = new URL(import.meta.url);
+const __dirname = path.dirname(moduleURL.pathname);
+
 app.use(cookieParser());
 
-// Set port to 3000.
+// Set listening port to 3000.
 const port = 3000;
 
-// BASE route
-app.get('/', (req, res) => {
-  res.status(200);
-  res.sendFile(path.join(__dirname, '../dist/index.html'));
-});
+//define router handlers
+app.use('/user', userRoutes);
 
-// Serve static files (css, js).
-// app.use(express.static) should set content type of css and js files automatically.
-app.use(express.static(path.resolve(__dirname, '../assets/')));
+// Route for retrieving standard metrics on homepage.
+app.get(
+  '/baseMetrics',
+  performanceController.getWebData,
+  performanceController.getInsightsData,
+  performanceController.getStorageData,
+  (req, res) => {
+    // Three controllers are used to retrieve metrics from 3 APIs. Response object will contain three sub-objects.
+    res.locals.baseMetrics = {
+      storage: res.locals.webData,
+      web: res.locals.storageData,
+      insights: res.locals.insightsData,
+    };
+    res.status(200);
+    res.json(res.locals.baseMetrics);
+  }
+);
+
+app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, (req, res) => {
+  //console.log('this is back on the frontend');
+  //console.log(res.locals.subscriptions);
+  //res.json(res.locals.subscriptions);
+  res.json(res.locals.functionApps);
+  }
+);
+
+app.get('/getMetrics', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, functionMetricsController.getMetrics, (req, res) => {
+  console.log('completed');
+  console.log(res.locals.metrics);
+  res.json(res.locals.metrics);
+});
 
 // Default error handler.
 app.use((err, req, res, next) => {
@@ -34,6 +68,10 @@ app.use((err, req, res, next) => {
   const errorObj = Object.assign({}, defaultErr, err);
   console.log(errorObj.log);
   return res.status(errorObj.status).json(errorObj.message);
+});
+
+app.use('*', (req, res) => {
+  res.status(404).json({ err: 'endpoint requested is not found' });
 });
 
 // Make sure server is listening.
