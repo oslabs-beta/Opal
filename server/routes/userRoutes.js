@@ -8,12 +8,12 @@ router.post(
   userController.checkUserCred,
   userController.addUserCred,
   (req, res) => {
-    res.status(200).json(res.locals.user);
+    res.status(200).json({user:res.locals.user, userInfo: res.locals.userInfo});
   }
 );
 
 router.post('/login', userController.login, (req, res) => {
-  res.status(200).json(res.locals.user);
+  res.status(200).json({user:res.locals.user, userInfo: res.locals.userInfo});
 });
 
 export default router;
