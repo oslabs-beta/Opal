@@ -17,7 +17,7 @@ export async function main() {
 
   if (!metricsResourceId) {
     throw new Error(
-      'METRICS_RESOURCE_ID must be set in the environment for this sample'
+      'RESOURCE_ID must be set in the environment for this sample'
     );
   }
   //This example uses listMetricDefinitions as an iterator. Do some of the other npm modules work in a similar way?

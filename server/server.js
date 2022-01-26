@@ -5,11 +5,13 @@ import path from 'path';
 import cors from 'cors';
 import performanceController from './controllers/performanceController.js';
 import sdkController from './controllers/testsdkcontroller.js';
-import functionMetricsController from './controllers/functionMetricsController.js'
+import functionMetricsController from './controllers/functionmetricscontroller.js'
 import insightsController from './controllers/insightscontrollertest.js';
+
 
 // Import routers
 import userRoutes from './routes/userRoutes.js';
+// import performanceController from './controllers/performanceController.js';
 
 // Standard imports.
 const app = express();
@@ -48,7 +50,8 @@ app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchReso
   //console.log('this is back on the frontend');
   //console.log(res.locals.subscriptions);
   //res.json(res.locals.subscriptions);
-  res.json(res.locals.functionApps);
+  res.json([res.locals.functionApps, res.locals.insights]);
+  // res.json(res.locals.insightsList);
   }
 );
 
