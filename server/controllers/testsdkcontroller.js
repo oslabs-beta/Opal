@@ -48,6 +48,7 @@ sdkController.fetchResourceGroups = async (req, res, next) => {
     const groupsPerSub = await groupsByPage.next();
     res.locals.subscriptions[id].resourceGroups = groupsPerSub.value;
   }
+  console.log('THIS IS ALL OF THE RESOURCE GROUPS');
   return next();
 };
 
@@ -80,6 +81,7 @@ sdkController.fetchResources = async (req, res, next) => {
       console.log(res.locals.subscriptions[sub].resourceGroups[resourceGroup]);
       for (const functionApp in res.locals.subscriptions[sub].resourceGroups[resourceGroup].functionList) {
         let currentApp = res.locals.subscriptions[sub].resourceGroups[resourceGroup].functionList[functionApp];
+        //let currentApp = res.locals.subscriptions[sub].resourceGroups[resourceGroup];
         console.log(currentApp);
         functionAppArray.push(currentApp);
       }

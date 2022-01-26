@@ -19,7 +19,7 @@ const RESOURCE_GROUP = 'triggertestmogwais';
 const RESOURCE = 'triggerTestMogwais';
 
 // Set constant (for now) to identify the relevant timespan.
-const TIMESPAN = '2022-01-19T00:00:00Z/2022-01-20T23:59:00Z';
+const TIMESPAN = '2022-01-25T15:00:00Z/2022-01-26T23:59:00Z';
 
 // Set constant (for now) to identify preferred interval. Currently set to every six hours.
 const INTERVAL = 'PT6H';

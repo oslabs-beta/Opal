@@ -5,6 +5,7 @@ import path from 'path';
 import cors from 'cors';
 import performanceController from './controllers/performanceController.js';
 import sdkController from './controllers/testsdkcontroller.js';
+import functionMetricsController from './controllers/functionMetricsController.js'
 
 // Import routers
 import userRoutes from './routes/userRoutes.js';
@@ -50,6 +51,12 @@ app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchReso
   res.json(res.locals.functionApps);
   }
 );
+
+app.get('/getMetrics', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, functionMetricsController.getMetrics, (req, res) => {
+  console.log('completed');
+  console.log(res.locals.metrics);
+  res.json(res.locals.metrics);
+});
 
 // Default error handler.
 app.use((err, req, res, next) => {
