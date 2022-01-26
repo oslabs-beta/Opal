@@ -61,7 +61,7 @@ app.get('/getMetrics', sdkController.fetchSubscriptionIds, sdkController.fetchRe
 
 app.get('/getInsights', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, insightsController.getInsights, (req, res) => {
   console.log('completed getting application insights metrics');
-  //res.json(res.locals.insightsMetrics);
+  res.json(res.locals.insightsMetrics);
 });
 
 // Default error handler.
