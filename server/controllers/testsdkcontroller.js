@@ -83,13 +83,21 @@ sdkController.fetchResources = async (req, res, next) => {
 
       await allResources.value.forEach((app) => {
         // console.log('forEach loop for insights');
-        if (app.type === 'Microsoft.Insights/components') {
+        console.log('the current application toLowerCase is ');
+        console.log(app.type.toLowerCase());
+        if (app.type.toLowerCase() === 'microsoft.insights/components') {
+          console.log('found an insights component :');
+          console.log(app);
           for (const functionApp of functionList) {
-            console.log('functionApp', functionApp);
-            console.log('app', app);
+            // console.log('functionApp', functionApp);
+            // console.log('app', app);
             const fatl = functionApp.name.toLowerCase();
+            console.log("fatl", fatl);
             const atl = app.name.toLowerCase();
+            console.log("atl", atl);
             if (fatl === atl) {
+              console.log('found a match for the following insight ');
+              console.log(app);
               insightsList.push(app);
               // Alma -- Adding this line to add insights data as a property on function app.
               functionApp.insightId = app.id;
@@ -153,10 +161,18 @@ sdkController.formatExecutions = (req, res, next) => {
         //console.log(res.locals.webMetrics);
         // executionObj[sub].resourceGroups[group.name]
         currentFuncArray.forEach((func) => {
+          console.log('func');
+          console.log(func);
           //console.log("in the forEach loop");
           //console.log("res.locals.webMetrics[func.name].metrics[0].timeseries[0].data", res.locals.webMetrics[func.name].metrics[0].timeseries[0].data);
-          console.log('value of func');
-          console.log(func);
+          //console.log('value of func');
+          // console.log("res.locals.functionApps", res.locals.functionApps);
+          console.log("func.insightId", func.insightId);
+          //console.log(func);
+
+          // Why is insightId not being set for every function application?
+          // Do some not have insights ids, or are we not setting it properly?
+
           let functionCount = {
             name: func.name,
             id: func.id,
@@ -164,245 +180,53 @@ sdkController.formatExecutions = (req, res, next) => {
             metricName: 'ExecutionCount',
             timeseries: res.locals.webMetrics[func.name].metrics[0].timeseries[0].data
           }
-          //console.log('functionCount')
-          //console.log(functionCount);
+          if (func.insightId !== undefined) {
+            functionCount.insightId = func.insightId
+          }
+
+          console.log('functionCount');
+          console.log(functionCount);
           executionObj[sub][group.name][functionCount.name] = functionCount;
         });
       } else {
         // do nothing
       }
-      /*let currentFuncs = res.locals.subscriptions[sub].resourceGroups[group][group.name].functionList;
-      if (currentFuncs.length) {
-        console.log('function list');
-        console.log(currentFuncs);
-        executionObj[sub][group.name] = currentFuncs;
-        console.log('here lies the gloomily named execution object'); //lol
-        console.log(executionObj);
-      }*/
     }
   }
-  console.log("executionObj");
-  console.log(executionObj);
+  // console.log("executionObj");
+  // console.log(executionObj);
   res.locals.executionObj = executionObj;
   return next();
 };
 
 sdkController.formatAppDetail = (req, res, next) => {
+  // console.log(res.locals.functionApps);
   const selectedApp = res.locals.functionApps[0];
-  // console.log('only object in webMetrics');
-  // console.log(res.locals.webMetrics[selectedApp.name]);
+  // console.log('in formatAppDetail');
   const metricsArray = res.locals.webMetrics[selectedApp.name].metrics;
+  // console.log('metricsArray');
+  // console.log(metricsArray);
+  const insightsArray = res.locals.insightsMetrics[0].metrics;
+  // console.log('insightsArray');
+  // console.log(insightsArray);
+  // console.log('insightsArray', insightsArray);
   const metricsObj = {};
   metricsArray.forEach((metric) => {
-    metricsObj[metric.name] = metric
+    metricsObj[metric.name] = metric;
   });
+  insightsArray.forEach((insight) => {
+    metricsObj[insight.name] = insight;
+  })
   res.locals.appDetail = {
     name: selectedApp.name,
     id: selectedApp.id,
     location: selectedApp.location,
     metrics: metricsObj,
   };
+
   //console.log('appDetail');
   //console.log(res.locals.appDetail);
   return next();
-  /*
-  {
-    "triggerTestMogwais": {
-        "cost": 8634,
-        "namespace": "Microsoft.Web/sites",
-        "metrics": [
-            {
-                "id": "/subscriptions/eb87b3ba-9c9c-4950-aa5d-6e60e18877ad/resourceGroups/triggertestmogwais/providers/Microsoft.Web/sites/triggerTestMogwais/providers/Microsoft.Insights/metrics/BytesReceived",
-                "type": "Microsoft.Insights/metrics",
-                "name": "BytesReceived",
-                "errorCode": "Success",
-                "unit": "Bytes",
-                "timeseries": [
-                    {
-                        "data": [
-                            {
-                                "timeStamp": "2022-01-25T15:47:00.000Z",
-                                "total": 474825
-                            },
-                            {
-                                "timeStamp": "2022-01-25T21:47:00.000Z",
-                                "total": 6309
-                            },
-                            {
-                                "timeStamp": "2022-01-26T03:47:00.000Z"
-                            },
-                            {
-                                "timeStamp": "2022-01-26T09:47:00.000Z"
-                            }
-                        ],
-                        "metadataValues": []
-                    }
-                ],
-                "description": "The amount of incoming bandwidth consumed by the app, in MiB. For WebApps and FunctionApps."
-            },
-            {
-                "id": "/subscriptions/eb87b3ba-9c9c-4950-aa5d-6e60e18877ad/resourceGroups/triggertestmogwais/providers/Microsoft.Web/sites/triggerTestMogwais/providers/Microsoft.Insights/metrics/BytesSent",
-                "type": "Microsoft.Insights/metrics",
-                "name": "BytesSent",
-                "errorCode": "Success",
-                "unit": "Bytes",
-                "timeseries": [
-                    {
-                        "data": [
-                            {
-                                "timeStamp": "2022-01-25T15:47:00.000Z",
-                                "total": 192047
-                            },
-                            {
-                                "timeStamp": "2022-01-25T21:47:00.000Z",
-                                "total": 6132
-                            },
-                            {
-                                "timeStamp": "2022-01-26T03:47:00.000Z",
-                                "total": 0
-                            },
-                            {
-                                "timeStamp": "2022-01-26T09:47:00.000Z",
-                                "total": 0
-                            }
-                        ],
-                        "metadataValues": []
-                    }
-                ],
-                "description": "The amount of outgoing bandwidth consumed by the app, in MiB. For WebApps and FunctionApps."
-            },
-            {
-                "id": "/subscriptions/eb87b3ba-9c9c-4950-aa5d-6e60e18877ad/resourceGroups/triggertestmogwais/providers/Microsoft.Web/sites/triggerTestMogwais/providers/Microsoft.Insights/metrics/FunctionExecutionUnits",
-                "type": "Microsoft.Insights/metrics",
-                "name": "FunctionExecutionUnits",
-                "errorCode": "Success",
-                "unit": "Count",
-                "timeseries": [
-                    {
-                        "data": [
-                            {
-                                "timeStamp": "2022-01-25T15:47:00.000Z",
-                                "total": 2749312
-                            },
-                            {
-                                "timeStamp": "2022-01-25T21:47:00.000Z",
-                                "total": 0
-                            },
-                            {
-                                "timeStamp": "2022-01-26T03:47:00.000Z",
-                                "total": 0
-                            },
-                            {
-                                "timeStamp": "2022-01-26T09:47:00.000Z",
-                                "total": 0
-                            }
-                        ],
-                        "metadataValues": []
-                    }
-                ],
-                "description": "Function Execution Units. For FunctionApps only."
-            },
-            {
-                "id": "/subscriptions/eb87b3ba-9c9c-4950-aa5d-6e60e18877ad/resourceGroups/triggertestmogwais/providers/Microsoft.Web/sites/triggerTestMogwais/providers/Microsoft.Insights/metrics/FunctionExecutionCount",
-                "type": "Microsoft.Insights/metrics",
-                "name": "FunctionExecutionCount",
-                "errorCode": "Success",
-                "unit": "Count",
-                "timeseries": [
-                    {
-                        "data": [
-                            {
-                                "timeStamp": "2022-01-25T15:47:00.000Z",
-                                "total": 121
-                            },
-                            {
-                                "timeStamp": "2022-01-25T21:47:00.000Z",
-                                "total": 0
-                            },
-                            {
-                                "timeStamp": "2022-01-26T03:47:00.000Z",
-                                "total": 0
-                            },
-                            {
-                                "timeStamp": "2022-01-26T09:47:00.000Z",
-                                "total": 0
-                            }
-                        ],
-                        "metadataValues": []
-                    }
-                ],
-                "description": "Function Execution Count. For FunctionApps only."
-            },
-            {
-                "id": "/subscriptions/eb87b3ba-9c9c-4950-aa5d-6e60e18877ad/resourceGroups/triggertestmogwais/providers/Microsoft.Web/sites/triggerTestMogwais/providers/Microsoft.Insights/metrics/Threads",
-                "type": "Microsoft.Insights/metrics",
-                "name": "Threads",
-                "errorCode": "Success",
-                "unit": "Count",
-                "timeseries": [
-                    {
-                        "data": [
-                            {
-                                "timeStamp": "2022-01-25T15:47:00.000Z",
-                                "total": 41149
-                            },
-                            {
-                                "timeStamp": "2022-01-25T21:47:00.000Z",
-                                "total": 7501
-                            },
-                            {
-                                "timeStamp": "2022-01-26T03:47:00.000Z",
-                                "total": 0
-                            },
-                            {
-                                "timeStamp": "2022-01-26T09:47:00.000Z",
-                                "total": 0
-                            }
-                        ],
-                        "metadataValues": []
-                    }
-                ],
-                "description": "The number of threads currently active in the app process. For WebApps and FunctionApps."
-            },
-            {
-                "id": "/subscriptions/eb87b3ba-9c9c-4950-aa5d-6e60e18877ad/resourceGroups/triggertestmogwais/providers/Microsoft.Web/sites/triggerTestMogwais/providers/Microsoft.Insights/metrics/FileSystemUsage",
-                "type": "Microsoft.Insights/metrics",
-                "name": "FileSystemUsage",
-                "errorCode": "Success",
-                "unit": "Bytes",
-                "timeseries": [
-                    {
-                        "data": [
-                            {
-                                "timeStamp": "2022-01-25T15:47:00.000Z",
-                                "total": 0
-                            },
-                            {
-                                "timeStamp": "2022-01-25T21:47:00.000Z",
-                                "total": 0
-                            },
-                            {
-                                "timeStamp": "2022-01-26T03:47:00.000Z",
-                                "total": 0
-                            },
-                            {
-                                "timeStamp": "2022-01-26T09:47:00.000Z",
-                                "total": 0
-                            }
-                        ],
-                        "metadataValues": []
-                    }
-                ],
-                "description": "Percentage of filesystem quota consumed by the app. For WebApps and FunctionApps."
-            }
-        ],
-        "timespan": {
-            "startTime": "2022-01-25T15:47:23.000Z"
-        },
-        "resourceRegion": "eastus",
-        "granularity": "PT6H"
-    }
-}*/
 };
 
 sdkController.setFunctionApp = (req, res, next) => {

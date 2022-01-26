@@ -38,7 +38,7 @@ functionMetricsController.getMSWebMetrics = async (req, res, next) => {
       });
     }
     const result = await metricQuery.queryResource(resId, metrics, {
-      granularity: 'PT6H',
+      granularity: 'PT5M',
       timespan: { duration: 'PT24H' },
       //aggregations: ['Count']
     });
@@ -72,6 +72,7 @@ functionMetricsController.getMSInsightsMetrics = async (req, res, next) => {
   for await (let resource of res.locals.functionApps) {
     console.log('resource');
     console.log(resource);
+    const name = resource.name;
     const resId = resource.insightId;
     if (!resId) {
       return next({
@@ -79,15 +80,21 @@ functionMetricsController.getMSInsightsMetrics = async (req, res, next) => {
       });
     }
     const result = await metricQuery.queryResource(resId, metrics, {
-      granularity: 'PT6H',
-      timespan: { duration: 'PT48H' },
+      granularity: 'PT5M',
+      timespan: { duration: 'PT24H' },
       //aggregations: ['Count']
     });
+    result.name = name;
     metricsArray.push(result);
   }
+
+  console.log('here is the current function data on res.locals');
+  // res.locals.functionApps is an array of function app objects, each of which has: name, id, location, insightId
+  console.log(res.locals.functionApps);
   res.locals.insightsMetrics = metricsArray;
-  console.log('here are the metrics from MS insights, as an array of metrics');
-  console.log(res.locals.insightsMetrics[0].metrics);
+  console.log('here are the metrics from MS insights');
+  // res.locals.metrics is an array of metric objects, each of which has cost, namespace, metrics, timespan, resource, granularity
+  console.log(res.locals.insightsMetrics);
   return next();
 };
 
