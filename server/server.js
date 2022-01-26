@@ -33,7 +33,7 @@ app.get(
   '/baseMetrics',
   performanceController.getWebData,
   performanceController.getInsightsData,
-  performanceController.getStorageData,
+  /*performanceController.getStorageData,*/
   (req, res) => {
     // Three controllers are used to retrieve metrics from 3 APIs. Response object will contain three sub-objects.
     res.locals.baseMetrics = {
@@ -71,15 +71,15 @@ app.get('/executionOnly', sdkController.executionOnly, sdkController.fetchSubscr
   res.json(res.locals.executionObj);
 });
 
-app.get('/getAppDetails', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, functionMetricsController.getMSWebMetrics, insightsController.getInsights, (req, res) => {
-
+app.post('/getAppDetails', sdkController.setFunctionApp, functionMetricsController.getMSWebMetrics, functionMetricsController.getMSInsightsMetrics, sdkController.formatAppDetail, (req, res) => {
+  res.json(res.locals.appDetail);
 });
 
 
 // Default error handler.
 app.use((err, req, res, next) => {
   const defaultErr = {
-    log: 'Express error handler caught unknown middleware error',
+    log: `Express error handler caught unknown middleware error ${err}`,
     status: 500,
     message: { err: 'An error occurred' },
   };

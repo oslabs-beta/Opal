@@ -19,7 +19,7 @@ const MSWebSimulator = {
   FunctionExecutionCount: true,
   AppConnections: false,
   Handles: false,
-  Threads: true,
+  Threads: false,
   PrivateBytes: false,
   IoReadBytesPerSecond: false,
   IoWriteBytesPerSecond: false,
@@ -32,7 +32,7 @@ const MSWebSimulator = {
   Gen1Collections: false,
   Gen2Collections: false,
   HealthCheckStatus: false,
-  FileSystemUsage: true,
+  FileSystemUsage: false,
 };
 
 const MSStorageSimulator = {

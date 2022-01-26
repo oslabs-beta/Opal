@@ -87,7 +87,13 @@ sdkController.fetchResources = async (req, res, next) => {
           for (const functionApp of functionList) {
             console.log('functionApp', functionApp);
             console.log('app', app);
-            if (functionApp.name === app.name) insightsList.push(app);
+            const fatl = functionApp.name.toLowerCase();
+            const atl = app.name.toLowerCase();
+            if (fatl === atl) {
+              insightsList.push(app);
+              // Alma -- Adding this line to add insights data as a property on function app.
+              functionApp.insightId = app.id;
+            }
           }
         }
       });
@@ -149,9 +155,12 @@ sdkController.formatExecutions = (req, res, next) => {
         currentFuncArray.forEach((func) => {
           //console.log("in the forEach loop");
           //console.log("res.locals.webMetrics[func.name].metrics[0].timeseries[0].data", res.locals.webMetrics[func.name].metrics[0].timeseries[0].data);
+          console.log('value of func');
+          console.log(func);
           let functionCount = {
             name: func.name,
             id: func.id,
+            location: func.location,
             metricName: 'ExecutionCount',
             timeseries: res.locals.webMetrics[func.name].metrics[0].timeseries[0].data
           }
@@ -179,7 +188,236 @@ sdkController.formatExecutions = (req, res, next) => {
 };
 
 sdkController.formatAppDetail = (req, res, next) => {
+  const selectedApp = res.locals.functionApps[0];
+  // console.log('only object in webMetrics');
+  // console.log(res.locals.webMetrics[selectedApp.name]);
+  const metricsArray = res.locals.webMetrics[selectedApp.name].metrics;
+  const metricsObj = {};
+  metricsArray.forEach((metric) => {
+    metricsObj[metric.name] = metric
+  });
+  res.locals.appDetail = {
+    name: selectedApp.name,
+    id: selectedApp.id,
+    location: selectedApp.location,
+    metrics: metricsObj,
+  };
+  //console.log('appDetail');
+  //console.log(res.locals.appDetail);
   return next();
+  /*
+  {
+    "triggerTestMogwais": {
+        "cost": 8634,
+        "namespace": "Microsoft.Web/sites",
+        "metrics": [
+            {
+                "id": "/subscriptions/eb87b3ba-9c9c-4950-aa5d-6e60e18877ad/resourceGroups/triggertestmogwais/providers/Microsoft.Web/sites/triggerTestMogwais/providers/Microsoft.Insights/metrics/BytesReceived",
+                "type": "Microsoft.Insights/metrics",
+                "name": "BytesReceived",
+                "errorCode": "Success",
+                "unit": "Bytes",
+                "timeseries": [
+                    {
+                        "data": [
+                            {
+                                "timeStamp": "2022-01-25T15:47:00.000Z",
+                                "total": 474825
+                            },
+                            {
+                                "timeStamp": "2022-01-25T21:47:00.000Z",
+                                "total": 6309
+                            },
+                            {
+                                "timeStamp": "2022-01-26T03:47:00.000Z"
+                            },
+                            {
+                                "timeStamp": "2022-01-26T09:47:00.000Z"
+                            }
+                        ],
+                        "metadataValues": []
+                    }
+                ],
+                "description": "The amount of incoming bandwidth consumed by the app, in MiB. For WebApps and FunctionApps."
+            },
+            {
+                "id": "/subscriptions/eb87b3ba-9c9c-4950-aa5d-6e60e18877ad/resourceGroups/triggertestmogwais/providers/Microsoft.Web/sites/triggerTestMogwais/providers/Microsoft.Insights/metrics/BytesSent",
+                "type": "Microsoft.Insights/metrics",
+                "name": "BytesSent",
+                "errorCode": "Success",
+                "unit": "Bytes",
+                "timeseries": [
+                    {
+                        "data": [
+                            {
+                                "timeStamp": "2022-01-25T15:47:00.000Z",
+                                "total": 192047
+                            },
+                            {
+                                "timeStamp": "2022-01-25T21:47:00.000Z",
+                                "total": 6132
+                            },
+                            {
+                                "timeStamp": "2022-01-26T03:47:00.000Z",
+                                "total": 0
+                            },
+                            {
+                                "timeStamp": "2022-01-26T09:47:00.000Z",
+                                "total": 0
+                            }
+                        ],
+                        "metadataValues": []
+                    }
+                ],
+                "description": "The amount of outgoing bandwidth consumed by the app, in MiB. For WebApps and FunctionApps."
+            },
+            {
+                "id": "/subscriptions/eb87b3ba-9c9c-4950-aa5d-6e60e18877ad/resourceGroups/triggertestmogwais/providers/Microsoft.Web/sites/triggerTestMogwais/providers/Microsoft.Insights/metrics/FunctionExecutionUnits",
+                "type": "Microsoft.Insights/metrics",
+                "name": "FunctionExecutionUnits",
+                "errorCode": "Success",
+                "unit": "Count",
+                "timeseries": [
+                    {
+                        "data": [
+                            {
+                                "timeStamp": "2022-01-25T15:47:00.000Z",
+                                "total": 2749312
+                            },
+                            {
+                                "timeStamp": "2022-01-25T21:47:00.000Z",
+                                "total": 0
+                            },
+                            {
+                                "timeStamp": "2022-01-26T03:47:00.000Z",
+                                "total": 0
+                            },
+                            {
+                                "timeStamp": "2022-01-26T09:47:00.000Z",
+                                "total": 0
+                            }
+                        ],
+                        "metadataValues": []
+                    }
+                ],
+                "description": "Function Execution Units. For FunctionApps only."
+            },
+            {
+                "id": "/subscriptions/eb87b3ba-9c9c-4950-aa5d-6e60e18877ad/resourceGroups/triggertestmogwais/providers/Microsoft.Web/sites/triggerTestMogwais/providers/Microsoft.Insights/metrics/FunctionExecutionCount",
+                "type": "Microsoft.Insights/metrics",
+                "name": "FunctionExecutionCount",
+                "errorCode": "Success",
+                "unit": "Count",
+                "timeseries": [
+                    {
+                        "data": [
+                            {
+                                "timeStamp": "2022-01-25T15:47:00.000Z",
+                                "total": 121
+                            },
+                            {
+                                "timeStamp": "2022-01-25T21:47:00.000Z",
+                                "total": 0
+                            },
+                            {
+                                "timeStamp": "2022-01-26T03:47:00.000Z",
+                                "total": 0
+                            },
+                            {
+                                "timeStamp": "2022-01-26T09:47:00.000Z",
+                                "total": 0
+                            }
+                        ],
+                        "metadataValues": []
+                    }
+                ],
+                "description": "Function Execution Count. For FunctionApps only."
+            },
+            {
+                "id": "/subscriptions/eb87b3ba-9c9c-4950-aa5d-6e60e18877ad/resourceGroups/triggertestmogwais/providers/Microsoft.Web/sites/triggerTestMogwais/providers/Microsoft.Insights/metrics/Threads",
+                "type": "Microsoft.Insights/metrics",
+                "name": "Threads",
+                "errorCode": "Success",
+                "unit": "Count",
+                "timeseries": [
+                    {
+                        "data": [
+                            {
+                                "timeStamp": "2022-01-25T15:47:00.000Z",
+                                "total": 41149
+                            },
+                            {
+                                "timeStamp": "2022-01-25T21:47:00.000Z",
+                                "total": 7501
+                            },
+                            {
+                                "timeStamp": "2022-01-26T03:47:00.000Z",
+                                "total": 0
+                            },
+                            {
+                                "timeStamp": "2022-01-26T09:47:00.000Z",
+                                "total": 0
+                            }
+                        ],
+                        "metadataValues": []
+                    }
+                ],
+                "description": "The number of threads currently active in the app process. For WebApps and FunctionApps."
+            },
+            {
+                "id": "/subscriptions/eb87b3ba-9c9c-4950-aa5d-6e60e18877ad/resourceGroups/triggertestmogwais/providers/Microsoft.Web/sites/triggerTestMogwais/providers/Microsoft.Insights/metrics/FileSystemUsage",
+                "type": "Microsoft.Insights/metrics",
+                "name": "FileSystemUsage",
+                "errorCode": "Success",
+                "unit": "Bytes",
+                "timeseries": [
+                    {
+                        "data": [
+                            {
+                                "timeStamp": "2022-01-25T15:47:00.000Z",
+                                "total": 0
+                            },
+                            {
+                                "timeStamp": "2022-01-25T21:47:00.000Z",
+                                "total": 0
+                            },
+                            {
+                                "timeStamp": "2022-01-26T03:47:00.000Z",
+                                "total": 0
+                            },
+                            {
+                                "timeStamp": "2022-01-26T09:47:00.000Z",
+                                "total": 0
+                            }
+                        ],
+                        "metadataValues": []
+                    }
+                ],
+                "description": "Percentage of filesystem quota consumed by the app. For WebApps and FunctionApps."
+            }
+        ],
+        "timespan": {
+            "startTime": "2022-01-25T15:47:23.000Z"
+        },
+        "resourceRegion": "eastus",
+        "granularity": "PT6H"
+    }
+}*/
 };
+
+sdkController.setFunctionApp = (req, res, next) => {
+  const { name, id, location, insightId } = req.body;
+  res.locals.functionApps = [];
+  res.locals.functionApps.push({
+    name: name,
+    id: id,
+    location: location,
+    insightId: insightId
+  });
+  res.locals.executionOnly = false;
+  // For both routes to use identical data, we would also want this to include the following properties.
+  // type: (e.g., Microsoft.Web/sites') and kind: (e.g., 'functionapp').
+   return next();
+}
 
 export default sdkController;
