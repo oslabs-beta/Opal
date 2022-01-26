@@ -33,9 +33,9 @@ insightsController.getInsights = async (req, res, next) => {
   const metricQuery = new MetricsQueryClient(credential);
   const metrics = insightsController.generateMetric2D(MSInsightsSimulator);
   const metricsArray = [];
-  // REPLACE WITH THE REAL THING LATER
-  for await (let resource of tempInsightResources) {
-    const resId = resource.id;
+  // Alma: Replacing temp with actual resource IDs.
+  for await (let resource of res.locals.functionApps) {
+    const resId = resource.insightId
     if (!resId) {
       return next({
         err: 'Resource ID must be set to fetch metrics for function.',
@@ -49,6 +49,8 @@ insightsController.getInsights = async (req, res, next) => {
     metricsArray.push(result);
   }
   res.locals.insightsMetrics = metricsArray;
+  // Added this line as well.
+  console.log(res.locals.insightsMetrics);
   return next();
 };
 

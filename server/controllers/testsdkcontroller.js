@@ -83,11 +83,25 @@ sdkController.fetchResources = async (req, res, next) => {
 
       await allResources.value.forEach((app) => {
         // console.log('forEach loop for insights');
-        if (app.type === 'Microsoft.Insights/components') {
+        console.log('the current application toLowerCase is ');
+        console.log(app.type.toLowerCase());
+        if (app.type.toLowerCase() === 'microsoft.insights/components') {
+          console.log('found an insights component :');
+          console.log(app);
           for (const functionApp of functionList) {
-            console.log('functionApp', functionApp);
-            console.log('app', app);
-            if (functionApp.name === app.name) insightsList.push(app);
+            // console.log('functionApp', functionApp);
+            // console.log('app', app);
+            const fatl = functionApp.name.toLowerCase();
+            console.log("fatl", fatl);
+            const atl = app.name.toLowerCase();
+            console.log("atl", atl);
+            if (fatl === atl) {
+              console.log('found a match for the following insight ');
+              console.log(app);
+              insightsList.push(app);
+              // Alma -- Adding this line to add insights data as a property on function app.
+              functionApp.insightId = app.id;
+            }
           }
         }
       });
@@ -147,39 +161,87 @@ sdkController.formatExecutions = (req, res, next) => {
         //console.log(res.locals.webMetrics);
         // executionObj[sub].resourceGroups[group.name]
         currentFuncArray.forEach((func) => {
+          console.log('func');
+          console.log(func);
           //console.log("in the forEach loop");
           //console.log("res.locals.webMetrics[func.name].metrics[0].timeseries[0].data", res.locals.webMetrics[func.name].metrics[0].timeseries[0].data);
+          //console.log('value of func');
+          // console.log("res.locals.functionApps", res.locals.functionApps);
+          console.log("func.insightId", func.insightId);
+          //console.log(func);
+
+          // Why is insightId not being set for every function application?
+          // Do some not have insights ids, or are we not setting it properly?
+
           let functionCount = {
             name: func.name,
             id: func.id,
+            location: func.location,
             metricName: 'ExecutionCount',
             timeseries: res.locals.webMetrics[func.name].metrics[0].timeseries[0].data
           }
-          //console.log('functionCount')
-          //console.log(functionCount);
+          if (func.insightId !== undefined) {
+            functionCount.insightId = func.insightId
+          }
+
+          console.log('functionCount');
+          console.log(functionCount);
           executionObj[sub][group.name][functionCount.name] = functionCount;
         });
       } else {
         // do nothing
       }
-      /*let currentFuncs = res.locals.subscriptions[sub].resourceGroups[group][group.name].functionList;
-      if (currentFuncs.length) {
-        console.log('function list');
-        console.log(currentFuncs);
-        executionObj[sub][group.name] = currentFuncs;
-        console.log('here lies the gloomily named execution object'); //lol
-        console.log(executionObj);
-      }*/
     }
   }
-  console.log("executionObj");
-  console.log(executionObj);
+  // console.log("executionObj");
+  // console.log(executionObj);
   res.locals.executionObj = executionObj;
   return next();
 };
 
 sdkController.formatAppDetail = (req, res, next) => {
+  // console.log(res.locals.functionApps);
+  const selectedApp = res.locals.functionApps[0];
+  // console.log('in formatAppDetail');
+  const metricsArray = res.locals.webMetrics[selectedApp.name].metrics;
+  // console.log('metricsArray');
+  // console.log(metricsArray);
+  const insightsArray = res.locals.insightsMetrics[0].metrics;
+  // console.log('insightsArray');
+  // console.log(insightsArray);
+  // console.log('insightsArray', insightsArray);
+  const metricsObj = {};
+  metricsArray.forEach((metric) => {
+    metricsObj[metric.name] = metric;
+  });
+  insightsArray.forEach((insight) => {
+    metricsObj[insight.name] = insight;
+  })
+  res.locals.appDetail = {
+    name: selectedApp.name,
+    id: selectedApp.id,
+    location: selectedApp.location,
+    metrics: metricsObj,
+  };
+
+  //console.log('appDetail');
+  //console.log(res.locals.appDetail);
   return next();
 };
+
+sdkController.setFunctionApp = (req, res, next) => {
+  const { name, id, location, insightId } = req.body;
+  res.locals.functionApps = [];
+  res.locals.functionApps.push({
+    name: name,
+    id: id,
+    location: location,
+    insightId: insightId
+  });
+  res.locals.executionOnly = false;
+  // For both routes to use identical data, we would also want this to include the following properties.
+  // type: (e.g., Microsoft.Web/sites') and kind: (e.g., 'functionapp').
+   return next();
+}
 
 export default sdkController;
