@@ -1,6 +1,6 @@
 // Import statements, and configure dotenv.
 import fetch from 'node-fetch';
-import {config} from 'dotenv';
+import { config } from 'dotenv';
 import { MSWebSimulator, MSStorageSimulator, MSInsightsSimulator } from '../constants/frontendSimulator.js';
 config();
 
@@ -19,7 +19,7 @@ const RESOURCE_GROUP = 'triggertestmogwais';
 const RESOURCE = 'triggerTestMogwais';
 
 // Set constant (for now) to identify the relevant timespan.
-const TIMESPAN = '2022-01-19T00:00:00Z/2022-01-20T23:59:00Z';
+const TIMESPAN = '2022-01-25T15:00:00Z/2022-01-26T23:59:00Z';
 
 // Set constant (for now) to identify preferred interval. Currently set to every six hours.
 const INTERVAL = 'PT6H';
@@ -28,6 +28,87 @@ const INTERVAL = 'PT6H';
 //const FILTER = '';
 
 const performanceController = {};
+
+performanceController.convertFrontEndToSDK = (req, res, next) => {
+  // Need to add error handling to these.
+  console.log('entering convert to SDK controller');
+  // get requested functions.
+
+  const timeConverter = {
+    '1 minute': 'PT1M',
+    '5 minutes': 'PT5M',
+    '15 minutes': 'PT15M',
+    '30 minutes': 'PT30M',
+    '1 hour': 'PT1H',
+    '6 hours': 'PT6H',
+    '12 hours': 'PT12H',
+    '1 day': 'PT1D',
+  };
+
+  try {
+    console.log('converting granularity');
+    const funcs = req.body.functions;
+    // get requested granularity and timespan
+    const granularity = req.body.granularity;
+    res.locals.granularity = timeConverter[granularity.toLowerCase()];
+  } catch (err) {
+    return next({
+      err: err,
+    });
+  }
+
+  try {
+    console.log('converting timespan');
+    const timespan = req.body.timespan;
+    res.locals.timespan = timeConverter[timespan.toLowerCase()];
+    res.locals.aggregations = req.body.aggregations;
+  } catch (err) {
+    return next({
+      err: err
+    })
+  }
+
+  // convert requested metrics to an array for use on the backend.
+  console.log('selecting metrics for use on backend');
+  try {
+    const metrics = req.body.metrics;
+    const metricArray = [];
+    for (let metric in req.body.metrics) {
+      if (metrics.metric === true) {
+        metricArray.push(metric);
+      }
+    }
+    res.locals.metrics = metricArray;
+  } catch (err) {
+    return next({
+      err: err
+    });
+  }
+
+  return next();
+};
+
+performanceController.convertSDKToFrontEnd = (req, res, next) => {
+  try {
+    res.locals.sdkData.forEach((metric) => {
+      const { id, name, errorCode, unit, timeseries, description } = metric;
+      res.locals.functionMetrics[name] = {
+        data: timeseries[0]['data'],
+        description: description,
+        unit: unit,
+        URL: id,
+        returned: errorCode,
+      }
+      // Might not need the URL or returned metrics.
+    });
+  } catch (err) {
+    return next({
+      err: err
+    });
+  }
+  return next();
+}
+
 
 // Work on asynchronous function calls: all three can be handled at once, instead of awaiting
 // the results of a prior controller's call. Check BPs.
@@ -40,19 +121,11 @@ performanceController.getWebData = async (req, res, next) => {
   const API_VERSION = '2021-05-01';
   const metricList = performanceController.generateMetric1D(MSWebSimulator);
   try {
-    // console.log('BEARER_TOKEN');
-    // console.log(typeof BEARER_TOKEN);
-    // console.log(BEARER_TOKEN);
-    // console.log('BEARER_CLONE');
-    // console.log(typeof BEARER_CLONE);
-    // console.log(BEARER_CLONE);
-    // console.log('are their values the same');
-    // console.log(BEARER_TOKEN === BEARER_CLONE);
     const fetchURL = `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${RESOURCE_GROUP}/providers/Microsoft.Web/sites/${RESOURCE}/providers/microsoft.insights/metrics?metricnames=${metricList}&timespan=${TIMESPAN}&interval=${INTERVAL}&api-version=${API_VERSION}`;
     await fetch(fetchURL, {
       method: 'GET',
       headers: {
-        Authorization: BEARER_TOKEN
+        Authorization: BEARER_TOKEN,
       },
     })
       .then((response) => response.json())

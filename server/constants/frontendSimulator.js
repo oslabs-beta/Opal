@@ -1,7 +1,7 @@
 const MSWebSimulator = {
   Requests: false,
-  BytesReceived: false,
-  BytesSent: false,
+  BytesReceived: true,
+  BytesSent: true,
   Http101: false,
   Http2xx: false,
   Http3xx: false,
@@ -9,13 +9,13 @@ const MSWebSimulator = {
   Http403: false,
   Http404: false,
   Http406: false,
-  Http4xx: false,
-  Http5xx: false,
+  Http4xx: true,
+  Http5xx: true,
   MemoryWorkingSet: false,
   AverageMemoryWorkingSet: false,
   AverageResponseTime: false,
   HttpResponseTime: false,
-  FunctionExecutionUnits: false,
+  FunctionExecutionUnits: true,
   FunctionExecutionCount: true,
   AppConnections: false,
   Handles: false,
@@ -42,7 +42,7 @@ const MSStorageSimulator = {
   Egress: false,
   SuccessServerLatency: false,
   SuccessE2ELatency: false,
-  Availability: true,
+  Availability: false,
 };
 
 const MSInsightsSimulator = {
@@ -79,8 +79,8 @@ const MSInsightsSimulator = {
   },
   requests: {
     duration: true,
-    count: true,
-    failed: false,
+    count: false,
+    failed: true,
     rate: false,
   },
   exceptions: {
