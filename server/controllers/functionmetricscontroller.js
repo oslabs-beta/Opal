@@ -108,8 +108,16 @@ functionMetricsController.getMSInsightsMetrics = async (req, res, next) => {
       console.log('queryResultArray', queryResultArray);
       // for each function in the query result.
       for (let i = 0; i < queryResultArray.length; i++) {
-        //let currentFunc = queryResultArray[i];
-        queryResultArray[i].name = nameArray[i];
+        let currentFunc = queryResultArray[i];
+        currentFunc.name = nameArray[i];
+        console.log('currentFunc');
+        console.log(currentFunc);
+        for (let j = 0; j < currentFunc.metrics.length; j++) {
+          let currentMetric = currentFunc.metrics[j];
+          currentMetric.timeseries = currentMetric.timeseries[0].data;
+          console.log('currentMetric.timeseries');
+          console.log(currentMetric.timeseries);
+        }
         metricsArray.push(queryResultArray[i]);
       }
       // metricsArray.push(queryResultArray);
