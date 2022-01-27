@@ -317,10 +317,10 @@ function HomePage() {
             ) : (
               <>
                 <h1 className="text-white text-8xl text-center mb-4">
-                  Welcome to Opal!
+                  Opal
                 </h1>
-                <p className="text-white text-6xl text-center">
-                  A monitoring tool for the serverless world
+                <p className="text-white text-4xl text-center">
+                  A monitoring tool for a serverless world
                 </p>
               </>
             )}
