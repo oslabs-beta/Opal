@@ -5,9 +5,8 @@ import path from 'path';
 import cors from 'cors';
 import performanceController from './controllers/performanceController.js';
 import sdkController from './controllers/testsdkcontroller.js';
-import functionMetricsController from './controllers/functionmetricscontroller.js'
+import functionMetricsController from './controllers/functionmetricscontroller.js';
 import insightsController from './controllers/insightscontrollertest.js';
-
 
 // Import routers
 import userRoutes from './routes/userRoutes.js';
@@ -46,35 +45,69 @@ app.get(
   }
 );
 
-app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, (req, res) => {
-  //console.log('this is back on the frontend');
-  //console.log(res.locals.subscriptions);
-  //res.json(res.locals.subscriptions);
-  res.json([res.locals.functionApps, res.locals.insights]);
-  // res.json(res.locals.insightsList);
+app.get(
+  '/getFuncs',
+  sdkController.fetchSubscriptionIds,
+  sdkController.fetchResourceGroups,
+  sdkController.fetchResources,
+  (req, res) => {
+    //console.log('this is back on the frontend');
+    //console.log(res.locals.subscriptions);
+    //res.json(res.locals.subscriptions);
+    res.json([res.locals.functionApps, res.locals.insights]);
+    // res.json(res.locals.insightsList);
   }
 );
 
-app.get('/getMetrics', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, functionMetricsController.getMSWebMetrics, (req, res) => {
-  console.log('completed getting MS Web metrics');
-  console.log(res.locals.metrics);
-  // Need to combine into a JSON object.
-  res.json(res.locals.webMetrics);
-});
+app.get(
+  '/getMetrics',
+  sdkController.fetchSubscriptionIds,
+  sdkController.fetchResourceGroups,
+  sdkController.fetchResources,
+  functionMetricsController.getMSWebMetrics,
+  (req, res) => {
+    console.log('completed getting MS Web metrics');
+    console.log(res.locals.metrics);
+    // Need to combine into a JSON object.
+    res.json(res.locals.webMetrics);
+  }
+);
 
-app.get('/getInsights', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, insightsController.getInsights, (req, res) => {
-  console.log('completed getting application insights metrics');
-  res.json(res.locals.insightsMetrics);
-});
+app.get(
+  '/getInsights',
+  sdkController.fetchSubscriptionIds,
+  sdkController.fetchResourceGroups,
+  sdkController.fetchResources,
+  insightsController.getInsights,
+  (req, res) => {
+    console.log('completed getting application insights metrics');
+    res.json(res.locals.insightsMetrics);
+  }
+);
 
-app.get('/executionOnly', sdkController.executionOnly, sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, functionMetricsController.getMSWebMetrics, sdkController.formatExecutions, (req, res) => {
-  res.json(res.locals.executionObj);
-});
+app.get(
+  '/executionOnly',
+  sdkController.executionOnly,
+  sdkController.fetchSubscriptionIds,
+  sdkController.fetchResourceGroups,
+  sdkController.fetchResources,
+  functionMetricsController.getMSWebMetrics,
+  sdkController.formatExecutions,
+  (req, res) => {
+    res.json(res.locals.executionObj);
+  }
+);
 
-app.post('/getAppDetails', sdkController.setFunctionApp, functionMetricsController.getMSWebMetrics, functionMetricsController.getMSInsightsMetrics, sdkController.formatAppDetail, (req, res) => {
-  res.json(res.locals.appDetail);
-});
-
+app.post(
+  '/getAppDetails',
+  sdkController.setFunctionApp,
+  functionMetricsController.getMSWebMetrics,
+  functionMetricsController.getMSInsightsMetrics,
+  sdkController.formatAppDetail,
+  (req, res) => {
+    res.json(res.locals.appDetail);
+  }
+);
 
 // Global error handler.
 
