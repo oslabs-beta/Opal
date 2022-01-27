@@ -106,6 +106,7 @@ functionMetricsController.getMSInsightsMetrics = async (req, res, next) => {
   Promise.all(promiseArray)
     .then((queryResultArray) => {
       console.log('queryResultArray', queryResultArray);
+      // for each function in the query result.
       for (let i = 0; i < queryResultArray.length; i++) {
         //let currentFunc = queryResultArray[i];
         queryResultArray[i].name = nameArray[i];

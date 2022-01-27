@@ -113,7 +113,10 @@ function AzurePage() {
         <br />
         <div className='w-full'>
           <div
-            onClick={() => dispatch(changeTab('Overview'))}
+            onClick={() => {
+              dispatch(changeTab('Overview'));
+              setSpecificData([]);
+            }}
             className={`whitespace-nowrap flex items-center text-white p-5 w-full cursor-pointer hover:bg-gray-500 hover:bg-opacity-20 hover:border-l-4 hover:border-white ${
               sidebarActive ? '' : 'justify-center'
             } `}
@@ -281,12 +284,12 @@ function AzurePage() {
           </div>
         </div>
 
-        <div className='mt-40 w-full flex justify-center'>
+        {/*<div className='mt-40 w-full flex justify-center'>
           <img src='../../assets/images/graphTrend.png' alt='' />
         </div>
         <div className='mt-32 flex justify-center'>
           <img src='../../assets/images/graph.png' alt='' />
-        </div>
+        </div>*/}
 
         <div className='flex flex-wrap w-full justify-center items-center'>
           { console.log('specific data ') }
@@ -301,6 +304,7 @@ function AzurePage() {
                   onClick={() => {
                     Promise.resolve(getMoreData(d)).then((data) => {
                       setSpecificData(data); //[],[]
+                      dispatch(changeTab('Func Details'));
                     });
                     //setClickedGraph(1);
                     }}>
