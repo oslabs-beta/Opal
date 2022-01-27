@@ -10,7 +10,6 @@ import Unauthorized from './Pages/Unauthorized.js';
 import NotFound from './Pages/NotFound.js';
 import Login from './Pages/LoginPage.js';
 import Signup from './Pages/SignupPage.js';
-import LineChart from './Components/azureGraph.js';
 import { useSelector } from 'react-redux';
 
 function App() {
@@ -23,7 +22,6 @@ function App() {
           <Route path='/' element={<HomePage />} />
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
-          <Route path='/chart' element={<LineChart />} />
           {user ? (
             <>
               <Route path='/azure' element={<AzurePage />} />

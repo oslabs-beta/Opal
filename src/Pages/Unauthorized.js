@@ -1,9 +1,11 @@
 import React from 'react';
 
 function Unauthorized() {
-  return <div>
+  return (
+    <div>
       <p>Hi from the unauthorized page</p>
-  </div>;
+    </div>
+  );
 }
 
 export default Unauthorized;

@@ -15,6 +15,7 @@ import { BookOpenIcon } from '@heroicons/react/outline';
 import Overview from '../Components/Overview';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeTab } from '../redux/slices/dashSlice';
+import { Graph } from '../Components/';
 
 function AzurePage() {
   const dispatch = useDispatch();
