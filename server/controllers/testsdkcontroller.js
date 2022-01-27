@@ -53,32 +53,32 @@ sdkController.fetchSubscriptionIds = async (req, res, next) => {
   return next();
 };
 
-sdkController.fetchSubscriptionIdsOld = async (req, res, next) => {
-  // get all subscriptions associated with the given credential.
-  // look up iterator functionality in relation to promise use.
-  // subscriptions are accessed through an iterator.
-  // may need to iterate through pages of subscriptions.
-  const subClient = new SubscriptionClient(credential);
-  const subscriptions = subClient.subscriptions.list().byPage();
-  const nextSub = await subscriptions.next();
-  // nextSub.value will return an array of subscriptions.
-  // for our purposes, all we need is the subscriptionId.
-  // return an array of subscription ids.
-  res.locals.subscriptions = {};
-  //This is using .list().byPage() await .next().value because we are using a forEach loop.
-  //If we iterate with a for loop, we can use await .list() and for await ().
-  nextSub.value.forEach((sub) => {
-    res.locals.subscriptions[sub.subscriptionId] = {
-      tenantId: sub.tenantId,
-      displayName: sub.displayName,
-      id: sub.id,
-      subscriptionId: sub.subscriptionId,
-      subscriptionName: sub.subscriptionName,
-      resourceGroups: {},
-    };
-  });
-  return next();
-};
+// sdkController.fetchSubscriptionIdsOld = async (req, res, next) => {
+//   // get all subscriptions associated with the given credential.
+//   // look up iterator functionality in relation to promise use.
+//   // subscriptions are accessed through an iterator.
+//   // may need to iterate through pages of subscriptions.
+//   const subClient = new SubscriptionClient(credential);
+//   const subscriptions = subClient.subscriptions.list().byPage();
+//   const nextSub = await subscriptions.next();
+//   // nextSub.value will return an array of subscriptions.
+//   // for our purposes, all we need is the subscriptionId.
+//   // return an array of subscription ids.
+//   res.locals.subscriptions = {};
+//   //This is using .list().byPage() await .next().value because we are using a forEach loop.
+//   //If we iterate with a for loop, we can use await .list() and for await ().
+//   nextSub.value.forEach((sub) => {
+//     res.locals.subscriptions[sub.subscriptionId] = {
+//       tenantId: sub.tenantId,
+//       displayName: sub.displayName,
+//       id: sub.id,
+//       subscriptionId: sub.subscriptionId,
+//       subscriptionName: sub.subscriptionName,
+//       resourceGroups: {},
+//     };
+//   });
+//   return next();
+// };
 
 // Discuss whether this is the best way to handle.
 sdkController.fetchResourceGroups = async (req, res, next) => {
