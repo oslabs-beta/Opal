@@ -26,7 +26,7 @@ function AzurePage() {
   return (
     <div className='h-screen w-full flex'>
       <div
-        className='open relative left-0 transition-all hover:transition-all ease-in-out h-screen bg-[#363740] flex  flex-col items-center overflow-x-hidden'
+        className='open relative left-0 transition-all hover:transition-all ease-in-out h-screen bg-[#363740] flex  scrollbar-hide flex-col items-center overflow-x-hidden'
         onMouseLeave={() => setSidebarActive(false)}
         onMouseEnter={() => setSidebarActive(true)}
       >
@@ -194,7 +194,7 @@ function AzurePage() {
         <br />
         <div
           onClick={() => window.location.replace('/')}
-          className={`whitespace-nowrap flex items-center text-white p-5 w-full cursor-pointer hover:bg-gray-500 absolute bottom-0 hover:bg-opacity-20 hover:border-l-4 hover:border-white ${
+          className={`whitespace-nowrap flex items-center text-white p-5 w-full cursor-pointer hover:bg-gray-500 lg:absolute bottom-0 hover:bg-opacity-20 hover:border-l-4 hover:border-white ${
             sidebarActive ? '' : 'justify-center'
           }`}
         >
@@ -204,8 +204,8 @@ function AzurePage() {
           {sidebarActive ? <h1>Logout</h1> : ''}
         </div>
       </div>
-      <div className='flex-grow w-full bg-white relative'>
-        <div className='fixed top-0 w-full bg-white h-28 drop-shadow-lg flex items-center justify-center'>
+      <div className='flex-grow overflow-y-scroll scrollbar-hide w-full bg-white relative'>
+        <div className='sticky top-0 w-full bg-white h-28 drop-shadow-lg flex items-center justify-center'>
           <div className='w-11/12 h-4/6 flex justify-between items-center'>
             <div className='text-3xl font-medium'>{Tab}</div>
             <div className='flex items-center'>
