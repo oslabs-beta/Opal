@@ -31,8 +31,9 @@ export const Graph = ({ data, format }) => {
       const obj = {};
 
       const mnt = moment(data.timeseries[i].timeStamp);
+      console.log(obj);
       obj['time'] = mnt.format('LT');
-      obj['total'] = data.timeseries[i].total;
+      obj['total'] = (data.timeseries[i].total) ? data.timeseries[i].total : data.timeseries[i].average;
 
       arr.push(obj);
     }

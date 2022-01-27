@@ -314,12 +314,12 @@ function AzurePage() {
                 );
               })
             : specificData.metrics.map((d) => {
-                console.log('mapping specific data');
                 return (
                   <div
                     key={d.id}
                     className='flex flex-col items-center justify-center w-2/5 mb-52 p-4 border-2 border-gray-500 border-opacity-20 rounded-lg ml-4 mr-4'
                   >
+                    <h1>{specificData.name}</h1>
                     <h1 className='text-4xl font-bold mb-14'>{d.name}</h1>
                     <h3 className='text-2xl mb-12'>{d.metricName}</h3>
                     <Graph data={d} format={'1h'} />
