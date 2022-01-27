@@ -45,6 +45,11 @@ functionMetricsController.getMSWebMetrics = async (req, res, next) => {
 
   Promise.all(promiseArray).then((queryResultArray) => {
     for (let i = 0; i < queryResultArray.length; i++) {
+      let currentFunc = queryResultArray[i];
+      for (let j = 0; j < currentFunc.metrics.length; j++) {
+        let currentMetric = currentFunc.metrics[j];
+        currentMetric.timeseries = currentMetric.timeseries[0].data;
+      }
       metricsObj[idArray[i]] = queryResultArray[i];
     }
     res.locals.webMetrics = metricsObj;
@@ -58,6 +63,7 @@ functionMetricsController.getMSWebMetrics = async (req, res, next) => {
 };
 
 functionMetricsController.getMSInsightsMetrics = async (req, res, next) => {
+  console.log('inMsInsights');
   const start = new Date();
   const metrics = functionMetricsController.generateMetric2D(MSInsightsSimulator).split(',');
   const metricsArray = [];
@@ -78,16 +84,31 @@ functionMetricsController.getMSInsightsMetrics = async (req, res, next) => {
       timespan: { duration: 'PT24H' },
       //aggregations: ['Count']
     });
+    console.log('result');
+    console.log(result);
     promiseArray.push(result);
     nameArray.push(resource.name);
   }
 
   console.log('promiseArray', promiseArray);
   console.log('nameArray', nameArray);
+  /*
+  Promise.all(promiseArray).then((queryResultArray) => {
+    for (let i = 0; i < queryResultArray.length; i++) {
+      let currentFunc = queryResultArray[i];
+      for (let j = 0; j < currentFunc.metrics.length; j++) {
+        let currentMetric = currentFunc.metrics[j];
+        currentMetric.timeseries = currentMetric.timeseries[0].data;
+      }
+      metricsObj[idArray[i]] = queryResultArray[i];
+    }
+    res.locals.webMetrics = metricsObj;*/
   Promise.all(promiseArray)
     .then((queryResultArray) => {
       console.log('queryResultArray', queryResultArray);
+      // for each function in the query result.
       for (let i = 0; i < queryResultArray.length; i++) {
+        //let currentFunc = queryResultArray[i];
         queryResultArray[i].name = nameArray[i];
         metricsArray.push(queryResultArray[i]);
       }
