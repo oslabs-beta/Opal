@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { getExecOnlyData } from '../util/getExecOnlyData';
 
 import { ChartBarIcon } from '@heroicons/react/outline';
 import { CubeTransparentIcon } from '@heroicons/react/outline';
@@ -15,6 +16,7 @@ import { BookOpenIcon } from '@heroicons/react/outline';
 import Overview from '../Components/Overview';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeTab } from '../redux/slices/dashSlice';
+import { Graph } from '../Components/';
 
 function AzurePage() {
   const dispatch = useDispatch();
@@ -22,6 +24,45 @@ function AzurePage() {
   const [sidebarActive, setSidebarActive] = useState(null);
 
   const Tab = useSelector((state) => state.dash.tab);
+  const user = useSelector((state) => state.user.user);
+
+  let session;
+
+  if (sessionStorage.getItem('graphs') && !sidebarActive)
+    session = JSON.parse(sessionStorage.getItem('graphs'));
+
+  const [data, setData] = useState(session || []);
+  const graphArr = [];
+
+  useEffect(() => {
+    if (!sessionStorage.getItem('graphs')) {
+      const data = getExecOnlyData();
+      Promise.resolve(data)
+        .then((result) => {
+          if (result) {
+            for (let i in result) {
+              for (let x in result[i]) {
+                for (let y in result[i][x]) {
+                  graphArr.push(result[i][x][y]);
+                }
+              }
+            }
+          }
+
+          sessionStorage.setItem('graphs', JSON.stringify(graphArr));
+        })
+        .catch((err) => console.log(err));
+
+      setData(graphArr);
+    }
+  }, []);
+
+  // IIFE
+  // (function parse() {
+  //   console.log('hi');
+  // })();
+
+  console.log('this is data', data);
 
   return (
     <div className='h-screen w-full flex'>
@@ -205,15 +246,18 @@ function AzurePage() {
         </div>
       </div>
       <div className='flex-grow overflow-y-scroll scrollbar-hide w-full bg-white relative'>
-        <div className='sticky top-0 w-full bg-white h-28 drop-shadow-lg flex items-center justify-center'>
+        <div className='sticky top-0 z-10 w-full bg-white h-28 drop-shadow-lg flex items-center justify-center'>
           <div className='w-11/12 h-4/6 flex justify-between items-center'>
             <div className='text-3xl font-medium'>{Tab}</div>
             <div className='flex items-center'>
-              <h1>Jones Fredinand</h1>
+              <h1 className=' font-medium text-lg'>
+                {user.firstname[0].toUpperCase() + user.firstname.slice(1)}{' '}
+                {user.lastname[0].toUpperCase() + user.lastname.slice(1)}
+              </h1>
               <div className='ml-4'>
                 <img
-                  className='w-14 h-14 rounded-full'
-                  src='../../assets/images/pfp.jpg'
+                  className='w-12 h-11 rounded-full'
+                  src='../../assets/images/pfp.png'
                   alt=''
                 />
               </div>
@@ -226,6 +270,20 @@ function AzurePage() {
         </div>
         <div className='mt-32 flex justify-center'>
           <img src='../../assets/images/graph.png' alt='' />
+        </div>
+
+        <div className='flex flex-wrap w-full justify-center items-center'>
+          {data.map((d) => {
+            return (
+              <div
+                key={d.id}
+                className='flex flex-col items-center justify-center w-2/5 mb-52 p-4 border-2 border-gray-500 border-opacity-20 rounded-lg ml-4 mr-4'
+              >
+                <h1 className='text-4xl font-bold mb-14'>{d.name}</h1>
+                <Graph data={d} format={'1h'} />
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

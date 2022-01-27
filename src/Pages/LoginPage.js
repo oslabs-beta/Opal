@@ -108,7 +108,7 @@ function Login() {
           <motion.button
             type="button"
             onClick={() => {
-              if (Password.current.value.length > 6 && User.current.value)
+              if (Password.current.value.length >= 6 && User.current.value)
                 handleSubmit();
               else {
                 setPasswordErr(true);

@@ -5,39 +5,58 @@ const userController = {};
 userController.checkUserCred = async (req, res, next) => {
   const { Username, Email } = req.body;
 
-  const q = "SELECT 1 FROM users WHERE Username = $1 OR Email = $2";
-
-  const response = await db.query(q, [Username, Email]);
-
-  if (response.rows.length > 1) {
-    return next({message: {msg: 'The username or email is already in use',  errors: { email: true, username: true }, error: true }});
-  } 
+  const q = "SELECT * FROM users WHERE Username = $1 OR Email = $2";
+  try {
+    const response = await db.query(q, [Username, Email]);
+    if (response.rows.length > 0) {
+      return next({
+        message: {
+          msg: "The username or email is already in use",
+          errors: { email: true, username: true },
+          error: true,
+        }, status: 409
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
 
   return next();
 };
 
 userController.addUserCred = async (req, res, next) => {
   const { Username, Email, FirstName, LastName, Password } = req.body;
-  
-    const q =
-      "INSERT INTO users (username, email, firstName, lastName, password) VALUES ($1, $2, $3, $4, $5)";
-    await db.query(
-      q,
-      [Username, Email, FirstName, LastName, Password],
-      (err, result) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(result);
-          if (result.rows.length > 1) {
-            return next({ message: {msg: 'There was an error creating your account', errors: { all: true }, error: true }});
-          }
-          res.locals.user = true;
-          res.locals.userInfo = result.rows[0];
-          return next();
+
+  const q =
+    "INSERT INTO users (username, email, firstName, lastName, password) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+  await db.query(
+    q,
+    [Username, Email, FirstName, LastName, Password],
+    (err, result) => {
+      if (err) {
+        console.log("this is the error being triggered", err);
+        return next({ message: {
+          msg: "The username or email is already in use",
+          errors: { email: true, username: true },
+          error: true,
+        }, status: 400});
+      } else {
+        if (result.rows.length < 0) {
+          return next({
+            message: {
+              msg: "There was an error creating your account",
+              errors: { all: true },
+              error: true,
+            }, status: 400
+          });
         }
+        console.log(result)
+        res.locals.user = true;
+        res.locals.userInfo = result.rows[0];
+        return next();
       }
-    );
+    }
+  );
 };
 
 userController.login = async (req, res, next) => {
@@ -84,7 +103,7 @@ userController.login = async (req, res, next) => {
             error: true,
             msg: "The username or email you gave does not exist",
             errors: { user: true, password: true },
-          },
+          }, status: 400
         });
       }
     }
