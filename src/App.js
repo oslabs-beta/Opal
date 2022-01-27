@@ -24,7 +24,7 @@ function App() {
           <Route path='/signup' element={<Signup />} />
           {user ? (
             <>
-              <Route path='/azure' element={<AzurePage />} />
+              <Route path='/azure/:id' element={<AzurePage />} />
               <Route path='/aws' element={<AwsPage />} />
               <Route path='/google' element={<GooglePage />} />
             </>

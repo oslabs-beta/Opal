@@ -28,7 +28,7 @@ function AzurePage() {
 
   let session;
 
-  if (sessionStorage.getItem('graphs') && !sidebarActive)
+  if (sessionStorage.getItem('graphs'))
     session = JSON.parse(sessionStorage.getItem('graphs'));
 
   const [data, setData] = useState(session || []);
