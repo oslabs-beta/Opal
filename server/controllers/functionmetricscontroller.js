@@ -31,19 +31,32 @@ functionMetricsController.getMSWebMetrics = async (req, res, next) => {
   console.log('function apps');
   console.log(res.locals.functionApps);
   for await (let app of res.locals.functionApps) {
-    const resId = app.id;
-    if (!resId) {
+    try {
+      if (!app.id) {
+        return next({
+          err: 'Resource ID must be set to fetch metrics for function.',
+        });
+      }
+      // console.log('resId');
+      await console.log('app', app);
+      const resId = await app.id;
+      console.log(resId);
+      console.log('about to run query');
+      const result = await metricQuery.queryResource(resId, metrics, {
+        granularity: 'PT1H',
+        timespan: { duration: 'PT24H' },
+        //aggregations: ['Count']
+      });
+      console.log('about to set metrics object at appname equal to the result of our query')
+      metricsObj[app.name] = result;
+      //metricsArray.push(result);
+    } catch(err) {
+      console.log('ERROR');
       return next({
-        err: 'Resource ID must be set to fetch metrics for function.',
+        err: err
       });
     }
-    const result = await metricQuery.queryResource(resId, metrics, {
-      granularity: 'PT1H',
-      timespan: { duration: 'PT24H' },
-      //aggregations: ['Count']
-    });
-    metricsObj[app.name] = result;
-    //metricsArray.push(result);
+    console.log('leaving the for loop')
   }
   // Two cases are needed.
   // Case One: If res.locals.execution only === true, loop through everything.
@@ -54,6 +67,7 @@ functionMetricsController.getMSWebMetrics = async (req, res, next) => {
 
   //res.locals.webMetrics = metricsArray;
   res.locals.webMetrics = metricsObj;
+  console.log('just set webMetris leaving the function');
   return next();
 };
 
