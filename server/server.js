@@ -76,7 +76,8 @@ app.post('/getAppDetails', sdkController.setFunctionApp, functionMetricsControll
 });
 
 
-// Default error handler.
+// Global error handler.
+
 app.use((err, req, res, next) => {
   const defaultErr = {
     log: `Express error handler caught unknown middleware error ${err}`,
