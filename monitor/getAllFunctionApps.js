@@ -21,6 +21,7 @@ const subscriptionList = async () => {
     console.log(await "subscriptions", subscriptions);
     const subscriptionArray = [];
     for await (const subscription of subscriptions){
+        console.log(await "subscription", subscription)
         subscriptionArray.push(subscription);
     }
     return subscriptionArray;
