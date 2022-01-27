@@ -13,10 +13,10 @@ import Signup from './Pages/SignupPage.js';
 import { useSelector } from 'react-redux';
 
 function App() {
-  const user = true; /* useSelector((state) => state.user.user); */
+  const user = useSelector((state) => state.user.user);
 
   return (
-    <div className='App'>
+    <div className='App bg-transparent'>
       <Router>
         <Routes>
           <Route path='/' element={<HomePage />} />

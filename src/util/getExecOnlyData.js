@@ -2,14 +2,11 @@ import axios from 'axios';
 
 const baseUrl = 'http://localhost:3000/executionOnly';
 
-export const getAzureData = async () => {
+export const getExecOnlyData = async () => {
   try {
     const { data } = await axios.get(baseUrl);
-    console.log(data);
     return data;
   } catch (err) {
-    throw err;
+    console.log(err);
   }
 };
-
-// getAzureData();
