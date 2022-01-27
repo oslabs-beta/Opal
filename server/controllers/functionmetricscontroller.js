@@ -30,45 +30,39 @@ functionMetricsController.getMSWebMetrics = async (req, res, next) => {
   }
   console.log('function apps');
   console.log(res.locals.functionApps);
-  for await (let app of res.locals.functionApps) {
-    try {
-      if (!app.id) {
-        return next({
-          err: 'Resource ID must be set to fetch metrics for function.',
-        });
-      }
-      // console.log('resId');
-      await console.log('app', app);
-      const resId = await app.id;
-      console.log(resId);
-      console.log('about to run query');
-      const result = await metricQuery.queryResource(resId, metrics, {
-        granularity: 'PT1H',
-        timespan: { duration: 'PT24H' },
-        //aggregations: ['Count']
-      });
-      console.log('about to set metrics object at appname equal to the result of our query')
-      metricsObj[app.name] = result;
-      //metricsArray.push(result);
-    } catch(err) {
-      console.log('ERROR');
+  const promiseArray = [];
+  const idArray = [];
+  for (let app of res.locals.functionApps) {
+    if (!app.id) {
       return next({
-        err: err
+        err: 'Resource ID must be set to fetch metrics for function.',
       });
     }
-    console.log('leaving the for loop')
-  }
-  // Two cases are needed.
-  // Case One: If res.locals.execution only === true, loop through everything.
-  // Case Two: If res.locals.execution only == false, dont loop, just retrieve
-  // ALL of the metrics for a single function application.
-  // easy way to do this: keep code here the same, but set res.locals.functionapps = one function.
-  // That would let us skip all of the middleware involved in retrieving subscription data.
+    //const promise = new Promise((resolve, reject) => {
+      const query = metricQuery.queryResource(app.id, metrics, {
+        granularity: 'PT1H',
+        timespan: { duration: 'PT24H' },
+      });
+    promiseArray.push(query);
+    idArray.push(app.id);
+  };
 
-  //res.locals.webMetrics = metricsArray;
-  res.locals.webMetrics = metricsObj;
-  console.log('just set webMetris leaving the function');
-  return next();
+  Promise.all(promiseArray).then((queryResultArray) => {
+    console.log('results');
+    console.log(queryResultArray);
+    // each array element has a .name (app.id) and a respones (response).
+    for (let i = 0; i < queryResultArray.length; i++) {
+      metricsObj[idArray[i]] = queryResultArray[i];
+    }
+    console.log("metricsObj", metricsObj);
+    res.locals.webMetrics = metricsObj;
+    return next();
+  });
+  //Promise.all(promiseArray);
+    //.then((result) => (metricsObj[app.name] = result));
+  // promiseArray.push(result);
+  // metricsObj[app.name] = result;
+  // res.locals.webMetrics = metricsObj;
 };
 
 functionMetricsController.getMSInsightsMetrics = async (req, res, next) => {
@@ -84,8 +78,6 @@ functionMetricsController.getMSInsightsMetrics = async (req, res, next) => {
   // the data back to the client yet.
 
   for await (let resource of res.locals.functionApps) {
-    console.log('resource');
-    console.log(resource);
     const name = resource.name;
     const resId = resource.insightId;
     if (!resId) {
@@ -112,6 +104,7 @@ functionMetricsController.getMSInsightsMetrics = async (req, res, next) => {
   return next();
 };
 
+// Storage metrics controller is not currently being used.
 functionMetricsController.getStorageMetrics = async (req, res, next) => {
   const metrics = functionMetricsController.generateMetric1D(MSStorageSimulator);
   const metricsArray = [];
@@ -123,8 +116,8 @@ functionMetricsController.getStorageMetrics = async (req, res, next) => {
       });
     }
     const result = await metricQuery.queryResource(resId, metrics, {
-      granularity: 'PT6H',
-      timespan: { duration: 'PT48H' },
+      granularity: 'PT1H',
+      timespan: { duration: 'PT24H' },
       //aggregations: ['Count']
     });
     metricsArray.push(result);
