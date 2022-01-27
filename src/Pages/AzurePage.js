@@ -22,7 +22,8 @@ function AzurePage() {
   const [sidebarActive, setSidebarActive] = useState(null);
 
   const Tab = useSelector((state) => state.dash.tab);
-
+  const user = useSelector((state) => state.user.user);
+  console.log(user);
   return (
     <div className='h-screen w-full flex'>
       <div
@@ -209,11 +210,11 @@ function AzurePage() {
           <div className='w-11/12 h-4/6 flex justify-between items-center'>
             <div className='text-3xl font-medium'>{Tab}</div>
             <div className='flex items-center'>
-              <h1>Jones Fredinand</h1>
+              <h1 className=' font-medium text-lg'>{user.firstname[0].toUpperCase() + user.firstname.slice(1)} {user.lastname[0].toUpperCase() + user.lastname.slice(1)}</h1>
               <div className='ml-4'>
                 <img
-                  className='w-14 h-14 rounded-full'
-                  src='../../assets/images/pfp.jpg'
+                  className='w-12 h-11 rounded-full'
+                  src='../../assets/images/pfp.png'
                   alt=''
                 />
               </div>
