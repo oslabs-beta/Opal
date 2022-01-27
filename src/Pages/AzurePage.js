@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { getExecOnlyData } from '../util/getExecOnlyData';
+import { getMoreData } from '../util/getMoreData';
 
 import { ChartBarIcon } from '@heroicons/react/outline';
 import { CubeTransparentIcon } from '@heroicons/react/outline';
@@ -19,9 +20,11 @@ import { changeTab } from '../redux/slices/dashSlice';
 import { Graph } from '../Components/';
 
 function AzurePage() {
+
   const dispatch = useDispatch();
 
   const [sidebarActive, setSidebarActive] = useState(null);
+  const [clickedGraph, setClickedGraph] = useState(0);
 
   const Tab = useSelector((state) => state.dash.tab);
   const user = useSelector((state) => state.user.user);
@@ -32,10 +35,21 @@ function AzurePage() {
     session = JSON.parse(sessionStorage.getItem('graphs'));
 
   const [data, setData] = useState(session || []);
+  // Here is a separate state for specific function app data.
+  const [specificData, setSpecificData] = useState({});
+
   const graphArr = [];
 
   useEffect(() => {
-    if (!sessionStorage.getItem('graphs')) {
+    /*if (clickedGraph === 1) {
+      const data = getMoreData();
+      Promise.resolve(data) => {
+        .then((result) => {
+
+        })
+      }
+    }
+    else */if (!sessionStorage.getItem('graphs')) {
       const data = getExecOnlyData();
       Promise.resolve(data)
         .then((result) => {
@@ -56,6 +70,8 @@ function AzurePage() {
       setData(graphArr);
     }
   }, []);
+
+
 
   // IIFE
   // (function parse() {
@@ -273,17 +289,39 @@ function AzurePage() {
         </div>
 
         <div className='flex flex-wrap w-full justify-center items-center'>
-          {data.map((d) => {
-            return (
-              <div
-                key={d.id}
-                className='flex flex-col items-center justify-center w-2/5 mb-52 p-4 border-2 border-gray-500 border-opacity-20 rounded-lg ml-4 mr-4'
-              >
-                <h1 className='text-4xl font-bold mb-14'>{d.name}</h1>
-                <Graph data={d} format={'1h'} />
-              </div>
-            );
-          })}
+          { console.log('specific data ') }
+          {console.log(specificData)}
+          {!Object.keys(specificData).length ? data.map((d) => {
+            //console.log(specificData.length)
+            // Consider refactoring into a single render.
+              return (
+                <div
+                  key={d.id}
+                  className='flex flex-col items-center justify-center w-2/5 mb-52 p-4 border-2 border-gray-500 border-opacity-20 rounded-lg ml-4 mr-4'
+                  onClick={() => {
+                    Promise.resolve(getMoreData(d)).then((data) => {
+                      setSpecificData(data); //[],[]
+                    });
+                    //setClickedGraph(1);
+                    }}>
+                  <h1 className='text-4xl font-bold mb-14'>{d.name}</h1>
+                  <h3 className='text-2xl mb-12'>{d.metricName}</h3>
+                  <Graph data={d} format={'1h'}/>
+                </div>
+              );
+          }) : specificData.metrics.map((d) => {
+            console.log('mapping specific data');
+              return (
+                <div
+                  key={d.id}
+                  className='flex flex-col items-center justify-center w-2/5 mb-52 p-4 border-2 border-gray-500 border-opacity-20 rounded-lg ml-4 mr-4'>
+                  <h1 className='text-4xl font-bold mb-14'>{d.name}</h1>
+                  <h3 className='text-2xl mb-12'>{d.metricName}</h3>
+                  <Graph data={d} format={'1h'}/>
+                </div>
+              );
+          })} {/*Promise.resolve(specificData).then( (data) =>
+          console.log('finished now', data))*/} <div> </div>
         </div>
       </div>
     </div>

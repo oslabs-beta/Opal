@@ -176,6 +176,9 @@ sdkController.formatExecutions = (req, res, next) => {
         //console.log(executionObj[sub]);
         executionObj[sub][group.name] = {};
         let currentFuncArray = group.functionList;
+        console.log('res.locals.webMetrics');
+        console.log(res.locals.webMetrics);
+        console.log(currentFuncArray);
         currentFuncArray.forEach((func) => {
           let functionCount = {
             name: func.name,
@@ -188,12 +191,14 @@ sdkController.formatExecutions = (req, res, next) => {
             resourceGroupName: func.resourceGroupName,
             location: func.location,
             metricName: 'ExecutionCount',
-            timeseries: res.locals.webMetrics[func.name].metrics[0].timeseries[0].data,
+            timeseries: res.locals.webMetrics[func.name].metrics[0].timeseries
           };
           if (func.insightId !== undefined) {
             functionCount.insightId = func.insightId;
           }
           functionCount.totalCount = 0;
+          console.log('functioncount timeseries');
+          console.log(functionCount);
           functionCount.timeseries.forEach((time) => {
             functionCount.totalCount += time.total;
           });
@@ -219,22 +224,26 @@ sdkController.formatAppDetail = (req, res, next) => {
   const metricsObj = {};
   console.log('metricsArray');
   console.log(metricsArray);
-  metricsArray.forEach((metric) => {
-    metricsObj[metric.name] = metric;
-  });
+  //metricsArray.forEach((metric) => {
+  //  metricsObj[metric.name] = metric;
+  //});
   console.log('insightsArray');
   console.log(insightsArray);
+  //insightsArray.forEach((insight) => {
+  //  metricsObj[insight.name] = insight;
+  //});
   insightsArray.forEach((insight) => {
-    metricsObj[insight.name] = insight;
-  });
+    metricsArray.push(insight)
+  })
   res.locals.appDetail = {
     name: selectedApp.name,
     id: selectedApp.id,
     resourceGroupId: selectedApp.resourceGroupId,
     resourceGroupName: selectedApp.resourceGroupName,
     location: selectedApp.location,
-    metrics: metricsObj,
+    metrics: metricsArray,
   };
+  // metrics: metricsObj;
   const end = new Date();
   console.log('formatting App Detail took');
   console.log(end - start);
