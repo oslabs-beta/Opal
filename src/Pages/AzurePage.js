@@ -20,7 +20,6 @@ import { changeTab } from '../redux/slices/dashSlice';
 import { Graph } from '../Components/';
 
 function AzurePage() {
-
   const dispatch = useDispatch();
 
   const [sidebarActive, setSidebarActive] = useState(null);
@@ -31,7 +30,7 @@ function AzurePage() {
 
   let session;
 
-  if (sessionStorage.getItem('graphs') && !sidebarActive)
+  if (sessionStorage.getItem('graphs'))
     session = JSON.parse(sessionStorage.getItem('graphs'));
 
   const [data, setData] = useState(session || []);
@@ -49,7 +48,7 @@ function AzurePage() {
         })
       }
     }
-    else */if (!sessionStorage.getItem('graphs')) {
+    else */ if (!sessionStorage.getItem('graphs')) {
       const data = getExecOnlyData();
       Promise.resolve(data)
         .then((result) => {
@@ -70,8 +69,6 @@ function AzurePage() {
       setData(graphArr);
     }
   }, []);
-
-
 
   // IIFE
   // (function parse() {
@@ -265,7 +262,7 @@ function AzurePage() {
         </div>
       </div>
       <div className='flex-grow overflow-y-scroll scrollbar-hide w-full bg-white relative'>
-        <div className='sticky top-0 z-10 w-full bg-white h-28 drop-shadow-lg flex items-center justify-center'>
+        <div className='sticky top-0 z-10 mb-10 w-full bg-white h-28 drop-shadow-lg flex items-center justify-center'>
           <div className='w-11/12 h-4/6 flex justify-between items-center'>
             <div className='text-3xl font-medium'>{Tab}</div>
             <div className='flex items-center'>
@@ -292,40 +289,46 @@ function AzurePage() {
         </div>*/}
 
         <div className='flex flex-wrap w-full justify-center items-center'>
-          { console.log('specific data ') }
+          {console.log('specific data ')}
           {console.log(specificData)}
-          {!Object.keys(specificData).length ? data.map((d) => {
-            //console.log(specificData.length)
-            // Consider refactoring into a single render.
-              return (
-                <div
-                  key={d.id}
-                  className='flex flex-col items-center justify-center w-2/5 mb-52 p-4 border-2 border-gray-500 border-opacity-20 rounded-lg ml-4 mr-4'
-                  onClick={() => {
-                    Promise.resolve(getMoreData(d)).then((data) => {
-                      setSpecificData(data); //[],[]
-                      dispatch(changeTab('Func Details'));
-                    });
-                    //setClickedGraph(1);
-                    }}>
-                  <h1 className='text-4xl font-bold mb-14'>{d.name}</h1>
-                  <h3 className='text-2xl mb-12'>{d.metricName}</h3>
-                  <Graph data={d} format={'1h'}/>
-                </div>
-              );
-          }) : specificData.metrics.map((d) => {
-              return (
-                <div
-                  key={d.id}
-                  className='flex flex-col items-center justify-center w-2/5 mb-52 p-4 border-2 border-gray-500 border-opacity-20 rounded-lg ml-4 mr-4'>
-                    <h1>{specificData.name}</h1>
-                  <h1 className='text-4xl font-bold mb-14'>{d.name}</h1>
-                  <h3 className='text-2xl mb-12'>{d.metricName}</h3>
-                  <Graph data={d} format={'1h'}/>
-                </div>
-              );
-          })} {/*Promise.resolve(specificData).then( (data) =>
-          console.log('finished now', data))*/} <div> </div>
+          {!Object.keys(specificData).length
+            ? data.map((d) => {
+                //console.log(specificData.length)
+                // Consider refactoring into a single render.
+                return (
+                  <div
+                    key={d.id}
+                    className='flex flex-col items-center justify-center w-2/5 mb-52 p-4 border-2 border-gray-500 border-opacity-20 rounded-lg ml-4 mr-4'
+                    onClick={() => {
+                      Promise.resolve(getMoreData(d)).then((data) => {
+                        setSpecificData(data); //[],[]
+                        dispatch(changeTab('Func Details'));
+                      });
+                      //setClickedGraph(1);
+                    }}
+                  >
+                    <h1 className='text-4xl font-bold mb-14'>{d.name}</h1>
+                    <h3 className='text-2xl mb-12'>{d.metricName}</h3>
+                    <Graph data={d} format={'1h'} />
+                  </div>
+                );
+              })
+            : specificData.metrics.map((d) => {
+                return (
+                  <div
+                    key={d.id}
+                    className='flex flex-col items-center justify-center w-2/5 mb-52 p-4 border-2 border-gray-500 border-opacity-20 rounded-lg ml-4 mr-4'
+                  >
+                    <h1 className='text-2xl mb-14'>{specificData.name}</h1>
+                    <h1 className='text-4xl font-bold mb-14'>{d.name}</h1>
+                    {/* <h3 className='text-2xl mb-12'>{d.metricName}</h3> */}
+                    <Graph data={d} format={'1h'} />
+                  </div>
+                );
+              })}{' '}
+          {/*Promise.resolve(specificData).then( (data) =>
+          console.log('finished now', data))*/}{' '}
+          <div> </div>
         </div>
       </div>
     </div>
