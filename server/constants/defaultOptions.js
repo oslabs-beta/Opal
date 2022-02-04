@@ -1,4 +1,4 @@
-const MSWebSimulator = {
+const MSWebOptions = {
   Requests: false,
   BytesReceived: true,
   BytesSent: true,
@@ -35,7 +35,7 @@ const MSWebSimulator = {
   FileSystemUsage: false,
 };
 
-const MSStorageSimulator = {
+const MSStorageOptions = {
   UsedCapacity: false,
   Transactions: false,
   Ingress: false,
@@ -45,7 +45,7 @@ const MSStorageSimulator = {
   Availability: false,
 };
 
-const MSInsightsSimulator = {
+const MSInsightsOptions = {
   availabilityResults: {
     count: false,
     duration: false,
@@ -93,4 +93,4 @@ const MSInsightsSimulator = {
   },
 };
 
-export { MSWebSimulator, MSStorageSimulator, MSInsightsSimulator };
+export { MSWebOptions, MSStorageOptions, MSInsightsOptions };
