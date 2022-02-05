@@ -4,25 +4,26 @@ import { ResourceManagementClient } from '@azure/arm-resources';
 import { SubscriptionClient } from '@azure/arm-resources-subscriptions';
 import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import fetch from 'node-fetch';
+import { Request, Response, NextFunction } from 'express';
 config();
 
 // Create a new credential.
 const credential = new DefaultAzureCredential();
 
-const sdkController = {};
+const sdkController: any = {};
 
-sdkController.executionOnly = async (req, res, next) => {
+sdkController.executionOnly = async (req: Request, res: Response, next: NextFunction) => {
   res.locals.executionOnly = true;
   return next();
 };
 
-sdkController.fetchSubscriptionIds = async (req, res, next) => {
+sdkController.fetchSubscriptionIds = async (req: Request, res: Response, next: NextFunction) => {
   // get all subscriptions associated with the given credential.
   // look up iterator functionality in relation to promise use.
   // subscriptions are accessed through an iterator.
   // may need to iterate through pages of subscriptions.
-  const subClient = new SubscriptionClient(credential);
-  const subscriptions = subClient.subscriptions.list();
+  const subClient: any = new SubscriptionClient(credential);
+  const subscriptions: any = subClient.subscriptions.list();
   // const nextSub = await subscriptions.next();
   // nextSub.value will return an array of subscriptions.
   // for our purposes, all we need is the subscriptionId.
