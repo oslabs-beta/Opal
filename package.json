@@ -43,7 +43,7 @@
     "build-dev": "cross-env NODE_ENV=development && webpack --mode development",
     "build-prod": "cross-env NODE_ENV=production && webpack --mode production",
     "client": "cross-env NODE_ENV=development && webpack serve --hot --open --mode development",
-    "server": "ts-node server/server.js",
+    "server": "nodemon server/server.js",
     "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\" --hot"
   },
   "eslintConfig": {
