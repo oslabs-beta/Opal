@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: ['./src/index.js'],
+  entry: ['./src/index.tsx'],
   // Enable importing JS and TSX files without identifying their extension.
   resolve: {
     extensions: ['.js', '.jsx', '.tsx', '.ts'],
@@ -20,7 +20,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?/,
+        test: /\.(tsx|ts)$/,
         use: 'ts-loader',
         exclude: /node_modules/,
       },

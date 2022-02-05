@@ -1,14 +1,15 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useAppSelector } from '../redux/hooks'
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { logout } from "../redux/slices/userSlice";
 import "./animation.css";
 
-function HomePage() {
+export const HomePage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.user);
+  const user = useAppSelector((state) => state.user.user);
 
   return (
     <div className="scrollbar-hide">
@@ -163,7 +164,7 @@ function HomePage() {
                 </div>
                 <div className="flex flex-col justify-center mb-5 items-center">
                   <svg
-                    onClick={() => navigate('/azure')}
+                    onClick={() => navigate('/azure/overview')}
                     className="cursor-pointer bubble1"
                     xmlns="http://www.w3.org/2000/svg"
                     width="300"
@@ -365,6 +366,4 @@ function HomePage() {
       </footer>
     </div>
   );
-}
-
-export default HomePage;
+};
