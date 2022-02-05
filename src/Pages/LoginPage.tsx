@@ -5,25 +5,31 @@ import { LockClosedIcon } from "@heroicons/react/solid";
 import "./animation.css";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/slices/userSlice";
+import { refObj } from '../../Types';
 
-function Login() {
+interface dataObject {
+  User: string,
+  Password: string
+}
+
+export const LoginPage = () => {
   const [error, setError] = useState(false);
   const [userErr, setUserErr] = useState(false);
-  const [passwordErr, setPasswordErr] = useState(false);
+  const [passwordErr, setPasswordErr] = useState<string | boolean>(false);
 
-  const User = useRef(null);
-  const Password = useRef(null);
+  const User = useRef<refObj>(null);
+  const Password = useRef<refObj>(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  async function handleSubmit(e) {
+  async function handleSubmit() {
     setUserErr(false);
     setPasswordErr(false);
 
-    const data = {
-      User: User.current.value,
-      Password: Password.current.value,
+    const data:dataObject = {
+      User: User.current!.value,
+      Password: Password.current!.value,
     };
 
     try {
@@ -39,8 +45,8 @@ function Login() {
         setError(response.msg);
         if (response.errors.user) setUserErr(true);
         if (response.errors.password) setPasswordErr(true);
-        User.current.value = "";
-        Password.current.value = "";
+        User!.current!.value = "";
+        Password!.current!.value = "";
       } else {
         navigate("/");
         dispatch(login(response.userInfo));
@@ -108,11 +114,12 @@ function Login() {
           <motion.button
             type="button"
             onClick={() => {
-              if (Password.current.value.length >= 6 && User.current.value)
+              if (Password.current!.value.length >= 6 && User.current!.value)
                 handleSubmit();
               else {
                 setPasswordErr(true);
                 setUserErr(true);
+                // @ts-ignore
                 setError("Password must be at least 6 characters");
               }
             }}
@@ -158,6 +165,4 @@ function Login() {
       </form>
     </div>
   );
-}
-
-export default Login;
+};

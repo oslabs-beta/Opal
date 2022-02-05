@@ -5,9 +5,18 @@ import { LockClosedIcon } from "@heroicons/react/solid";
 import "./animation.css";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/slices/userSlice";
+import { refObj } from '../../Types';
 
-function Signup() {
-  const [errorMsg, setErrorMsg] = useState(null);
+interface SignUpObject {
+  Username: string,
+  Email: string,
+  FirstName: string,
+  LastName: string,
+  Password: string
+}
+
+export const SignUpPage = () => {
+  const [errorMsg, setErrorMsg] = useState<string | boolean>(false);
   const [usernameErr, setUsernameErr] = useState(false);
   const [emailErr, setEmailErr] = useState(false);
   const [firstNErr, setFirstNErr] = useState(false);
@@ -15,17 +24,23 @@ function Signup() {
   const [passErr, setPassErr] = useState(false);
   const [confirmErr, setConfirmErr] = useState(false);
 
-  const Username = useRef(null);
-  const Email = useRef(null);
-  const FirstName = useRef(null);
-  const LastName = useRef(null);
-  const Password = useRef(null);
-  const ConfirmPass = useRef(null);
+  const Username = useRef<refObj>(null);
+  const Email = useRef<refObj>(null);
+  const FirstName = useRef<refObj>(null);
+  const LastName = useRef<refObj>(null);
+  const Password = useRef<refObj>(null);
+  const ConfirmPass = useRef<refObj>(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  /**
+   * @function async { HandleSubmit }
+   * 
+   * A function that will be invoked on click of the submit button when 
+   */
+
+  const handleSubmit = async () => {
     setErrorMsg(false);
     setUsernameErr(false);
     setEmailErr(false);
@@ -34,15 +49,28 @@ function Signup() {
     setPassErr(false);
     setConfirmErr(false);
 
-    const data = {
-      Username: Username.current.value,
-      Email: Email.current.value,
-      FirstName: FirstName.current.value,
-      LastName: LastName.current.value,
-      Password: Password.current.value,
+    /**
+     * @symbol { ! }
+     * 
+     * The exclamation mark symbol in TypeScript tells TypeScript that we are sure the value/ variable cannot be null 
+     * therefore they won't need to check if value is null or undefined since TypeScript believes that certain properties 
+     * or variables will be null or undefined.
+     */
+
+    const data:SignUpObject = {
+      Username: Username.current!.value,
+      Email: Email.current!.value,
+      FirstName: FirstName.current!.value,
+      LastName: LastName.current!.value,
+      Password: Password.current!.value,
     };
 
     try {
+
+      /**
+       *  Post request made to userController signup endpoint to create a new user in our Database
+       */
+
       const response = await fetch("http://localhost:3000/user/signup", {
         method: "POST",
         headers: {
@@ -51,17 +79,17 @@ function Signup() {
         body: JSON.stringify(data),
       }).then((response) => response.json());
 
-      console.log(response);
+      // console.log(response);
 
       if (response.error) {
         setErrorMsg(response.msg);
         if (response.errors.email) { 
           setEmailErr(true);
-          Email.current.value = '';
+          Email.current!.value = '';
         }
         if (response.errors.username) {
           setUsernameErr(true);
-          Username.current.value = '';
+          Username.current!.value = '';
         }
 
         if (response.errors.all) {
@@ -71,11 +99,11 @@ function Signup() {
           setLastNErr(true);
           setPassErr(true);
           setConfirmErr(true);
-          Email.current.value = '';
-          Username.current.value = '';
-          Password.current.value = '';
-          LastName.current.value = '';
-          FirstName.current.value = '';
+          Email.current!.value = '';
+          Username.current!.value = '';
+          Password.current!.value = '';
+          LastName.current!.value = '';
+          FirstName.current!.value = '';
         }
       } else {
         navigate('/');
@@ -229,27 +257,27 @@ function Signup() {
               setConfirmErr(false);
               setPassErr(false);
 
-              if (!Username.current.value) setUsernameErr(true);
-              if (!Email.current.value) setEmailErr(true);
-              if (!Email.current.value.includes('@')) setEmailErr(true);
-              if (!FirstName.current.value) setFirstNErr(true);
-              if (!LastName.current.value) setLastNErr(true);
-              if (!Password.current.value) setPassErr(true);
-              if (!ConfirmPass.current.value) setConfirmErr(true);
-              if (Password.current.value.length < 6) setPassErr(true);
-              if (!ConfirmPass.current.value !== Password.current.value)
+              if (!Username.current!.value) setUsernameErr(true);
+              if (!Email.current!.value) setEmailErr(true);
+              if (!Email.current!.value.includes('@')) setEmailErr(true);
+              if (!FirstName.current!.value) setFirstNErr(true);
+              if (!LastName.current!.value) setLastNErr(true);
+              if (!Password.current!.value) setPassErr(true);
+              if (!ConfirmPass.current!.value) setConfirmErr(true);
+              if (Password.current!.value.length < 6) setPassErr(true);
+              if (ConfirmPass.current!.value !== Password.current!.value)
                 setConfirmErr(true);
 
               if (
-                !Username.current.value ||
-                !Email.current.value ||
-                !FirstName.current.value ||
-                !LastName.current.value ||
-                !Password.current.value ||
-                !ConfirmPass.current.value ||
-                ConfirmPass.current.value !== Password.current.value ||
-                Password.current.value.length < 6 ||
-                !Email.current.value.includes('@')
+                !Username.current!.value ||
+                !Email.current!.value ||
+                !FirstName.current!.value ||
+                !LastName.current!.value ||
+                !Password.current!.value ||
+                !ConfirmPass.current!.value ||
+                ConfirmPass.current!.value !== Password.current!.value ||
+                Password.current!.value.length < 6 ||
+                !Email.current!.value.includes('@')
               ) {
                 setErrorMsg("Please properly complete the form fields");
               } else handleSubmit();
@@ -289,6 +317,4 @@ function Signup() {
       </form>
     </div>
   );
-}
-
-export default Signup;
+};
