@@ -15,3 +15,5 @@ export { SummaryPage } from './SummaryPageComponent';
 export { DashNav } from './DashNav';
 
 export { Sidebar } from './Sidebar';
+
+export { Loader } from './LoaderComponent';

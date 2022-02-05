@@ -2,6 +2,10 @@
   animation: spin 17s linear infinite;
 }
 
+.Loader {
+  animation: spin 2s linear infinite;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
