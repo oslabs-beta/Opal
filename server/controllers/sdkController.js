@@ -1,8 +1,9 @@
 import { config } from 'dotenv';
-// import { MSWebSimulator, MSStorageSimulator, MSInsightsSimulator } from '../constants/frontendSimulator.js';
-import { /*InteractiveBrowserCredential,*/ DefaultAzureCredential /*, AzureCliCredential, ChainedTokenCredential*/ } from '@azure/identity';
+import { DefaultAzureCredential } from '@azure/identity';
 import { ResourceManagementClient } from '@azure/arm-resources';
 import { SubscriptionClient } from '@azure/arm-resources-subscriptions';
+import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
+import fetch from 'node-fetch';
 config();
 
 // Create a new credential.
@@ -16,7 +17,6 @@ sdkController.executionOnly = async (req, res, next) => {
 };
 
 sdkController.fetchSubscriptionIds = async (req, res, next) => {
-  const start = new Date();
   // get all subscriptions associated with the given credential.
   // look up iterator functionality in relation to promise use.
   // subscriptions are accessed through an iterator.
@@ -27,10 +27,11 @@ sdkController.fetchSubscriptionIds = async (req, res, next) => {
   // nextSub.value will return an array of subscriptions.
   // for our purposes, all we need is the subscriptionId.
   // return an array of subscription ids.
+
   res.locals.subscriptions = {};
   //This is using .list().byPage() await .next().value because we are using a forEach loop.
   //If we iterate with a for loop, we can use await .list() and for await ().
-  for await (const sub of subscriptions){
+  for await (const sub of subscriptions) {
     res.locals.subscriptions[sub.subscriptionId] = {
       tenantId: sub.tenantId,
       displayName: sub.displayName,
@@ -39,48 +40,18 @@ sdkController.fetchSubscriptionIds = async (req, res, next) => {
       subscriptionName: sub.subscriptionName,
       resourceGroups: {},
     };
-  };
-  // this would make res.locals.subscriptionData an array.
-  // instead, let's make res.locals.subscriptionData an object.
-  // each property on the object will be a subscription.
-  // each subscritpion will in turn contain a resource group.
-  // each resource group property will in turn contain a list of resources.
-  // each resource will in turn contain a list of function applications.
-  console.log('fetch subscriptions took');
-  const end = new Date();
-  console.log(end - start);
-  console.log('milliseconds');
-  return next();
+
+    // Create an insights management client for collecting workspace IDs (for insights into function-level metrics).
+    const opClient = new OperationalInsightsManagementClient(credential, res.locals.subscriptions[sub.subscriptionId].subscriptionId);
+    let workspaces = opClient.workspaces.list();
+    res.locals.subscriptions[sub.subscriptionId].workSpaceArray = [];
+    for await (const workspace of workspaces) {
+      res.locals.subscriptions[sub.subscriptionId].workSpaceArray.push(workspace.customerId);
+    }
+    return next();
+  }
 };
 
-sdkController.fetchSubscriptionIdsOld = async (req, res, next) => {
-  // get all subscriptions associated with the given credential.
-  // look up iterator functionality in relation to promise use.
-  // subscriptions are accessed through an iterator.
-  // may need to iterate through pages of subscriptions.
-  const subClient = new SubscriptionClient(credential);
-  const subscriptions = subClient.subscriptions.list().byPage();
-  const nextSub = await subscriptions.next();
-  // nextSub.value will return an array of subscriptions.
-  // for our purposes, all we need is the subscriptionId.
-  // return an array of subscription ids.
-  res.locals.subscriptions = {};
-  //This is using .list().byPage() await .next().value because we are using a forEach loop.
-  //If we iterate with a for loop, we can use await .list() and for await ().
-  nextSub.value.forEach((sub) => {
-    res.locals.subscriptions[sub.subscriptionId] = {
-      tenantId: sub.tenantId,
-      displayName: sub.displayName,
-      id: sub.id,
-      subscriptionId: sub.subscriptionId,
-      subscriptionName: sub.subscriptionName,
-      resourceGroups: {},
-    };
-  });
-  return next();
-};
-
-// Discuss whether this is the best way to handle.
 sdkController.fetchResourceGroups = async (req, res, next) => {
   const start = new Date();
   for (let sub in res.locals.subscriptions) {
@@ -92,9 +63,9 @@ sdkController.fetchResourceGroups = async (req, res, next) => {
     res.locals.subscriptions[sub].resourceGroups = groupsPerSub.value;
   }
   const end = new Date();
-  console.log('fetching resource groups took');
-  console.log(end - start);
-  console.log('milliseconds');
+  // console.log('fetching resource groups took');
+  // console.log(end - start);
+  // console.log('milliseconds');
   return next();
 };
 
@@ -118,7 +89,7 @@ sdkController.fetchResources = async (req, res, next) => {
       const functionList = [];
 
       // Sort resources into Function Applications and Insights. Ignore others.
-      for await (const app of resources){
+      for await (const app of resources) {
         app.tenantId = currentSub.tenantId;
         app.subscriptionDisplayName = currentSub.displayName;
         app.subscriptionNamespaceId = currentSub.id;
@@ -131,7 +102,7 @@ sdkController.fetchResources = async (req, res, next) => {
         } else if (app.type.toLowerCase() === 'microsoft.insights/components') {
           insightsList.push(app);
         }
-      };
+      }
 
       // Pair every insight component with its corresponding function application.
       insightsList.forEach((app) => {
@@ -160,25 +131,17 @@ sdkController.fetchResources = async (req, res, next) => {
   res.locals.functionApps = functionAppArray;
   res.locals.insights = insightsList;
   const end = new Date();
-  console.log('fetching resources took')
-  console.log(end - start);
-  console.log('milliseconds');
   return next();
 };
 
 sdkController.formatExecutions = (req, res, next) => {
-  const startTime = new Date();
   const executionObj = {};
   for (let sub in res.locals.subscriptions) {
     executionObj[sub] = {};
     for (let group of res.locals.subscriptions[sub].resourceGroups) {
       if (group.functionList.length) {
-        //console.log(executionObj[sub]);
         executionObj[sub][group.name] = {};
         let currentFuncArray = group.functionList;
-        console.log('res.locals.webMetrics');
-        console.log(res.locals.webMetrics);
-        console.log(currentFuncArray);
         currentFuncArray.forEach((func) => {
           let functionCount = {
             name: func.name,
@@ -191,14 +154,17 @@ sdkController.formatExecutions = (req, res, next) => {
             resourceGroupName: func.resourceGroupName,
             location: func.location,
             metricName: 'ExecutionCount',
-            timeseries: res.locals.webMetrics[func.name].metrics[0].timeseries
+            timeseries: res.locals.webMetrics[func.name].metrics[0].timeseries,
           };
           if (func.insightId !== undefined) {
             functionCount.insightId = func.insightId;
           }
+          if (res.locals.subscriptions[sub].workSpaceArray[0] !== undefined) {
+            console.log(res.locals.subscriptions[sub]);
+            functionCount.workSpaceId = res.locals.subscriptions[sub].workSpaceArray[0];
+          } else {
+          }
           functionCount.totalCount = 0;
-          console.log('functioncount timeseries');
-          console.log(functionCount);
           functionCount.timeseries.forEach((time) => {
             functionCount.totalCount += time.total;
           });
@@ -208,12 +174,28 @@ sdkController.formatExecutions = (req, res, next) => {
     }
   }
   res.locals.executionObj = executionObj;
-
-  const endTime = new Date();
-  console.log('formatting executions took');
-  console.log(endTime - startTime);
-  console.log('milliseconds');
   return next();
+};
+
+sdkController.getAllFunctions = async (req, res, next) => {
+  const { subscriptionIdentifier, resourceGroupName, appName } = res.locals.azure.functionData;
+  try {
+    const fetchURL = `https://management.azure.com/subscriptions/${subscriptionIdentifier}/resourceGroups/${resourceGroupName}/providers/Microsoft.Web/sites/${appName}/functions?api-version=2021-01-01`;
+    await fetch(fetchURL, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + res.locals.azure.bearerToken.token,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        res.locals.allFunctions = data;
+        return next();
+      });
+  } catch (err) {
+    console.log('ERROR in web data');
+    return next(err);
+  }
 };
 
 sdkController.formatAppDetail = (req, res, next) => {
@@ -222,19 +204,9 @@ sdkController.formatAppDetail = (req, res, next) => {
   const metricsArray = res.locals.webMetrics[selectedApp.name].metrics;
   const insightsArray = res.locals.insightsMetrics[0].metrics;
   const metricsObj = {};
-  console.log('metricsArray');
-  console.log(metricsArray);
-  //metricsArray.forEach((metric) => {
-  //  metricsObj[metric.name] = metric;
-  //});
-  console.log('insightsArray');
-  console.log(insightsArray);
-  //insightsArray.forEach((insight) => {
-  //  metricsObj[insight.name] = insight;
-  //});
   insightsArray.forEach((insight) => {
-    metricsArray.push(insight)
-  })
+    metricsArray.push(insight);
+  });
   res.locals.appDetail = {
     name: selectedApp.name,
     id: selectedApp.id,
@@ -243,18 +215,13 @@ sdkController.formatAppDetail = (req, res, next) => {
     location: selectedApp.location,
     metrics: metricsArray,
   };
-  // metrics: metricsObj;
   const end = new Date();
-  console.log('formatting App Detail took');
-  console.log(end - start);
-  console.log('milliseconds');
   return next();
 };
 
 sdkController.setFunctionApp = (req, res, next) => {
-  const start = new Date();
   // Both single-function and multi-function routes should be relying on same data in res.locals.
-  const { name, id, location, insightId, resourceGroupId, resourceGroupName } = req.body;
+  const { name, id, location, insightId, resourceGroupId, resourceGroupName, workSpaceId } = req.body;
   res.locals.functionApps = [];
   res.locals.functionApps.push({
     name: name,
@@ -263,12 +230,32 @@ sdkController.setFunctionApp = (req, res, next) => {
     resourceGroupName: resourceGroupName,
     location: location,
     insightId: insightId,
+    workSpaceId: workSpaceId,
   });
   res.locals.executionOnly = false;
-  const end = new Date();
-  console.log('setting function application export details took');
-  console.log(end - start);
-  console.log('milliseconds');
+  return next();
+};
+
+sdkController.setFunction = (req, res, next) => {
+  const { workSpaceId, functionName } = req.body;
+  res.locals.azure = {
+    specificFunction: {
+      azureLogAnalyticsWorkspaceId: workSpaceId,
+      functionName: functionName,
+    },
+  };
+  return next();
+};
+
+sdkController.setResource = (req, res, next) => {
+  const { subscription, resourceGroupName, appName } = req.body;
+  res.locals.azure = {
+    functionData: {
+      subscriptionIdentifier: subscription,
+      resourceGroupName: resourceGroupName,
+      appName: appName,
+    },
+  };
   return next();
 };
 
