@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 let biscuit;
 
 if (Cookies.get('userCookie')) {
-    biscuit = JSON.parse(Cookies.get('userCookie'));
+    biscuit = JSON.parse(Cookies.get('userCookie') || '');
 }
 
 export const userSlice = createSlice({

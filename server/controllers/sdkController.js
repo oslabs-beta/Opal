@@ -12,12 +12,12 @@ const credential = new DefaultAzureCredential();
 
 const sdkController: any = {};
 
-sdkController.executionOnly = async (req: Request, res: Response, next: NextFunction) => {
+sdkController.executionOnly = async (req, res, next) => {
   res.locals.executionOnly = true;
   return next();
 };
 
-sdkController.fetchSubscriptionIds = async (req: Request, res: Response, next: NextFunction) => {
+sdkController.fetchSubscriptionIds = async (req, res, next) => {
   // get all subscriptions associated with the given credential.
   // look up iterator functionality in relation to promise use.
   // subscriptions are accessed through an iterator.

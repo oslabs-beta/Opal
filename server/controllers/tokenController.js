@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import { config } from 'dotenv';
-import { Request, Response, NextFunction } from 'express';
+//import { Request, Response, NextFunction } from 'express';
 config();
 
 // Reset type for controllers.
@@ -12,11 +12,11 @@ const TENANT_ID: any = process.env.TENANT_ID;
 const CLIENT_ID: any = process.env.CLIENT_ID;
 const CLIENT_SECRET: any = process.env.CLIENT_SECRET;
 
-tokenController.checkToken = async (req: Request, res: Response, next: NextFunction) => {
+tokenController.checkToken = async (req, res, next) => {
   // Consider adding route if storing token in cookie or elsewhere until expiration.
 };
 
-tokenController.getToken = async (req: Request, res: Response, next: NextFunction) => {
+tokenController.getToken = async (req, res, next) => {
   // (Unless user has a token stored), get a new token.
   const azureManagementURL: string = 'https://management.azure.com/';
   const grantType: string = 'client_credentials';
