@@ -4,13 +4,13 @@ import { config } from 'dotenv';
 config();
 
 // Reset type for controllers.
-const tokenController: any = {};
+const tokenController = {};
 
 // If need to change login functionality, need these to be defined elsewhere.
 // See if better way to handle environmental variables in this context.
-const TENANT_ID: any = process.env.TENANT_ID;
-const CLIENT_ID: any = process.env.CLIENT_ID;
-const CLIENT_SECRET: any = process.env.CLIENT_SECRET;
+const TENANT_ID = process.env.TENANT_ID;
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
 tokenController.checkToken = async (req, res, next) => {
   // Consider adding route if storing token in cookie or elsewhere until expiration.
@@ -18,9 +18,9 @@ tokenController.checkToken = async (req, res, next) => {
 
 tokenController.getToken = async (req, res, next) => {
   // (Unless user has a token stored), get a new token.
-  const azureManagementURL: string = 'https://management.azure.com/';
-  const grantType: string = 'client_credentials';
-  const url: string = 'https://login.microsoftonline.com/' + TENANT_ID + '/oauth2/token';
+  const azureManagementURL = 'https://management.azure.com/';
+  const grantType = 'client_credentials';
+  const url = 'https://login.microsoftonline.com/' + TENANT_ID + '/oauth2/token';
   await fetch(url, {
     method: 'POST',
     headers: {
