@@ -1,52 +1,71 @@
-// Import statements.
-import express from 'express';
+import express/*, {Request, Response, NextFunction }*/ from 'express';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import cors from 'cors';
-import sdkController from './controllers/testsdkcontroller.js';
-import functionMetricsController from './controllers/functionmetricscontroller.js'
+import sdkController from './controllers/sdkController.js';
+import metricsController from './controllers/metricsController.js';
+import tokenController from './controllers/tokenController.js';
 
 // Import routers
 import userRoutes from './routes/userRoutes.js';
-// import performanceController from './controllers/performanceController.js';
 
-// Standard imports.
+// Standard express imports.
 const app = express();
 app.use(express.json());
 app.use(cors());
 const moduleURL = new URL(import.meta.url);
 const __dirname = path.dirname(moduleURL.pathname);
-
 app.use(cookieParser());
 
 // Set listening port to 3000.
 const port = 3000;
 
-//define router handlers
+// Define routes.
+
 app.use('/user', userRoutes);
 
-// For debugging: get list of all functions.
+// Default route: On initial load, serve subscription, resource group, and functionApp data to the front end.
+// Object also includes function execution counts for the given time period for all function Apps in each subscription.
+app.get('/executionOnly', sdkController.executionOnly, sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, metricsController.getMSWebMetrics, sdkController.formatExecutions, (req, res) => {
+  res.json(res.locals.executionObj);
+});
+
+// Secondary route: On selecting a specific function application, get more metrics.
+app.post('/getAppDetails', sdkController.setFunctionApp, metricsController.getMSWebMetrics, metricsController.getMSInsightsMetrics, sdkController.formatAppDetail, (req, res) => {
+  res.json(res.locals.appDetail);
+});
+
+// Tertiary route: Get all of the functions associated with a specific function application.
+app.post('/getAllFunctions', sdkController.setResource, tokenController.getToken, sdkController.getAllFunctions, (req, res) => {
+  res.json(res.locals.allFunctions);
+});
+
+// Quaternary route: Get metrics associated with a specific function within a function application.
+app.post('/getSpecificFunction', sdkController.setFunction, metricsController.retrieveFunctionLogs, (req, res) => {
+  res.json(res.locals.funcResponse);
+})
+
+// DEBUGGING ONLY: Get a list of function applications.
 app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, (req, res) => {
   res.json([res.locals.functionApps, res.locals.insights]);
   }
 );
 
-// For debugging: get list of ALL metrics for all functions.
-app.get('/getMetrics', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, functionMetricsController.getMSWebMetrics, (req, res) => {
+// DEBUGGING ONLY: Get application insight data only.
+app.get('/applicationInsights', metricsController.applicationInsights, (req, res) => {
+  console.log('finished');
+});
+
+// DEBUGGING ONLY: Get a list of all metrics that exist for a given function.
+app.get('/getMetrics', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, metricsController.getMSWebMetrics, (req, res) => {
   console.log('completed getting MS Web metrics');
   console.log(res.locals.metrics);
   res.json(res.locals.webMetrics);
 });
 
-// Default route to serve up the frontend upon load.
-app.get('/executionOnly', sdkController.executionOnly, sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, functionMetricsController.getMSWebMetrics, sdkController.formatExecutions, (req, res) => {
-
-  res.json(res.locals.executionObj);
-});
-
-// Get more metrics about a specific app.
-app.post('/getAppDetails', sdkController.setFunctionApp, functionMetricsController.getMSWebMetrics, functionMetricsController.getMSInsightsMetrics, sdkController.formatAppDetail, (req, res) => {
-  res.json(res.locals.appDetail);
+// DEBUGGING ONLY: Get a list of all metrics for all function apps.
+app.post('/getInsightsOnly', sdkController.setFunctionApp, metricsController.getMSInsightsMetrics, sdkController.formatAppDetail, (req, res) => {
+  res.json(res.locals.insightsOnly);
 });
 
 // Global error handler.
