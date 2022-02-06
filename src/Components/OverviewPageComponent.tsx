@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Graph, Loader } from ".";
+import { AreaLineChart, Loader } from ".";
 import { getExecOnlyData } from "../util/getExecOnlyData";
 
 export const OverviewPage = () => {
@@ -51,6 +51,7 @@ export const OverviewPage = () => {
           <div className="flex flex-wrap w-full justify-center items-center p-5">
             {data &&
               data.map((d) => {
+                console.log(d);
                 return (
                   <div
                     key={d.id}
@@ -61,7 +62,7 @@ export const OverviewPage = () => {
                   >
                     <h1 className="text-4xl font-bold mb-14">{d.name}</h1>
                     <h3 className="text-2xl mb-12">{d.metricName}</h3>
-                    <Graph data={d} format={"1h"} />
+                    <AreaLineChart data={d} format={"1h"} />
                   </div>
                 );
               })}
