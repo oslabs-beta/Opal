@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Loader } from ".";
+import { AreaLineChart, LineGraph, Loader } from ".";
 import { getFuncAppData } from "../util/getFuncAppData";
 import { getFuncAppFunctions } from "../util/getFuncAppFunctions";
 import { XCircleIcon, CheckCircleIcon } from "@heroicons/react/solid";
@@ -11,7 +11,7 @@ interface SpecificFuncData {
   id: string;
   location: string;
   resourceGroupId: string;
-  metric: Array<object>;
+  metrics: Array<object | any>;
 }
 
 interface LocationObj {
@@ -21,7 +21,6 @@ interface LocationObj {
 export const FunctionAppSpecificPage = () => {
   const location: LocationObj = useLocation();
   const [loading, setLoading] = useState(false);
-  const [disabled, setDisabled] = useState<boolean | null>(null);
 
   const [data, setData] = useState<SpecificFuncData | null>(null);
   const [functions, setFunctions] = useState<[] | null>(null);
@@ -50,7 +49,7 @@ export const FunctionAppSpecificPage = () => {
       });
   }, [location, resourceGroupName]);
 
-  console.log(functions);
+  console.log(functions, data);
 
   return (
     <>
@@ -59,31 +58,70 @@ export const FunctionAppSpecificPage = () => {
       ) : data ? (
         <div className="w-full flex justify-center mb-16">
           <div className="w-11/12">
-            <h1 className='text-2xl'>{data!.name}</h1>
-            <br /><br />
+            <h1 className="text-2xl">{data!.name}</h1>
+            <br />
+            <br />
+            <div className="flex flex-col w-full h-auto justify-center items-center relative">
+              <LineGraph
+                data={data?.metrics[5]}
+                format="1h"
+                error={data?.metrics[7]}
+              />
+              <br />
+              <br />
+              <div className="flex w-full flex-col">
+                <div className="flex space-x-4 py-2">
+                  <h1 className='text-blue-500  w-16 whitespace-nowrap'>Total : </h1>
+                  <p>{data?.metrics[5].description}</p>
+                </div>
+                <div className="flex space-x-6 py-2">
+                  <h1 className='text-[red]  w-16 whitespace-nowrap'>Errors :</h1>
+                  <p>{data?.metrics[7].description}</p>
+                </div>
+              </div>
+            </div>
+            <br />
+            <br />
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-              Molestias fugiat ab dolorem debitis aliquam sit numquam esse iure
-              enim cum praesentium, facere veniam modi necessitatibus, expedita
-              sunt laborum, porro officia!
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis
+              veniam iusto asperiores quibusdam laboriosam nesciunt et ex
+              consequatur voluptatem delectus a maiores cupiditate maxime
+              dignissimos, amet repellendus natus. Commodi, non?
             </p>
-
             <br />
             <br />
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis veniam iusto asperiores quibusdam laboriosam nesciunt et ex consequatur voluptatem delectus a maiores cupiditate maxime dignissimos, amet repellendus natus. Commodi, non?</p>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+              nobis necessitatibus, harum officia aspernatur cumque numquam odit
+              sint tempore ut aperiam nesciunt corrupti, repudiandae fugit
+              provident iure amet ad explicabo?
+            </p>
             <br />
             <br />
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam nobis necessitatibus, harum officia aspernatur cumque numquam odit sint tempore ut aperiam nesciunt corrupti, repudiandae fugit provident iure amet ad explicabo?</p>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+              nobis necessitatibus, harum officia aspernatur cumque numquam odit
+              sint tempore ut aperiam nesciunt corrupti, repudiandae fugit
+              provident iure amet ad explicabo?
+            </p>
             <br />
             <br />
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam nobis necessitatibus, harum officia aspernatur cumque numquam odit sint tempore ut aperiam nesciunt corrupti, repudiandae fugit provident iure amet ad explicabo?</p>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+              nobis necessitatibus, harum officia aspernatur cumque numquam odit
+              sint tempore ut aperiam nesciunt corrupti, repudiandae fugit
+              provident iure amet ad explicabo?
+            </p>
             <br />
             <br />
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam nobis necessitatibus, harum officia aspernatur cumque numquam odit sint tempore ut aperiam nesciunt corrupti, repudiandae fugit provident iure amet ad explicabo?</p>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
+              nobis necessitatibus, harum officia aspernatur cumque numquam odit
+              sint tempore ut aperiam nesciunt corrupti, repudiandae fugit
+              provident iure amet ad explicabo?
+            </p>
             <br />
             <br />
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam nobis necessitatibus, harum officia aspernatur cumque numquam odit sint tempore ut aperiam nesciunt corrupti, repudiandae fugit provident iure amet ad explicabo?</p>
-            <br /><br />
             <div className="flex h-auto w-full">
               <div className="h-full p-5 border-t-2 border-black text-xl font-semibold">
                 <h1>Functions</h1>
@@ -93,7 +131,7 @@ export const FunctionAppSpecificPage = () => {
                   functions.map((func: any) => {
                     return (
                       <motion.div
-                        whileHover={{scale: 1.025}}
+                        whileHover={{ scale: 1.025 }}
                         key={func.name}
                         className="p-6 mb-2 shadow-md border-2 rounded-lg flex justify-between cursor-pointer hover:bg-[#e5e7eb] hover:shadow-xl"
                       >
@@ -106,7 +144,7 @@ export const FunctionAppSpecificPage = () => {
                             </div>
                           ) : (
                             <div className="flex space-x-10 items-center justify-between ">
-                              <h1>{ func.properties.language }</h1>
+                              <h1>{func.properties.language}</h1>
                               <div className="flex space-x-4 items-center ">
                                 <h1 className=" font-medium">Active</h1>
                                 <CheckCircleIcon className="w-6 h-6 text-green-500" />
