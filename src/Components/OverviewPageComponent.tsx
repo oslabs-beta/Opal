@@ -51,7 +51,6 @@ export const OverviewPage = () => {
           <div className="flex flex-wrap w-full justify-center items-center p-5">
             {data &&
               data.map((d) => {
-                console.log(d);
                 return (
                   <div
                     key={d.id}
