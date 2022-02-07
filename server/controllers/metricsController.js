@@ -1,7 +1,6 @@
 import { config } from 'dotenv';
 import { DefaultAzureCredential } from '@azure/identity';
 import { MetricsQueryClient, LogsQueryClient } from '@azure/monitor-query';
-//import appInsights from 'applicationinsights';
 import { MSWebOptions, MSInsightsOptions, MSStorageOptions } from '../constants/defaultOptions.js';
 import { generateMetric1D, generateMetric2D } from '../utils/metricGenerator.js';
 config();
@@ -12,16 +11,16 @@ const credential = new DefaultAzureCredential();
 const metricQuery = new MetricsQueryClient(credential);
 const logsQuery = new LogsQueryClient(credential);
 
+// Get metrics associated with a function application's MS Web provider.
 metricsController.getMSWebMetrics = async (req, res, next) => {
   let metrics;
   const metricsObj = {};
   if (res.locals.executionOnly === true) {
-    // If user is only looking for function execution count, output that only.
+    // If only seeking function execution count, output only that metric.
     metrics = ['FunctionExecutionCount'];
   } else {
-    // If use is looking for all metrics, get all metrics.
+    // If seeking all metrics, get all metrics.
     metrics = generateMetric1D(MSWebOptions);
-    // Get all metrics.
   }
   const promiseArray = [];
   const idArray = [];
@@ -94,7 +93,6 @@ metricsController.getMSInsightsMetrics = async (req, res, next) => {
     })
     .then(() => {
       res.locals.insightsMetrics = metricsArray;
-      const end = new Date();
       return next();
     });
 };
