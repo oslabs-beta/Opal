@@ -16,8 +16,12 @@ metricsController.getMSWebMetrics = async (req, res, next) => {
   // Set granularity and timespan dynamically once they are passed from the frontend.
   // For now, set them statically to hour-by-hour, for a 24-hour period.
   let granularity = 'PT1H';
-  let timespan = {duration: 'PT24H'};
-
+  //let timespan = {duration: 'PT24H'};
+  let timespan = {duration: '2022-01-26T23:03:24.604Z/2022-01-27T23:03:24.604Z' }
+  //let timespan = {
+  //  start_time: '2022-02-06T21:03:24.604Z',
+  //  end_time: '2022-02-07T21:03:24.604Z'
+  //}
   let metrics;
   const metricsObj = {};
 
@@ -80,7 +84,8 @@ metricsController.getMSInsightsMetrics = async (req, res, next) => {
   // Set granularity and timespan dynamically once they are passed from the frontend.
   // For now, set them statically to hour-by-hour, for a 24-hour period.
   let granularity = 'PT1H';
-  let timespan = {duration: 'PT24H'};
+  //let timespan = {duration: 'PT24H'};
+  let timespan = {duration: '2022-01-26T23:03:24.604Z/2022-01-27T23:03:24.604Z' }
 
   // For now, metrics are selected statically.
   const metrics = generateMetric2D(MSInsightsOptions).split(',');
@@ -166,6 +171,7 @@ metricsController.retrieveFunctionLogs = async (req, res, next) => {
   const kustoQuery1 = `AppExceptions | project TimeGenerated, Id | where OperationName contains \'${functionName}\'`;
   const kustoQuery2 = `AppRequests | project TimeGenerated, Id, OperationName, Success, DurationMs, OperationId, AppRoleInstance, AppRoleName, ItemCount, ResultCode | where OperationName contains \'${functionName}\'`;
   const kustoQuery3 = `AppBrowserTimings | project AppRoleName, Measurements, Name, OperationId, OperationName, ProcessingDurationMs, ReceiveDurationMs, SendDurationMs, TotalDurationMs | where OperationName contains \'${functionName}\'`;
+  const kustoQuery4 = `AppMetrics | project AppRoleName | where OperationName contains \'${functionName}\'`;
 
 //   const logRes1 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery1, {
 //     //duration: Durations.sevenDays,
@@ -176,10 +182,17 @@ metricsController.retrieveFunctionLogs = async (req, res, next) => {
 
   const logRes2 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery2, {
       //duration: Durations.sevenDays,
-      duration: "P10D",
+      duration: "P14D",
     });
   console.log(logRes2.tables[0]);
   res.locals.funcResponse = metricsController.processTable(logRes2);
+
+//   const logRes4 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery4, {
+//     //duration: Durations.sevenDays,
+//     duration: "P14D",
+//   });
+// console.log(logRes4.tables[0]);
+// res.locals.funcResponse = metricsController.processTable(logRes4);
 
   // const logRes3 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery3, {
   //   //duration: Durations.sevenDays,

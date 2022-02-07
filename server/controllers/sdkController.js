@@ -227,11 +227,11 @@ sdkController.getFunctionList = async (req, res, next) => {
   const funcRes = [];
   for (let sub in res.locals.azure.subList) {
     let currentSub = res.locals.azure.subList[sub];
-    for (let resGroup in currentSub.resourceGroups) {
-      let currentGrp = currentSub.resourceGroups[resGroup];
-      for (let i = 0; i < currentGrp.resources.length; i++) {
-        let currentRes = currentGrp.resources[i];
-        const fetchURL = `https://management.azure.com/subscriptions/${currentSub.subName}/resourceGroups/${currentGrp.resourceGroupName}/providers/Microsoft.Web/sites/${currentRes}/functions?api-version=2021-01-01`;
+    for (let resGroup in currentSub) {
+      let currentGrp = currentSub[resGroup];
+      for (let resource = 0; resource < currentGrp.length; resource++) {
+        let currentRes = currentGrp[resource];
+        const fetchURL = `https://management.azure.com/subscriptions/${sub}/resourceGroups/${currentGrp}/providers/Microsoft.Web/sites/${currentRes}/functions?api-version=2021-01-01`;
         let fetchPromise = axios(fetchURL, {
           method: 'GET',
           headers: {
@@ -239,8 +239,8 @@ sdkController.getFunctionList = async (req, res, next) => {
           },
         });
         funcPromise.push(fetchPromise);
-        funcSub.push(currentSub);
-        funcResGrp.push(currentGrp);
+        funcSub.push(sub);
+        funcResGrp.push(resGroup);
         funcRes.push(currentRes);
       }
     }
@@ -268,9 +268,6 @@ sdkController.getFunctionList = async (req, res, next) => {
             subscription: currentSub.subName,
             resourceGroup: currentGrp.resourceGroupName,
             resource: currentRes,
-            //shortname: currentFuncData.properties.name,
-
-            //name: name
           };
           res.locals.funcList.functions.push(currentFunc);
         }
@@ -292,7 +289,7 @@ sdkController.getFunctionList = async (req, res, next) => {
 };
 
 sdkController.setSub = (req, res, next) => {
-  res.locals.azure.subList = req.body.subscriptions;
+  res.locals.azure.subList = req.body;
   return next();
   /*
     {
