@@ -7,6 +7,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
 } from "recharts";
 
@@ -27,44 +28,43 @@ interface GraphProps {
 }
 
 interface Data {
-  time: string;
-  total: number;
+  Time: string;
+  Total: number;
 }
 
-export const Graph = ({ data, format }: GraphProps) => {
-
+export const AreaLineChart = ({ data, format }: GraphProps) => {
   const randomColour = colours[Math.floor(Math.random() * colours.length)];
-  const [time, setTime] = useState({});
+  const [time, setTime] = useState<object | null>(null);
 
-  // console.log(data, format);
+  console.log(data, format);
 
   const createObj = () => {
     const arr: Array<object> = []!;
 
     for (let i in data.timeseries) {
-      const obj: Data = { time: "", total: 0 };
+      const obj: Data = { Time: "", Total: 0 };
 
       const mnt = moment(data.timeseries[i].timeStamp);
 
-      obj["time"] = mnt.format("LT");
-      obj["total"] = data.timeseries[i].total
+      obj["Time"] = mnt.format("LT");
+      obj["Total"] = data.timeseries[i].total
         ? data.timeseries[i].total
-        : data.timeseries[i].average;
+        : data.timeseries[i].average ? data.timeseries[i].average : 0
 
       arr.push(obj);
+      console.log(obj);
     }
 
     setTime(arr);
   };
 
-  // IIFE
   if (!time) createObj();
 
   return (
     <div style={{ width: "100%", height: 300 }}>
       <ResponsiveContainer>
         <AreaChart
-        // @ts-ignore
+          // @ts-ignore
           data={time}
           margin={{
             top: 10,
@@ -80,13 +80,13 @@ export const Graph = ({ data, format }: GraphProps) => {
             </linearGradient>
           </defs>
           <CartesianGrid vertical={false} strokeDasharray="3 3" />
-          <XAxis dataKey="time" />
+          <XAxis dataKey="Time" />
           <YAxis />
           <Tooltip />
-
+          <Legend />
           <Area
             type="monotone"
-            dataKey="total"
+            dataKey="Total"
             stroke="blue"
             fillOpacity={1}
             fill="url(#colorUv)"

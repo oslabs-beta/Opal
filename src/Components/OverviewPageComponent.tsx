@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Graph, Loader } from ".";
+import { AreaLineChart, Loader } from ".";
 import { getExecOnlyData } from "../util/getExecOnlyData";
 
 export const OverviewPage = () => {
@@ -48,20 +48,21 @@ export const OverviewPage = () => {
         <Loader theme={'azure'} />
       ) : (
         <div>
-          <div className="flex flex-wrap w-full justify-center items-center">
+          <div className="flex flex-wrap w-full justify-center items-center p-5">
             {data &&
               data.map((d) => {
+                console.log(d);
                 return (
                   <div
                     key={d.id}
-                    className="flex flex-col items-center justify-center w-2/5 mb-52 p-4 border-2 border-gray-300 border-opacity-20 rounded-lg ml-4 mr-4 shadow-2xl"
+                    className="flex flex-col items-center justify-center w-[600px] mb-52 p-4 border-2 border-gray-300 border-opacity-20 rounded-lg ml-4 mr-4 shadow-2xl cursor-pointer"
                     onClick={() =>
                       navigate(`/azure/functionApp/${d.name}`, { state: d })
                     }
                   >
                     <h1 className="text-4xl font-bold mb-14">{d.name}</h1>
                     <h3 className="text-2xl mb-12">{d.metricName}</h3>
-                    <Graph data={d} format={"1h"} />
+                    <AreaLineChart data={d} format={"1h"} />
                   </div>
                 );
               })}
