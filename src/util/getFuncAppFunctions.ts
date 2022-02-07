@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl = `http://localhost:3000/getAllFunctions`;
+const baseUrl = `http://localhost:3000/getFunctions`;
 
 /**
  *

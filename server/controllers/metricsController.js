@@ -16,8 +16,12 @@ metricsController.getMSWebMetrics = async (req, res, next) => {
   // Set granularity and timespan dynamically once they are passed from the frontend.
   // For now, set them statically to hour-by-hour, for a 24-hour period.
   let granularity = 'PT1H';
-  let timespan = {duration: 'PT24H'};
-
+  //let timespan = {duration: 'PT24H'};
+  let timespan = {duration: '2022-01-26T23:03:24.604Z/2022-01-27T23:03:24.604Z' }
+  //let timespan = {
+  //  start_time: '2022-02-06T21:03:24.604Z',
+  //  end_time: '2022-02-07T21:03:24.604Z'
+  //}
   let metrics;
   const metricsObj = {};
 
@@ -80,7 +84,8 @@ metricsController.getMSInsightsMetrics = async (req, res, next) => {
   // Set granularity and timespan dynamically once they are passed from the frontend.
   // For now, set them statically to hour-by-hour, for a 24-hour period.
   let granularity = 'PT1H';
-  let timespan = {duration: 'PT24H'};
+  //let timespan = {duration: 'PT24H'};
+  let timespan = {duration: '2022-01-26T23:03:24.604Z/2022-01-27T23:03:24.604Z' }
 
   // For now, metrics are selected statically.
   const metrics = generateMetric2D(MSInsightsOptions).split(',');
