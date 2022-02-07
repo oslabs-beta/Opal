@@ -82,6 +82,8 @@ export const FunctionAppSpecificPage = () => {
             </div>
             <br />
             <br />
+            <h1>// List of individual errors and at what time they occured</h1>
+            <br /><br />
             <p>
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis
               veniam iusto asperiores quibusdam laboriosam nesciunt et ex
@@ -123,10 +125,10 @@ export const FunctionAppSpecificPage = () => {
             <br />
             <br />
             <div className="flex h-auto w-full">
-              <div className="h-full p-5 border-t-2 border-black text-xl font-semibold">
+              <div className="h-full p-5 border-t-2 border-[#363740] text-xl font-semibold">
                 <h1>Functions</h1>
               </div>
-              <div className="h-full flex-grow border-l-2 border-t-2 border-black p-5">
+              <div className="h-full flex-grow border-l-2 border-t-2 border-[#363740] p-5">
                 {functions &&
                   functions.map((func: any) => {
                     return (
