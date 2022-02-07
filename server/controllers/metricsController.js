@@ -13,8 +13,14 @@ const logsQuery = new LogsQueryClient(credential);
 
 // Get metrics associated with a function application's MS Web provider.
 metricsController.getMSWebMetrics = async (req, res, next) => {
+  // Set granularity and timespan dynamically once they are passed from the frontend.
+  // For now, set them statically to hour-by-hour, for a 24-hour period.
+  let granularity = 'PT1H';
+  let timespan = {duration: 'PT24H'};
+
   let metrics;
   const metricsObj = {};
+
   if (res.locals.executionOnly === true) {
     // If only seeking function execution count, output only that metric.
     metrics = ['FunctionExecutionCount'];
@@ -22,68 +28,92 @@ metricsController.getMSWebMetrics = async (req, res, next) => {
     // If seeking all metrics, get all metrics.
     metrics = generateMetric1D(MSWebOptions);
   }
-  const promiseArray = [];
-  const idArray = [];
-  for (let app of res.locals.functionApps) {
-    if (!app.id) {
+
+  const funcQueryArray = [];
+  const funcNameArray = [];
+
+  // Query MS Web metrics for every functionApp in the collection of function applications.
+  for (let funcApp of res.locals.functionApps) {
+    // Consistent formatting of error message.
+    if (!funcApp.id) {
       return next({
-        err: 'Resource ID must be set to fetch metrics for function.',
+        err: 'Error: A resource ID must be set in order to fetch metrics for a function.',
       });
     }
-    const query = metricQuery.queryResource(app.id, metrics, {
-      granularity: 'PT1H',
-      timespan: { duration: 'PT24H' },
+    const query = metricQuery.queryResource(funcApp.id, metrics, {
+      granularity: granularity,
+      timespan: timespan
+    })
+    .catch((err) => {
+      return next({
+        err: `Attempt to query MS Web metrics for ${funcApp.id} failed, with message ${err}.`
+      });
     });
-    promiseArray.push(query);
-    idArray.push(app.name);
+    // Push results of the query and name of the function application into parallel arrays.
+    funcQueryArray.push(query);
+    funcNameArray.push(funcApp.name);
   }
 
-  Promise.all(promiseArray).then((queryResultArray) => {
+  // Consider Promise.allSettled if we want to accept possibility that fewer than all queries will run.
+  Promise.all(funcQueryArray).then((queryResultArray) => {
     for (let i = 0; i < queryResultArray.length; i++) {
       let currentFunc = queryResultArray[i];
       for (let j = 0; j < currentFunc.metrics.length; j++) {
         let currentMetric = currentFunc.metrics[j];
         currentMetric.timeseries = currentMetric.timeseries[0].data;
       }
-      metricsObj[idArray[i]] = queryResultArray[i];
+      metricsObj[funcNameArray[i]] = queryResultArray[i];
     }
     res.locals.webMetrics = metricsObj;
     return next();
+  })
+  .catch((err) => {
+    return next({
+      err: `Querying MS Web metrics failed. Unable to retrieve metrics for one or more function applications,
+      with error ${err}.`
+    });
   });
-
-  const end = new Date();
 };
 
+// Retrieve the MS Insights metrics associated with a function application.
 metricsController.getMSInsightsMetrics = async (req, res, next) => {
-  const start = new Date();
+  // Set granularity and timespan dynamically once they are passed from the frontend.
+  // For now, set them statically to hour-by-hour, for a 24-hour period.
+  let granularity = 'PT1H';
+  let timespan = {duration: 'PT24H'};
+
+  // For now, metrics are selected statically.
   const metrics = generateMetric2D(MSInsightsOptions).split(',');
   const metricsArray = [];
 
-  const promiseArray = [];
-  const nameArray = [];
+  const funcQueryArray = [];
+  const funcNameArray = [];
 
-  for (const resource of res.locals.functionApps) {
-    const resId = resource.insightId;
+  // Run MS Insights query for each function application in the collection of function applications.
+  for (const functionApp of res.locals.functionApps) {
+    const resId = functionApp.insightId;
     if (!resId) {
       return next({
-        err: 'Resource ID must be set to fetch metrics for resource.',
+        err: 'Resource ID must be set to fetch metrics for function application.',
       });
     }
     const result = metricQuery.queryResource(resId, metrics, {
-      granularity: 'PT1H',
-      timespan: { duration: 'PT24H' },
+      granularity: granularity,
+      timespan: timespan
       //aggregations: ['Count']
     });
-    promiseArray.push(result);
-    nameArray.push(resource.name);
+
+    // Push the results of the query and the function's name into parallel arrays.
+    funcQueryArray.push(result);
+    funcNameArray.push(functionApp.name);
   }
 
-  Promise.all(promiseArray)
+  // Once all queries are complete, push the retrieved metrics into a single array (metricsArray).
+  Promise.all(funcQueryArray)
     .then((queryResultArray) => {
-      // for each function in the query result.
       for (let i = 0; i < queryResultArray.length; i++) {
         let currentFunc = queryResultArray[i];
-        currentFunc.name = nameArray[i];
+        currentFunc.name = funcNameArray[i];
         for (let j = 0; j < currentFunc.metrics.length; j++) {
           let currentMetric = currentFunc.metrics[j];
           currentMetric.timeseries = currentMetric.timeseries[0].data;
@@ -94,29 +124,34 @@ metricsController.getMSInsightsMetrics = async (req, res, next) => {
     .then(() => {
       res.locals.insightsMetrics = metricsArray;
       return next();
+    })
+    .catch((err) => {
+      return next({
+        err: `Querying MS Insights metrics failed. Unable to retrieve metrics for one or more function applications,
+        with error ${err}.`
+      });
     });
 };
 
-
 // Storage metrics controller is not currently being used.
 metricsController.getStorageMetrics = async (req, res, next) => {
-  const metrics = generateMetric1D(MSStorageOptions);
-  const metricsArray = [];
-  for await (let resource of res.locals.storageList) {
-    const resId = resource.id;
-    if (!resId) {
-      return next({
-        err: 'Resource ID must be set to fetch metrics for resource.',
-      });
-    }
-    const result = await metricQuery.queryResource(resId, metrics, {
-      granularity: 'PT1H',
-      timespan: { duration: 'PT24H' },
-      //aggregations: ['Count']
-    });
-    metricsArray.push(result);
-  }
-  res.locals.storageMetrics = metricsArray;
+  // const metrics = generateMetric1D(MSStorageOptions);
+  // const metricsArray = [];
+  // for await (let resource of res.locals.storageList) {
+  //   const resId = resource.id;
+  //   if (!resId) {
+  //     return next({
+  //       err: 'Resource ID must be set to fetch metrics for resource.',
+  //     });
+  //   }
+  //   const result = await metricQuery.queryResource(resId, metrics, {
+  //     granularity: 'PT1H',
+  //     timespan: { duration: 'PT24H' },
+  //     //aggregations: ['Count']
+  //   });
+  //   metricsArray.push(result);
+  // }
+  // res.locals.storageMetrics = metricsArray;
   return next();
 };
 
