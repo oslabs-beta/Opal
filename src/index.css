@@ -50,6 +50,7 @@ code {
 /* .bg {
   background-image: url(../assets/images/liquid-cheese.svg);
   background-size: 500px;
+  color: #e5e7eb;
 } */
 
 @tailwind base;
