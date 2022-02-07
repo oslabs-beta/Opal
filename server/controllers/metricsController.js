@@ -166,6 +166,7 @@ metricsController.retrieveFunctionLogs = async (req, res, next) => {
   const kustoQuery1 = `AppExceptions | project TimeGenerated, Id | where OperationName contains \'${functionName}\'`;
   const kustoQuery2 = `AppRequests | project TimeGenerated, Id, OperationName, Success, DurationMs, OperationId, AppRoleInstance, AppRoleName, ItemCount, ResultCode | where OperationName contains \'${functionName}\'`;
   const kustoQuery3 = `AppBrowserTimings | project AppRoleName, Measurements, Name, OperationId, OperationName, ProcessingDurationMs, ReceiveDurationMs, SendDurationMs, TotalDurationMs | where OperationName contains \'${functionName}\'`;
+  const kustoQuery4 = `AppMetrics | project AppRoleName | where OperationName contains \'${functionName}\'`;
 
 //   const logRes1 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery1, {
 //     //duration: Durations.sevenDays,
@@ -176,10 +177,17 @@ metricsController.retrieveFunctionLogs = async (req, res, next) => {
 
   const logRes2 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery2, {
       //duration: Durations.sevenDays,
-      duration: "P10D",
+      duration: "P14D",
     });
   console.log(logRes2.tables[0]);
   res.locals.funcResponse = metricsController.processTable(logRes2);
+
+//   const logRes4 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery4, {
+//     //duration: Durations.sevenDays,
+//     duration: "P14D",
+//   });
+// console.log(logRes4.tables[0]);
+// res.locals.funcResponse = metricsController.processTable(logRes4);
 
   // const logRes3 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery3, {
   //   //duration: Durations.sevenDays,
