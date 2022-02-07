@@ -36,8 +36,6 @@ export const AreaLineChart = ({ data, format }: GraphProps) => {
   const randomColour = colours[Math.floor(Math.random() * colours.length)];
   const [time, setTime] = useState<object | null>(null);
 
-  console.log(data, format);
-
   const createObj = () => {
     const arr: Array<object> = []!;
 
@@ -52,7 +50,6 @@ export const AreaLineChart = ({ data, format }: GraphProps) => {
         : data.timeseries[i].average ? data.timeseries[i].average : 0
 
       arr.push(obj);
-      console.log(obj);
     }
 
     setTime(arr);
