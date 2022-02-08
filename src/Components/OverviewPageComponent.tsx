@@ -8,9 +8,6 @@ export const OverviewPage = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-  const [executionObj, setExecutionObject] = useState(
-    JSON.parse(sessionStorage.getItem("executionObj") || "{}")
-  );
 
   let session;
 
@@ -27,9 +24,8 @@ export const OverviewPage = () => {
 
       Promise.resolve(data)
         .then((result: object) => {
-          setLoading(false);
           sessionStorage.setItem("executionObj", JSON.stringify(result));
-
+          setLoading(false);
           if (result) {
             for (let i in result) {
               for (let x in result[i]) {
@@ -43,20 +39,21 @@ export const OverviewPage = () => {
 
           sessionStorage.setItem("graphs", JSON.stringify(graphArr));
           setData(graphArr);
+          if (sessionStorage.getItem("executionObj")) {
+            //@ts-ignore
+            console.log('hi there', JSON.parse(sessionStorage.getItem("executionObj" || "{}")));
+            const executionObj = JSON.parse(sessionStorage.getItem("executionObj") || "{}");
+            const functions: any = getAllFunctions({ executionObj });
+            Promise.resolve(functions).then((result: any) => {
+              // setLoading(false);
+              sessionStorage.setItem('functions', JSON.stringify(result));
+            });
+          }
         })
         .catch((err) => console.log(err));
     }
   }, []);
-
-  useEffect(() => {
-    if (sessionStorage.getItem("executionObj")) {
-      // console.log(executionObj);
-      const functions: any = getAllFunctions({ executionObj });
-      Promise.resolve(functions).then((result: any) => {
-        console.log(result);
-      });
-    }
-  });
+  
 
   return (
     <>
