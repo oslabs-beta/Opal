@@ -20,3 +20,4 @@ export { Sidebar } from './Sidebar';
 
 export { Loader } from './LoaderComponent';
 
+export { ListComponent } from './ListComponent';

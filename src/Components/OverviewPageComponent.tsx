@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AreaLineChart, Loader } from ".";
+import { getAllFunctions } from "../util/getAllFuncs";
 import { getExecOnlyData } from "../util/getExecOnlyData";
 
 export const OverviewPage = () => {
@@ -20,9 +21,10 @@ export const OverviewPage = () => {
     if (!sessionStorage.getItem("graphs")) {
       setLoading(true);
       const data: any = getExecOnlyData();
-      // console.log("getExecOnlyData", data);
+
       Promise.resolve(data)
         .then((result: object) => {
+          sessionStorage.setItem("executionObj", JSON.stringify(result));
           setLoading(false);
           if (result) {
             for (let i in result) {
@@ -37,21 +39,31 @@ export const OverviewPage = () => {
 
           sessionStorage.setItem("graphs", JSON.stringify(graphArr));
           setData(graphArr);
+          if (sessionStorage.getItem("executionObj")) {
+            //@ts-ignore
+            console.log('hi there', JSON.parse(sessionStorage.getItem("executionObj" || "{}")));
+            const executionObj = JSON.parse(sessionStorage.getItem("executionObj") || "{}");
+            const functions: any = getAllFunctions({ executionObj });
+            Promise.resolve(functions).then((result: any) => {
+              // setLoading(false);
+              sessionStorage.setItem('functions', JSON.stringify(result));
+            });
+          }
         })
         .catch((err) => console.log(err));
     }
   }, []);
+  
 
   return (
     <>
       {loading ? (
-        <Loader theme={'azure'} />
+        <Loader theme={"azure"} />
       ) : (
         <div>
           <div className="flex flex-wrap w-full justify-center items-center p-5">
             {data &&
               data.map((d) => {
-                console.log(d);
                 return (
                   <div
                     key={d.id}
