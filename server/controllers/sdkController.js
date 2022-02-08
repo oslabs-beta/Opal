@@ -231,7 +231,7 @@ sdkController.getFunctionList = async (req, res, next) => {
       let currentGrp = currentSub[resGroup];
       for (let resource = 0; resource < currentGrp.length; resource++) {
         let currentRes = currentGrp[resource];
-        const fetchURL = `https://management.azure.com/subscriptions/${sub}/resourceGroups/${currentGrp}/providers/Microsoft.Web/sites/${currentRes}/functions?api-version=2021-01-01`;
+        const fetchURL = `https://management.azure.com/subscriptions/${sub}/resourceGroups/${resGroup}/providers/Microsoft.Web/sites/${currentRes}/functions?api-version=2021-01-01`;
         let fetchPromise = axios(fetchURL, {
           method: 'GET',
           headers: {
