@@ -1,9 +1,11 @@
 # Opal
 
-# A Cloud Monitoring Tool
+# An Azure Functions Monitoring Tool
 <p style="text-align:center"><img src="assets/images/opalheader.png"></p>
 
 # Table of Contents
+
+- [About Opal](#about-opal)
 
 - [Features](#features)
 
@@ -14,6 +16,10 @@
 - [Contributing](#contributing)
 
 - [Authors](#authors)
+
+## About Opal
+
+Opal is a tool for monitoring Azure Functions. Azure Functions is a leading "serverless" computing solution that allows developers to deploy their code without having to provision and maintain the servers they run on. Opal uses the Azure SDK and Azure REST API to query metrics about your Azure Functions, and displays them in graphs. This gives developers visibility into their Azure Functions in a way that is more pre-configured and cleaner than in the Azure Portal.
 
 ## Features
 
