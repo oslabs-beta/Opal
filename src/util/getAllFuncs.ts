@@ -25,7 +25,6 @@ export const getAllFunctions = async ({ executionObj }) => {
         }
       }
     }
-    console.log(JSON.stringify(postObj));
     const response = await axios.post(baseUrl, postObj);
     return response.data;
   } catch (err) {
