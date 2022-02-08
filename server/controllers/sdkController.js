@@ -4,6 +4,7 @@ import { ResourceManagementClient } from '@azure/arm-resources';
 import { SubscriptionClient } from '@azure/arm-resources-subscriptions';
 import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import fetch from 'node-fetch';
+import axios from 'axios'
 config();
 
 // Create a new credential.
@@ -62,7 +63,6 @@ sdkController.fetchResourceGroups = async (req, res, next) => {
     //Because we aren't iterating we need to use the .next() property.
     res.locals.subscriptions[sub].resourceGroups = groupsPerSub.value;
   }
-  const end = new Date();
   // console.log('fetching resource groups took');
   // console.log(end - start);
   // console.log('milliseconds');
@@ -70,7 +70,6 @@ sdkController.fetchResourceGroups = async (req, res, next) => {
 };
 
 sdkController.fetchResources = async (req, res, next) => {
-  const start = new Date();
   const functionAppArray = [];
   const insightsList = [];
   const subscriptions = res.locals.subscriptions;
@@ -130,7 +129,6 @@ sdkController.fetchResources = async (req, res, next) => {
 
   res.locals.functionApps = functionAppArray;
   res.locals.insights = insightsList;
-  const end = new Date();
   return next();
 };
 
@@ -177,6 +175,7 @@ sdkController.formatExecutions = (req, res, next) => {
   return next();
 };
 
+// This should be renamed -- this just gets all functions associated with one function app.
 sdkController.getAllFunctions = async (req, res, next) => {
   const { subscriptionIdentifier, resourceGroupName, appName } = res.locals.azure.functionData;
   try {
@@ -198,8 +197,120 @@ sdkController.getAllFunctions = async (req, res, next) => {
   }
 };
 
+// This route gets all functions associated with all subscribers and resource groups fed in from frontend.
+// Like need this to be async, but confirm.
+sdkController.getFunctionList = async (req, res, next) => {
+  /*
+    {
+      subscriptions: [
+        {
+          subName:
+          resourceGroups: [
+            {
+              resourceGroupName:
+              resources: [
+               "resource1, resource2"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    */
+    console.log('entering getFunctionList');
+  res.locals.funcList = {
+    functions: [],
+  };
+  const funcPromise = [];
+  const funcSub = [];
+  const funcResGrp = [];
+  const funcRes = [];
+  for (let sub in res.locals.azure.subList) {
+    let currentSub = res.locals.azure.subList[sub];
+    for (let resGroup in currentSub) {
+      let currentGrp = currentSub[resGroup];
+      for (let resource = 0; resource < currentGrp.length; resource++) {
+        let currentRes = currentGrp[resource];
+        const fetchURL = `https://management.azure.com/subscriptions/${sub}/resourceGroups/${currentGrp}/providers/Microsoft.Web/sites/${currentRes}/functions?api-version=2021-01-01`;
+        let fetchPromise = axios(fetchURL, {
+          method: 'GET',
+          headers: {
+            Authorization: 'Bearer ' + res.locals.azure.bearerToken.token,
+          },
+        });
+        funcPromise.push(fetchPromise);
+        funcSub.push(sub);
+        funcResGrp.push(resGroup);
+        funcRes.push(currentRes);
+      }
+    }
+  }
+  Promise.all(funcPromise).then((resultArray) => {
+    // For each requested resource in the promise array.
+      for (let i = 0; i < resultArray.length; i++) {
+        //console.log('here is one result from the promise aray');
+        //console.log(resultArray[i].data.value);
+        let currentFuncAppData = resultArray[i].data.value;
+        // For each function within each requested resource.
+        for (let j = 0; j < currentFuncAppData.length; j++) {
+          let currentFuncData = currentFuncAppData[j];
+          console.log(currentFuncData);
+          let currentSub = funcSub[i];
+          let currentGrp = funcResGrp[i];
+          let currentRes = funcRes[i];
+          const currentFunc = {
+            shortname: currentFuncData.properties.name,
+            id: currentFuncData.id,
+            fullname: currentFuncData.name,
+            type: currentFuncData.type,
+            location: currentFuncData.location,
+            properties: currentFuncData.properties,
+            subscription: currentSub.subName,
+            resourceGroup: currentGrp.resourceGroupName,
+            resource: currentRes,
+          };
+          res.locals.funcList.functions.push(currentFunc);
+        }
+      }
+      console.log('complete');
+      console.log(res.locals.funcList);
+      return next();
+    });
+    //.then(() => {
+    //  console.log('successfully resolved');
+    //  console.log(res.locals.funcList);
+    //  return next();
+    //})
+    //.catch((err) => {
+      // Fix error handling here.
+    //  console.log('did not successfully resolve');
+    //  return next(`hit err of ${err}`);
+    //});
+};
+
+sdkController.setSub = (req, res, next) => {
+  res.locals.azure.subList = req.body;
+  return next();
+  /*
+    {
+      subscriptions: [
+        {
+          subName:
+          resourceGroups: [
+            {
+              resourceGroupName:
+              resources: [
+               "resource1, resource2"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    */
+};
+
 sdkController.formatAppDetail = (req, res, next) => {
-  const start = new Date();
   const selectedApp = res.locals.functionApps[0];
   const metricsArray = res.locals.webMetrics[selectedApp.name].metrics;
   const insightsArray = res.locals.insightsMetrics[0].metrics;
@@ -215,7 +326,6 @@ sdkController.formatAppDetail = (req, res, next) => {
     location: selectedApp.location,
     metrics: metricsArray,
   };
-  const end = new Date();
   return next();
 };
 
