@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AreaLineChart, Loader } from ".";
+import { getAllFunctions } from "../util/getAllFuncs";
 import { getExecOnlyData } from "../util/getExecOnlyData";
 
 export const OverviewPage = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+  const [executionObj, setExecutionObject] = useState(
+    JSON.parse(sessionStorage.getItem("executionObj") || "{}")
+  );
 
   let session;
 
@@ -20,10 +24,12 @@ export const OverviewPage = () => {
     if (!sessionStorage.getItem("graphs")) {
       setLoading(true);
       const data: any = getExecOnlyData();
-      // console.log("getExecOnlyData", data);
+
       Promise.resolve(data)
         .then((result: object) => {
           setLoading(false);
+          sessionStorage.setItem("executionObj", JSON.stringify(result));
+
           if (result) {
             for (let i in result) {
               for (let x in result[i]) {
@@ -42,10 +48,20 @@ export const OverviewPage = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (sessionStorage.getItem("executionObj")) {
+      // console.log(executionObj);
+      const functions: any = getAllFunctions({ executionObj });
+      Promise.resolve(functions).then((result: any) => {
+        console.log(result);
+      });
+    }
+  });
+
   return (
     <>
       {loading ? (
-        <Loader theme={'azure'} />
+        <Loader theme={"azure"} />
       ) : (
         <div>
           <div className="flex flex-wrap w-full justify-center items-center p-5">
