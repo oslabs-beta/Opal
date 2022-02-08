@@ -11,7 +11,7 @@ export const FunctionAppPage = () => {
       <div className="w-11/12">
         {data?.length > 0 && data.map((val:any) => {
           return (
-            <motion.div whileHover={{scale: 1.025}} key={val.name} className='p-6 mb-5 shadow-lg cursor-pointer rounded-lg flex justify-between hover:bg-[#e5e7eb] hover:shadow-xl' onClick={() =>
+            <motion.div whileHover={{scale: 1.025}} key={val.name} className='p-6 mb-4 shadow-lg cursor-pointer border-2 rounded-lg flex justify-between hover:bg-[#e5e7eb] hover:shadow-xl' onClick={() =>
               navigate(`/azure/functionApp/${val.name}`, { state: val })
             }>
               <h1>{val.name}</h1>
