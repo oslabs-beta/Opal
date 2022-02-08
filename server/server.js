@@ -1,6 +1,5 @@
-import express/*, {Request, Response, NextFunction }*/ from 'express';
+import express from 'express';
 import cookieParser from 'cookie-parser';
-import path from 'path';
 import cors from 'cors';
 import sdkController from './controllers/sdkController.js';
 import metricsController from './controllers/metricsController.js';
@@ -13,8 +12,6 @@ import userRoutes from './routes/userRoutes.js';
 const app = express();
 app.use(express.json());
 app.use(cors());
-const moduleURL = new URL(import.meta.url);
-const __dirname = path.dirname(moduleURL.pathname);
 app.use(cookieParser());
 
 // Set listening port to 3000.
@@ -35,15 +32,21 @@ app.post('/getAppDetails', sdkController.setFunctionApp, metricsController.getMS
   res.json(res.locals.appDetail);
 });
 
+// Future update: Check if the client already has a token set to avoid unnecessarily duplication.
 // Tertiary route: Get all of the functions associated with a specific function application.
-app.post('/getAllFunctions', sdkController.setResource, tokenController.getToken, sdkController.getAllFunctions, (req, res) => {
+app.post('/getFunctions', sdkController.setResource, tokenController.getToken, sdkController.getAllFunctions, (req, res) => {
   res.json(res.locals.allFunctions);
 });
 
 // Quaternary route: Get metrics associated with a specific function within a function application.
-app.post('/getSpecificFunction', sdkController.setFunction, metricsController.retrieveFunctionLogs, (req, res) => {
+app.post('/getSpecificFunctionMetrics', sdkController.setFunction, metricsController.retrieveFunctionLogs, (req, res) => {
   res.json(res.locals.funcResponse);
-})
+});
+
+// Fifth route: Get a list of all functions associated with the account.
+app.post('/getAllFunctions', tokenController.getToken, sdkController.setSub, sdkController.getFunctionList, (req, res) => {
+  res.json(res.locals.funcList);
+});
 
 // DEBUGGING ONLY: Get a list of function applications.
 app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, (req, res) => {

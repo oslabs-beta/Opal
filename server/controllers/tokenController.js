@@ -1,23 +1,24 @@
+// Decide whether to use fetch or axios consistently across controllers.
 import fetch from 'node-fetch';
+// wont need this version later on.
+//import { DefaultAzureCredential } from '@azure/identity';
+//import { SubscriptionClient } from '@azure/arm-resources-subscriptions';
 import { config } from 'dotenv';
-//import { Request, Response, NextFunction } from 'express';
 config();
 
-// Reset type for controllers.
 const tokenController = {};
 
 // If need to change login functionality, need these to be defined elsewhere.
-// See if better way to handle environmental variables in this context.
 const TENANT_ID = process.env.TENANT_ID;
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
 tokenController.checkToken = async (req, res, next) => {
-  // Consider adding route if storing token in cookie or elsewhere until expiration.
+  // Consider adding route to temporarily store bearer tokens.
 };
 
 tokenController.getToken = async (req, res, next) => {
-  // (Unless user has a token stored), get a new token.
+  // Unless the user already has a token stored (not yet implemented), get a new token.
   const azureManagementURL = 'https://management.azure.com/';
   const grantType = 'client_credentials';
   const url = 'https://login.microsoftonline.com/' + TENANT_ID + '/oauth2/token';
@@ -31,7 +32,8 @@ tokenController.getToken = async (req, res, next) => {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log('Access token retrieved successfully.');
+      // If res.locals.azure has not yet been set, create it.
+      if (!res.locals.azure) res.locals.azure = {};
       res.locals.azure.bearerToken = {
         token: data.access_token,
         expires: data.expires_on,

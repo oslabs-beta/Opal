@@ -1,4 +1,6 @@
-export { Graph } from './graph';
+export { AreaLineChart } from './AreaChart';
+
+export { LineGraph } from './LineGraph';
 
 export { FunctionAppPage } from './FunctionAppPageComponent';
 export { FunctionAppSpecificPage } from './FunctionAppSpecificPageComponent';
@@ -17,3 +19,4 @@ export { DashNav } from './DashNav';
 export { Sidebar } from './Sidebar';
 
 export { Loader } from './LoaderComponent';
+
