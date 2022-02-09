@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import moment from "moment";
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -30,33 +30,33 @@ interface GraphProps {
 
 interface Data {
   Time: string;
-  Total: number;
-  Errors: number;
+  BytesReceived: number;
+  BytesSent: number;
 }
 
-export const LineGraph = ({ data, format, error }: GraphProps) => {
-  const randomColour = colours[Math.floor(Math.random() * colours.length)];
+export const BandWidthBar = ({ data, format, error }: GraphProps) => {
+
   const [time, setTime] = useState<object | null>(null);
 
   const createObj = () => {
     const arr: Array<object> = []!;
 
     for (let i in data.timeseries) {
-      const obj: Data = { Time: "", Total: 0, Errors: 0 };
+      const obj: Data = { Time: "", BytesReceived: 0, BytesSent: 0 };
 
       const mnt = moment(data.timeseries[i].timeStamp);
 
       obj["Time"] = mnt.format("LT");
-      obj["Total"] = data.timeseries[i].total
-        ? Math.floor(data.timeseries[i].total)
+      obj["BytesReceived"] = data.timeseries[i].total
+        ? (data.timeseries[i].total).toFixed()
         : data.timeseries[i].average
-        ? Math.floor(data.timeseries[i].average)
+        ? (data.timeseries[i].average).toFixed()
         : 0;
 
-      obj["Errors"] = error.timeseries[i].total
-        ? Math.floor(error.timeseries[i].total)
+      obj["BytesSent"] = error.timeseries[i].total
+        ? (error.timeseries[i].total).toFixed()
         : error.timeseries[i].average
-        ? Math.floor(error.timeseries[i].average)
+        ? (error.timeseries[i].average).toFixed()
         : 0;
 
       arr.push(obj);
@@ -70,7 +70,7 @@ export const LineGraph = ({ data, format, error }: GraphProps) => {
   return (
     <div className='relative -left-8' style={{ width: "100%", height: 300 }}>
       <ResponsiveContainer>
-        <LineChart
+        <BarChart
           // @ts-ignore
           data={time}
           margin={{
@@ -91,22 +91,20 @@ export const LineGraph = ({ data, format, error }: GraphProps) => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line
+          <Bar
             type="monotone"
-            dataKey="Total"
-            stroke="blue"
+            dataKey="BytesReceived"
+            stroke="cyan"
             fillOpacity={1}
             fill="url(#colorUv)"
-            activeDot={{ r: 6 }}
           />
-          <Line
+          <Bar
             type="monotone"
-            dataKey="Errors"
-            stroke="red"
-            fill="red"
-            activeDot={{ r: 6 }}
+            dataKey="BytesSent"
+            stroke="green"
+            fill="green"
           />
-        </LineChart>
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );

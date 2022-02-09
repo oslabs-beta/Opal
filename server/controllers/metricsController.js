@@ -177,6 +177,7 @@ metricsController.retrieveFunctionLogs = async (req, res, next) => {
   // Keeping out 'Properties,' which adds a lot of extra bulk.
 
   const kustoQuery3 = `AppBrowserTimings | project AppRoleName, Measurements, Name, OperationId, OperationName, ProcessingDurationMs, ReceiveDurationMs, SendDurationMs, TotalDurationMs | where OperationName contains \'${functionName}\'`;
+
   const kustoQuery4 = `AppMetrics | where OperationName contains \'${functionName}\'`;
 
   const kustoQuery5 = 'AppEvents | project TimeGenerated, Name, AppRoleInstance | order by TimeGenerated asc | limit 10'
