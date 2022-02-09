@@ -11,6 +11,8 @@
 
 - [Getting Started](#getting-started)
 
+- [Using the App](#using-the-app)
+
 - [How It Works](#how-it-works)
 
 - [Contributing](#contributing)
@@ -33,20 +35,43 @@ In all cases, the following are required to use Opal:
 An active Azure subscription that has Azure Functions deployed in it.
 
 ## Getting Started
-Clone the repo
-'''
 
-'''
+1. Clone the repo
+
+```
+git clone https://github.com/oslabs-beta/Opal
+cd Opal
+```
+
+2. Install the package dependencies.
+
+```
+npm i
+```
+
+3. Build the app.
+
+```
+npm run build-prod
+```
+
+4. Run the app.
+
+```
+npm run start-prod
+```
+
+## Using the App
+
+Opal relies on the Default Azure Credential part of the Azure Identity SDK to access the functions on your account. As such, there are several different ways to use Opal.
+
+1. Without environment variables.
+
+Opal can authenticate to your Azure Account with the Azure Account Visual Studio Code extension, the Azure Cli, or Azure Power Shell as long as at least one is locally installed and you are already logged into it. This is the way to run Opal that involves the least user setup. It grants access to metrics on the Function App level, but does not grant access to metrics on the Function level. To get access to metrics on the Function level, use environment variables.
+
+[Azure Account Visal Studio Code extension](ms-vscode.azure-account)
 
 
-
-Opal relies on the Default Azure Credential part of the Azure Identity SDK to access the functions on your account. As such, there are different ways to authenticate to your 
-
-
-Azure 
-1. ``npm run start`` to initialize the client and dev server.
-
-## How It Works
 
 ## Contributing
 
