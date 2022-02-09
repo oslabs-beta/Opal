@@ -69,7 +69,13 @@ Opal relies on the Default Azure Credential part of the Azure Identity SDK to ac
 
 Opal can authenticate to your Azure Account with the Azure Cli or Azure Power Shell as long as at least one is locally installed and you are already logged into it. This is the way to run Opal that involves the least user setup. It grants access to metrics on the Function App level, but does not grant access to metrics on the Function level. To get access to metrics on the Function level, use environment variables.
 
-[Azure Account Visal Studio Code extension](ms-vscode.azure-account)
+[Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+
+[Azure PowerShell](https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-7.2.0)
+
+2. Environment variables
+
+In the .env file in the root directory.
 
 
 
