@@ -44,23 +44,35 @@ sdkController.fetchSubscriptionIds = async (req, res, next) => {
 
     // Create an insights management client for collecting workspace IDs (for insights into function-level metrics).
     const opClient = new OperationalInsightsManagementClient(credential, res.locals.subscriptions[sub.subscriptionId].subscriptionId);
-    let workspaces = opClient.workspaces.list();
+    let workspaces = await opClient.workspaces.list();
     res.locals.subscriptions[sub.subscriptionId].workSpaceArray = [];
     for await (const workspace of workspaces) {
+      console.log(workspace);
       res.locals.subscriptions[sub.subscriptionId].workSpaceArray.push(workspace.customerId);
+      console.log('workSpaceArray');
+      console.log(res.locals.subscriptions[sub.subscriptionId].workSpaceArray);
     }
+
     return next();
   }
 };
 
 sdkController.fetchResourceGroups = async (req, res, next) => {
-  const start = new Date();
   for (let sub in res.locals.subscriptions) {
     res.locals.subscriptions[sub].rmc = new ResourceManagementClient(credential, sub);
     const groups = res.locals.subscriptions[sub].rmc.resourceGroups.list({ top: null });
     const groupsByPage = groups.byPage();
     const groupsPerSub = await groupsByPage.next();
     //Because we aren't iterating we need to use the .next() property.
+
+    const opClient = new OperationalInsightsManagementClient(credential, res.locals.subscriptions[sub].subscriptionId);
+    console.log('groupsPerSub is');
+    console.log(groupsPerSub.value);
+    let workspaces = await opClient.workspaces.list();
+    console.log('WORK SPACE');
+    const awaited = await workspaces.next();
+    console.log(awaited);
+
     res.locals.subscriptions[sub].resourceGroups = groupsPerSub.value;
   }
   // console.log('fetching resource groups took');
@@ -158,7 +170,7 @@ sdkController.formatExecutions = (req, res, next) => {
             functionCount.insightId = func.insightId;
           }
           if (res.locals.subscriptions[sub].workSpaceArray[0] !== undefined) {
-            console.log(res.locals.subscriptions[sub]);
+            //console.log(res.locals.subscriptions[sub]);
             functionCount.workSpaceId = res.locals.subscriptions[sub].workSpaceArray[0];
           } else {
           }
@@ -217,7 +229,7 @@ sdkController.getFunctionList = async (req, res, next) => {
       ]
     }
     */
-  console.log('entering getFunctionList');
+  //console.log('entering getFunctionList');
   res.locals.funcList = {
     functions: [],
   };
@@ -254,7 +266,7 @@ sdkController.getFunctionList = async (req, res, next) => {
       // For each function within each requested resource.
       for (let j = 0; j < currentFuncAppData.length; j++) {
         let currentFuncData = currentFuncAppData[j];
-        console.log(currentFuncData);
+        //console.log(currentFuncData);
         let currentSub = funcSub[i];
         let currentGrp = funcResGrp[i];
         let currentRes = funcRes[i];
@@ -272,8 +284,8 @@ sdkController.getFunctionList = async (req, res, next) => {
         res.locals.funcList.functions.push(currentFunc);
       }
     }
-    console.log('complete');
-    console.log(res.locals.funcList);
+    //console.log('complete');
+    //console.log(res.locals.funcList);
     return next();
   });
   //.then(() => {
@@ -395,13 +407,15 @@ sdkController.setFunctionApp = (req, res, next) => {
       break;
   }
 
-  console.log('received timespan of');
-  console.log(res.locals.timespan);
+  //console.log('received timespan of');
+  //console.log(res.locals.timespan);
 
   return next();
 };
 
 sdkController.setFunction = (req, res, next) => {
+  console.log('entering setFunction');
+  console.log(req.body);
   const { workSpaceId, functionName } = req.body;
   res.locals.azure = {
     specificFunction: {

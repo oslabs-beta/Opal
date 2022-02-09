@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
@@ -13,6 +14,17 @@ import { getFuncAppData } from "../util/getFuncAppData";
 import { getFuncAppFunctions } from "../util/getFuncAppFunctions";
 import { Slider, Button, Container } from "@mui/material";
 import { lodash } from "lodash";
+=======
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { AreaLineChart, LineGraph, Loader, ExecutionScatter, DelayGraph, BandWidthBar, FuncListComponent } from '.';
+import { getFuncAppData } from '../util/getFuncAppData';
+import { getFuncAppFunctions } from '../util/getFuncAppFunctions';
+import { costEstimator } from '../util/costEstimator'
+import { XCircleIcon, CheckCircleIcon } from '@heroicons/react/solid';
+import { motion } from 'framer-motion';
+import { Slider, Button, Container } from '@mui/material';
+>>>>>>> dev
 
 interface SpecificFuncData {
   name: string;
@@ -76,8 +88,22 @@ export const FunctionAppSpecificPage = () => {
       });
   }, [location, resourceGroupName, submitClick]);
 
-  function handleTimeSpan(event, value) {
-    console.log("User adjusted the timespan slider to " + value);
+  function convertTimeSpan(num) {
+    for (let timeFrame of timeFrameMarks) {
+      if (timeFrame.value === num) return timeFrame.label;
+    };
+    return null;
+  }
+
+  function convertGranularity (num) {
+    for (let gran of granularityMarks) {
+      if (gran.value === num) return gran.label;
+    }
+    return null;
+  }
+
+  function handleTimeSpan (event, value) {
+    console.log('User adjusted the timespan slider to ' + value);
     setTimeSpan(value);
   }
 
@@ -98,8 +124,11 @@ export const FunctionAppSpecificPage = () => {
       {loading ? (
         <Loader theme="azure" />
       ) : data ? (
-        <div className="w-full flex justify-center mb-16">
-          <div className="w-11/12">
+        <div className='w-full flex justify-center mb-16'>
+          <div className='w-11/12'>
+            Estimated Cost of {data!.name} for Selected Period: <br />
+            {costEstimator(data?.metrics, convertGranularity(granularity), convertTimeSpan(timeSpan))}
+            <br /><br />
             <h1>Select Timespan</h1>
             <div>
               <Slider
