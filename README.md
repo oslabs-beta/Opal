@@ -130,7 +130,7 @@ Opal was built with the following frameworks / libraries:
 
 ## Contributing
 
-We welcome contributions and issue submissions for any problems you encounter. To contribute, form the repo and submit pull requests.
+We welcome contributions and issue submissions for any problems you encounter. To contribute, fork the repo and submit pull requests.
 
 Ideas for contributions: Adding AWS Lambda monitoring, to make Opal a more platform neutral serverless monitoring tool.
 
