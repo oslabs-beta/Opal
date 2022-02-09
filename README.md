@@ -67,7 +67,7 @@ npm run start-prod
 
 ## Connecting to Azure
 
-Opal relies on the Default Azure Credential part of the Azure Identity SDK for read access (no write access) to the functions on your account. As such, there are two different ways to use Opal.
+Opal relies on the Default Azure Credential part of the Azure Identity SDK for read access (no write methods) to the functions on your account. As such, there are two different ways to use Opal.
 
 1. Without environment variables.
 
