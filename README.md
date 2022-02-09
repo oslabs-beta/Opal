@@ -1,5 +1,4 @@
 # Opal
-
 An Azure Functions Monitoring Tool
 
 <p style="text-align:center"><img src="assets/images/opalheader.png"></p>
@@ -19,6 +18,8 @@ An Azure Functions Monitoring Tool
 - [Contributing](#contributing)
 
 - [Authors](#authors)
+
+= [License](#license)
 
 ## About Opal
 
@@ -119,7 +120,10 @@ Opal was built with the following frameworks / libraries:
 We welcome contributions and issue submissions for any problems you encounter. To contribute, form the repo and submit pull requests.
 
 ## Authors
-Alma Eyre<br>
-Marckjhêl Palmer<br>
-Hussein Hamade<br>
-Bill O'Connell<br>
+Alma Eyre [Github](https://github.com/aselunar) | [LinkedIn](https://www.linkedin.com/in/alma-eyre/) <br>
+Marckjhêl Palmer [Github](https://github.com/Marcelckp)<br>
+Hussein Hamade [Github](https://github.com/hhamade98) | [LinkedIn](https://www.linkedin.com/in/hussein-hamade-/) <br>
+Bill O'Connell [Github](https://github.com/wdoconnell) | [LinkedIn](https://www.linkedin.com/in/bill-o-connell-6b950177/) <br>
+
+## License
+Distributed under the MIT license.
