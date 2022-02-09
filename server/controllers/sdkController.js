@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import { DefaultAzureCredential } from '@azure/identity';
+import { AzureCliCredential, DefaultAzureCredential } from '@azure/identity';
 import { ResourceManagementClient } from '@azure/arm-resources';
 import { SubscriptionClient } from '@azure/arm-resources-subscriptions';
 import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
@@ -9,6 +9,7 @@ config();
 
 // Create a new credential.
 const credential = new DefaultAzureCredential();
+const subClient = new SubscriptionClient(credential);
 
 const sdkController = {};
 
@@ -22,8 +23,8 @@ sdkController.fetchSubscriptionIds = async (req, res, next) => {
   // look up iterator functionality in relation to promise use.
   // subscriptions are accessed through an iterator.
   // may need to iterate through pages of subscriptions.
-  const subClient = new SubscriptionClient(credential);
-  const subscriptions = subClient.subscriptions.list();
+  // const subClient = new SubscriptionClient(credential);
+  const subscriptions = await subClient.subscriptions.list({top: null});
   // const nextSub = await subscriptions.next();
   // nextSub.value will return an array of subscriptions.
   // for our purposes, all we need is the subscriptionId.
@@ -33,6 +34,7 @@ sdkController.fetchSubscriptionIds = async (req, res, next) => {
   //This is using .list().byPage() await .next().value because we are using a forEach loop.
   //If we iterate with a for loop, we can use await .list() and for await ().
   for await (const sub of subscriptions) {
+    await console.log("sub in fetchSubscriptionIds", sub);
     res.locals.subscriptions[sub.subscriptionId] = {
       tenantId: sub.tenantId,
       displayName: sub.displayName,
@@ -53,12 +55,15 @@ sdkController.fetchSubscriptionIds = async (req, res, next) => {
       console.log(res.locals.subscriptions[sub.subscriptionId].workSpaceArray);
     }
 
-    return next();
+    
   }
+  return next();
 };
 
 sdkController.fetchResourceGroups = async (req, res, next) => {
   for (let sub in res.locals.subscriptions) {
+    console.log("sub", sub);
+    console.log("res.locals.subscriptions", res.locals.subscriptions);
     res.locals.subscriptions[sub].rmc = new ResourceManagementClient(credential, sub);
     const groups = res.locals.subscriptions[sub].rmc.resourceGroups.list({ top: null });
     const groupsByPage = groups.byPage();
