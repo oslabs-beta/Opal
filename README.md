@@ -20,9 +20,17 @@
 Opal is a tool for monitoring Azure Functions. Azure Functions is a leading "serverless" computing solution that allows developers to deploy their code without having to provision and maintain the servers they run on. Opal uses the Azure SDK and Azure REST API to query metrics about your Azure Functions, and displays them in graphs. This gives developers visibility into their Azure Functions in a way that is more pre-configured and cleaner than in the Azure Portal.
 
 ## Getting Started
-Opal relies on the Default Azure Credential part of Azure Identity to access the functions on your account. In all cases, the following are required to use Opal:
+In all cases, the following are required to use Opal:
+
 [NodeJS](https://nodejs.org/en/)
+
 [NPM](https://www.npmjs.com/)
+
+An active Azure subscription that has Azure Functions deployed in it.
+
+
+Opal relies on the Default Azure Credential part of the Azure Identity SDK to access the functions on your account. As such, there are different ways to authenticate to your 
+
 
 Azure 
 1. ``npm run start`` to initialize the client and dev server.
