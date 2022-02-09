@@ -4,7 +4,7 @@ import { ResourceManagementClient } from '@azure/arm-resources';
 import { SubscriptionClient } from '@azure/arm-resources-subscriptions';
 import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
 import fetch from 'node-fetch';
-import axios from 'axios'
+import axios from 'axios';
 config();
 
 // Create a new credential.
@@ -217,7 +217,7 @@ sdkController.getFunctionList = async (req, res, next) => {
       ]
     }
     */
-    console.log('entering getFunctionList');
+  console.log('entering getFunctionList');
   res.locals.funcList = {
     functions: [],
   };
@@ -247,45 +247,45 @@ sdkController.getFunctionList = async (req, res, next) => {
   }
   Promise.all(funcPromise).then((resultArray) => {
     // For each requested resource in the promise array.
-      for (let i = 0; i < resultArray.length; i++) {
-        //console.log('here is one result from the promise aray');
-        //console.log(resultArray[i].data.value);
-        let currentFuncAppData = resultArray[i].data.value;
-        // For each function within each requested resource.
-        for (let j = 0; j < currentFuncAppData.length; j++) {
-          let currentFuncData = currentFuncAppData[j];
-          console.log(currentFuncData);
-          let currentSub = funcSub[i];
-          let currentGrp = funcResGrp[i];
-          let currentRes = funcRes[i];
-          const currentFunc = {
-            shortname: currentFuncData.properties.name,
-            id: currentFuncData.id,
-            fullname: currentFuncData.name,
-            type: currentFuncData.type,
-            location: currentFuncData.location,
-            properties: currentFuncData.properties,
-            subscription: currentSub.subName,
-            resourceGroup: currentGrp.resourceGroupName,
-            resource: currentRes,
-          };
-          res.locals.funcList.functions.push(currentFunc);
-        }
+    for (let i = 0; i < resultArray.length; i++) {
+      //console.log('here is one result from the promise aray');
+      //console.log(resultArray[i].data.value);
+      let currentFuncAppData = resultArray[i].data.value;
+      // For each function within each requested resource.
+      for (let j = 0; j < currentFuncAppData.length; j++) {
+        let currentFuncData = currentFuncAppData[j];
+        console.log(currentFuncData);
+        let currentSub = funcSub[i];
+        let currentGrp = funcResGrp[i];
+        let currentRes = funcRes[i];
+        const currentFunc = {
+          shortname: currentFuncData.properties.name,
+          id: currentFuncData.id,
+          fullname: currentFuncData.name,
+          type: currentFuncData.type,
+          location: currentFuncData.location,
+          properties: currentFuncData.properties,
+          subscription: currentSub.subName,
+          resourceGroup: currentGrp.resourceGroupName,
+          resource: currentRes,
+        };
+        res.locals.funcList.functions.push(currentFunc);
       }
-      console.log('complete');
-      console.log(res.locals.funcList);
-      return next();
-    });
-    //.then(() => {
-    //  console.log('successfully resolved');
-    //  console.log(res.locals.funcList);
-    //  return next();
-    //})
-    //.catch((err) => {
-      // Fix error handling here.
-    //  console.log('did not successfully resolve');
-    //  return next(`hit err of ${err}`);
-    //});
+    }
+    console.log('complete');
+    console.log(res.locals.funcList);
+    return next();
+  });
+  //.then(() => {
+  //  console.log('successfully resolved');
+  //  console.log(res.locals.funcList);
+  //  return next();
+  //})
+  //.catch((err) => {
+  // Fix error handling here.
+  //  console.log('did not successfully resolve');
+  //  return next(`hit err of ${err}`);
+  //});
 };
 
 sdkController.setSub = (req, res, next) => {
@@ -331,7 +331,7 @@ sdkController.formatAppDetail = (req, res, next) => {
 
 sdkController.setFunctionApp = (req, res, next) => {
   // Both single-function and multi-function routes should be relying on same data in res.locals.
-  const { name, id, location, insightId, resourceGroupId, resourceGroupName, workSpaceId } = req.body;
+  const { name, id, location, insightId, resourceGroupId, resourceGroupName, workSpaceId, granularity, timespan } = req.body;
   res.locals.functionApps = [];
   res.locals.functionApps.push({
     name: name,
@@ -341,8 +341,63 @@ sdkController.setFunctionApp = (req, res, next) => {
     location: location,
     insightId: insightId,
     workSpaceId: workSpaceId,
+    timespan: timespan,
+    granularity: granularity,
   });
   res.locals.executionOnly = false;
+
+  // If timeframe is set, translate timeframe to data usable by sdkController.
+  switch (timespan) {
+    case 0:
+      res.locals.timespan = 'PT1H';
+      break;
+    case 1:
+      res.locals.timespan = 'PT24H';
+      break;
+    case 2:
+      res.locals.timespan = 'PT48H';
+      break;
+    case 3:
+      res.locals.timespan = 'P7D';
+      break;
+    case 4:
+      res.locals.timespan = 'P1M';
+      break;
+    default:
+      res.locals.timespan = 'PT24H';
+      break;
+  }
+
+  switch (granularity) {
+    case 0:
+      res.locals.granularity = 'PT5M';
+      break;
+    case 1:
+      res.locals.granularity = 'PT15M';
+      break;
+    case 2:
+      res.locals.granularity = 'PT30M';
+      break;
+    case 3:
+      res.locals.granularity = 'PT1H';
+      break;
+    case 4:
+      res.locals.granularity = 'PT6H';
+      break;
+    case 5:
+      res.locals.granularity = 'PT12H';
+      break;
+    case 6:
+      res.locals.granularity = 'P1D';
+      break;
+    default:
+      res.locals.granularity = 'PT1H';
+      break;
+  }
+
+  console.log('received timespan of');
+  console.log(res.locals.timespan);
+
   return next();
 };
 

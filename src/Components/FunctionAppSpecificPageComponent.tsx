@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { AreaLineChart, LineGraph, Loader, ExecutionScatter, DelayGraph, BandWidthBar, FuncListComponent } from '.';
 import { getFuncAppData } from '../util/getFuncAppData';
 import { getFuncAppFunctions } from '../util/getFuncAppFunctions';
+import { Slider, Button, Container } from '@mui/material';
 
 interface SpecificFuncData {
   name: string;
@@ -22,13 +23,32 @@ export const FunctionAppSpecificPage = () => {
 
   const [data, setData] = useState<SpecificFuncData | null>(null);
   const [functions, setFunctions] = useState<[] | null>(null);
+  const [timeSpan, setTimeSpan] = useState<number>(1);
+  const [granularity, setGranularity] = useState<number>(3);
+  let [submitClick, setSubmitClick] = useState<boolean>(false);
 
   const resourceGroupId = location.state.resourceGroupId.split('/');
   const resourceGroupName = resourceGroupId[resourceGroupId.length - 1];
+  const timeFrameMarks = [
+    { value: 0, label: '1 Hour'},
+    { value: 1, label: '24 Hours' },
+    { value: 2, label: '48 Hours' },
+    { value: 3, label: '1 Week'},
+    { value: 4, label: '1 Month'}
+  ];
+  const granularityMarks = [
+    { value: 0, label: '5 Minutes'},
+    { value: 1, label: '15 Minutes'},
+    { value: 2, label: '30 Minutes'},
+    { value: 3, label: '1 Hour'},
+    { value: 4, label: '6 Hours'},
+    { value: 5, label: '12 Hours'},
+    { value: 6, label: '1 Day'}
+  ]
 
   useEffect(() => {
     setLoading(true);
-    Promise.resolve(getFuncAppData(location.state))
+    Promise.resolve(getFuncAppData(location.state, timeSpan, granularity))
       .then((res: SpecificFuncData) => {
         // setLoading(false);
         setData(res);
@@ -45,7 +65,22 @@ export const FunctionAppSpecificPage = () => {
           setFunctions(res.value);
         });
       });
-  }, [location, resourceGroupName]);
+  }, [location, resourceGroupName, submitClick]);
+
+  function handleTimeSpan (event, value) {
+    console.log('User adjusted the timespan slider to ' + value);
+    setTimeSpan(value);
+  }
+
+  function handleGranularity (event, value) {
+    console.log('User adjusted the granularity to ' + value);
+    setGranularity(value);
+  }
+
+  function handleSend () {
+    (submitClick === false) ? setSubmitClick(true) : setSubmitClick(false);
+    console.log(submitClick);
+  }
 
   console.log(functions, data);
 
@@ -56,6 +91,14 @@ export const FunctionAppSpecificPage = () => {
       ) : data ? (
         <div className='w-full flex justify-center mb-16'>
           <div className='w-11/12'>
+            <h1>Select Timespan</h1>
+            <Slider sx={{ width: 1/3}} aria-label='TimeSpan' value={timeSpan} valueLabelDisplay='auto' step={null} marks={timeFrameMarks} max={4} onChangeCommitted={handleTimeSpan}></Slider>
+            <h1>Select Granularity</h1>
+            <Slider sx={{ width: 1/3}} aria-label='Granularity' value={granularity} valueLabelDisplay='auto' step={null} marks={granularityMarks} max={6} onChangeCommitted={handleGranularity}></Slider><br />
+            <Button onClick={() => {
+              handleSend();
+              }}>Update Preferences</Button>
+            <br /><br />
             <h1 className='text-2xl'>{data!.name}</h1>
             <br />
             <br />
