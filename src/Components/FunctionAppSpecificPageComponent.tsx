@@ -38,6 +38,7 @@ export const FunctionAppSpecificPage = () => {
 
   const resourceGroupId = location.state.resourceGroupId.split("/");
   const resourceGroupName = resourceGroupId[resourceGroupId.length - 1];
+  
   const timeFrameMarks = [
     { value: 0, label: "1 Hour" },
     { value: 1, label: "24 Hours" },
@@ -110,12 +111,14 @@ export const FunctionAppSpecificPage = () => {
         <div className="w-full flex justify-center mb-16">
           <div className="w-11/12">
             <div className="w-full flex flex-col justify-center items-center">
-              Estimated Cost of {data!.name} for Selected Period: <br />
-              {costEstimator(
-                data?.metrics,
-                convertGranularity(granularity),
-                convertTimeSpan(timeSpan)
-              )}
+              <div className='text-center'>
+                Estimated Cost of {data!.name} for Selected Period: <br />
+                {costEstimator(
+                  data?.metrics,
+                  convertGranularity(granularity),
+                  convertTimeSpan(timeSpan)
+                )}
+              </div>
               <br />
               <br />
               <h1>Select Timespan</h1>
@@ -228,10 +231,8 @@ export const FunctionAppSpecificPage = () => {
               </div>
               <div className="h-full flex-grow border-l-2 border-t-2 border-[#363740] p-5">
                 {functions &&
-                  functions.map((func: any, idx:number) => {
-                    return (
-                      <FuncListComponent key={idx} data={func} />
-                    );
+                  functions.map((func: any, idx: number) => {
+                    return <FuncListComponent key={idx} data={func} />;
                   })}
               </div>
             </div>
