@@ -123,7 +123,7 @@ Ideas for contributions: Adding AWS Lambda monitoring, to make Opal a more platf
 
 ## Authors
 Alma Eyre [Github](https://github.com/aselunar) | [LinkedIn](https://www.linkedin.com/in/alma-eyre/) <br>
-Marckjhêl Palmer [Github](https://github.com/Marcelckp)<br>
+Marcel Palmer [Github](https://github.com/Marcelckp)<br>
 Hussein Hamade [Github](https://github.com/hhamade98) | [LinkedIn](https://www.linkedin.com/in/hussein-hamade-/) <br>
 Bill O'Connell [Github](https://github.com/wdoconnell) | [LinkedIn](https://www.linkedin.com/in/bill-o-connell-6b950177/) <br>
 
