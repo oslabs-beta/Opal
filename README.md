@@ -1,7 +1,7 @@
+<p style="text-align:center"><img src="assets/images/opalheader.png"></p>
+
 # Opal
 An Azure Functions Monitoring Tool
-
-<p style="text-align:center"><img src="assets/images/opalheader.png"></p>
 
 # Table of Contents
 
@@ -19,7 +19,7 @@ An Azure Functions Monitoring Tool
 
 - [Authors](#authors)
 
-= [License](#license)
+- [License](#license)
 
 ## About Opal
 
@@ -118,6 +118,8 @@ Opal was built with the following frameworks / libraries:
 ## Contributing
 
 We welcome contributions and issue submissions for any problems you encounter. To contribute, form the repo and submit pull requests.
+
+Ideas for contributions: Adding AWS Lambda monitoring, to make Opal a more platform neutral serverless monitoring tool.
 
 ## Authors
 Alma Eyre [Github](https://github.com/aselunar) | [LinkedIn](https://www.linkedin.com/in/alma-eyre/) <br>
