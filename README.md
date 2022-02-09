@@ -84,7 +84,7 @@ Storing environment variables will allow you to access metrics on the Function A
 In Azure CLI, use 'az login' to login and then run the following command:
 
 ```
-az ad sp create-for-rbac && az account show --query id -o tsv
+az ad sp create-for-rbac --role contributor && az account show --query id -o tsv
 ```
 
 If you do not have Azure CLI installed locally, [access it through the Azure Portal](https://docs.microsoft.com/en-us/azure/cloud-shell/overview) and then run the above command.
