@@ -11,7 +11,7 @@ An Azure Functions Monitoring Tool
 
 - [Getting Started](#getting-started)
 
-- [Connecting to Azure](#using-the-app)
+- [Connecting to Azure](#connecting-to-azure)
 
 - [Built With](#built-with)
 
@@ -34,7 +34,7 @@ In all cases, the following are required to use Opal:
 
 [NPM](https://www.npmjs.com/)
 
-An active Azure subscription that has Azure Functions deployed in it.
+An active [Azure subscription](https://azure.microsoft.com/en-us/free/) that has [Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal) deployed in it.
 
 ## Getting Started
 
@@ -57,7 +57,7 @@ npm i
 npm run build-prod
 ```
 
-4. Check the below "Using the App" section to confirm how you wish to authenticate to your Azure account.
+4. Check the below "Connecting to Azure" section to confirm how you wish to authenticate to your Azure account.
 
 5. Run the app.
 
@@ -67,11 +67,11 @@ npm run start-prod
 
 ## Connecting to Azure
 
-Opal relies on the Default Azure Credential part of the Azure Identity SDK for read access (no write access) to the functions on your account. As such, there are two different ways to use Opal.
+Opal relies on the Default Azure Credential part of the Azure Identity SDK for read access (no write methods) to the functions on your account. As such, there are two different ways to connect to your Azure account.
 
 1. Without environment variables.
 
-Opal can authenticate to your Azure Account with the Azure Cli or Azure Power Shell as long as at least one is locally installed and you are already logged into it. This is the way to run Opal that involves the least user setup. It grants access to metrics on the Function App level, but does not grant access to metrics on the Function level. To get access to metrics on the Function level, use environment variables.
+Opal can authenticate to your Azure account with the Azure CLI or Azure Power Shell as long as at least one is locally installed and you are already logged into it. This is the way to run Opal that involves the least user setup. It grants access to metrics on the Function App level but does not grant access to metrics on the function level. To get access to metrics on the function level, use environment variables.
 
 [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 
@@ -79,9 +79,9 @@ Opal can authenticate to your Azure Account with the Azure Cli or Azure Power Sh
 
 2. With environment variables
 
-Storing environment variables will allow you to access metrics on the Function App and the Function level.
+Storing environment variables will allow you to access metrics on the Function App and the function level.
 
-In Azure CLI run the following command:
+In Azure CLI, use 'az login' to login and then run the following command:
 
 ```
 az ad sp create-for-rbac && az account show --query id -o tsv
@@ -89,10 +89,23 @@ az ad sp create-for-rbac && az account show --query id -o tsv
 
 If you do not have Azure CLI installed locally, [access it through the Azure Portal](https://docs.microsoft.com/en-us/azure/cloud-shell/overview) and then run the above command.
 
-In the .env file in the root directory, store the output of the above command in the following format:
+Create a .env file in the root directory, and store the output of the above command in the following format:
+
+```
+CLIENT_ID=<appId>
+CLIENT_SECRET=<password>
+TENANT_ID=<tenant>
+SUBSCRIPTION_ID='<the last value outputted (the value outside the object)>'
+```
+
+In other words,
+
 Set CLIENT_ID equal to the outputted appId.
-Set CLIENT_SERCRET equal to the outputted password.
+
+Set CLIENT_SECRET equal to the outputted password.
+
 Set TENANT_ID equal to the outputted tenant.
+
 Set SUBSCRIPTION_ID equal to the last value outputted (the value outputted outside the object), and wrap it in quotes.
 
 ## Built With
@@ -112,12 +125,12 @@ Opal was built with the following frameworks / libraries:
 
 * Express
 
-* Postgresql
+* PostgreSQL
 
 
 ## Contributing
 
-We welcome contributions and issue submissions for any problems you encounter. To contribute, form the repo and submit pull requests.
+We welcome contributions and issue submissions for any problems you encounter. To contribute, fork the repo and submit pull requests.
 
 Ideas for contributions: Adding AWS Lambda monitoring, to make Opal a more platform neutral serverless monitoring tool.
 
