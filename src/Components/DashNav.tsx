@@ -1,10 +1,10 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../redux/hooks";
 
 export const DashNav = () => {
   const user = useAppSelector((state) => state.user.user);
-  // const Tab = useAppSelector((state) => state.dash.tab);
+  const navigate = useNavigate();
 
   const location = useLocation();
   const route = location.pathname.split('/');
@@ -18,7 +18,7 @@ export const DashNav = () => {
             {user.firstname[0].toUpperCase() + user.firstname.slice(1)}{" "}
             {user.lastname[0].toUpperCase() + user.lastname.slice(1)}
           </h1>
-          <div className="ml-4">
+          <div className="ml-4 cursor-pointer" onClick={() => navigate('/azure/account')}>
             <img
               className="w-12 h-11 rounded-full"
               src="../../assets/images/pfp.png"
