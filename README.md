@@ -1,6 +1,7 @@
 # Opal
 
-# An Azure Functions Monitoring Tool
+An Azure Functions Monitoring Tool
+
 <p style="text-align:center"><img src="assets/images/opalheader.png"></p>
 
 # Table of Contents
@@ -92,6 +93,26 @@ Set CLIENT_ID equal to the outputted appId.
 Set CLIENT_SERCRET equal to the outputted password.
 Set TENANT_ID equal to the outputted tenant.
 Set SUBSCRIPTION_ID equal to the last value outputted (the value outputted outside the object), and wrap it in quotes.
+
+## Built With
+Opal was built with the following frameworks / libraries:
+
+* Azure SDK
+
+* Azure REST API
+
+* React
+
+* React Router
+
+* Redux
+
+* TypeScript
+
+* Express
+
+* Postgresql
+
 
 ## Contributing
 
