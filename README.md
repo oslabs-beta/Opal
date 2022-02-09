@@ -11,7 +11,7 @@ An Azure Functions Monitoring Tool
 
 - [Getting Started](#getting-started)
 
-- [Connecting to Azure](#using-the-app)
+- [Connecting to Azure](#connecting-to-azure)
 
 - [Built With](#built-with)
 
@@ -116,7 +116,7 @@ Opal was built with the following frameworks / libraries:
 
 * Express
 
-* Postgresql
+* PostgreSQL
 
 
 ## Contributing
