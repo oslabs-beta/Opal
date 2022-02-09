@@ -55,7 +55,9 @@ npm i
 npm run build-prod
 ```
 
-4. Run the app.
+4. Check the below "Using the App" section to confirm how you wish to authenticate to your Azure account.
+
+5. Run the app.
 
 ```
 npm run start-prod
@@ -73,20 +75,23 @@ Opal can authenticate to your Azure Account with the Azure Cli or Azure Power Sh
 
 [Azure PowerShell](https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-7.2.0)
 
-2. Environment variables
+2. With environment variables
+
+Storing environment variables will allow you to access metrics on the Function App and the Function level.
 
 In Azure CLI run the following command:
 
 ```
-az ad sp create-for-rbac
+az ad sp create-for-rbac && az account show --query id -o tsv
 ```
 
-If you do not have Azure CLI installed locally, [access it through the Azure Portal ](https://docs.microsoft.com/en-us/azure/cloud-shell/overview) and then run the above command.
+If you do not have Azure CLI installed locally, [access it through the Azure Portal](https://docs.microsoft.com/en-us/azure/cloud-shell/overview) and then run the above command.
 
 In the .env file in the root directory, store the output of the above command in the following format:
-
-
-
+Set CLIENT_ID equal to the outputted appId.
+Set CLIENT_SERCRET equal to the outputted password.
+Set TENANT_ID equal to the outputted tenant.
+Set SUBSCRIPTION_ID equal to the last value outputted (the value outputted outside the object), and wrap it in quotes.
 
 ## Contributing
 
