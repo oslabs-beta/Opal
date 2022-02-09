@@ -13,7 +13,7 @@
 
 - [Using the App](#using-the-app)
 
-- [How It Works](#how-it-works)
+- [Built With](#built-with)
 
 - [Contributing](#contributing)
 
@@ -95,7 +95,7 @@ Set SUBSCRIPTION_ID equal to the last value outputted (the value outputted outsi
 
 ## Contributing
 
-We'd love for you to test Opal out and submit any issues you encounter. Also feel free to fork to your own repo and submit pull requests!
+We welcome contributions and issue submissions for any problems you encounter. To contribute, form the repo and submit pull requests.
 
 ## Authors
 Alma Eyre<br>
