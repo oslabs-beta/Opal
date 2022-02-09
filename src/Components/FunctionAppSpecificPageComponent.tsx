@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
-  AreaLineChart,
   LineGraph,
   Loader,
-  ExecutionScatter,
   DelayGraph,
   BandWidthBar,
   FuncListComponent,
@@ -12,9 +10,9 @@ import {
 import { getFuncAppData } from "../util/getFuncAppData";
 import { getFuncAppFunctions } from "../util/getFuncAppFunctions";
 import { Slider, Button, Container } from "@mui/material";
-import { lodash } from "lodash";
+// import { lodash } from "lodash";
 
-import { costEstimator } from '../util/costEstimator'
+import { costEstimator } from "../util/costEstimator";
 
 interface SpecificFuncData {
   name: string;
@@ -81,48 +79,50 @@ export const FunctionAppSpecificPage = () => {
   function convertTimeSpan(num) {
     for (let timeFrame of timeFrameMarks) {
       if (timeFrame.value === num) return timeFrame.label;
-    };
+    }
     return null;
   }
 
-  function convertGranularity (num) {
+  function convertGranularity(num) {
     for (let gran of granularityMarks) {
       if (gran.value === num) return gran.label;
     }
     return null;
   }
 
-  function handleTimeSpan (event, value) {
-    console.log('User adjusted the timespan slider to ' + value);
+  function handleTimeSpan(event, value) {
     setTimeSpan(value);
   }
 
   function handleGranularity(event, value) {
-    console.log("User adjusted the granularity to " + value);
     setGranularity(value);
   }
 
   function handleSend() {
     submitClick === false ? setSubmitClick(true) : setSubmitClick(false);
-    console.log(submitClick);
   }
-
-  console.log(functions, data);
 
   return (
     <>
       {loading ? (
         <Loader theme="azure" />
       ) : data ? (
-        <div className='w-full flex justify-center mb-16'>
-          <div className='w-11/12'>
-            Estimated Cost of {data!.name} for Selected Period: <br />
-            {costEstimator(data?.metrics, convertGranularity(granularity), convertTimeSpan(timeSpan))}
-            <br /><br />
-            <h1>Select Timespan</h1>
-            <div>
+        <div className="w-full flex justify-center mb-16">
+          <div className="w-11/12">
+            <div className="w-full flex flex-col justify-center items-center">
+              Estimated Cost of {data!.name} for Selected Period: <br />
+              {costEstimator(
+                data?.metrics,
+                convertGranularity(granularity),
+                convertTimeSpan(timeSpan)
+              )}
+              <br />
+              <br />
+              <h1>Select Timespan</h1>
               <Slider
-                sx={{ width: 1 / 3 }}
+                key={1}
+                className="w-full"
+                sx={{ width: 2 / 3 }}
                 aria-label="TimeSpan"
                 value={timeSpan}
                 valueLabelDisplay="auto"
@@ -133,7 +133,9 @@ export const FunctionAppSpecificPage = () => {
               ></Slider>
               <h1>Select Granularity</h1>
               <Slider
-                sx={{ width: 1 / 3 }}
+                key={2}
+                className="w-full"
+                sx={{ width: 2 / 3 }}
                 aria-label="Granularity"
                 value={granularity}
                 valueLabelDisplay="auto"
@@ -143,13 +145,7 @@ export const FunctionAppSpecificPage = () => {
                 onChangeCommitted={handleGranularity}
               ></Slider>
               <br />
-              <Button
-                onClick={() => {
-                  handleSend();
-                }}
-              >
-                Update Preferences
-              </Button>
+              <Button onClick={handleSend}>Update Preferences</Button>
             </div>
             <br />
             <br />
@@ -232,9 +228,9 @@ export const FunctionAppSpecificPage = () => {
               </div>
               <div className="h-full flex-grow border-l-2 border-t-2 border-[#363740] p-5">
                 {functions &&
-                  functions.map((func: any) => {
+                  functions.map((func: any, idx:number) => {
                     return (
-                      <FuncListComponent key={func.shortname} data={func} />
+                      <FuncListComponent key={idx} data={func} />
                     );
                   })}
               </div>
