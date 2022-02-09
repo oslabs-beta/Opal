@@ -81,7 +81,7 @@ Opal can authenticate to your Azure Account with the Azure Cli or Azure Power Sh
 
 Storing environment variables will allow you to access metrics on the Function App and the Function level.
 
-In Azure CLI run the following command:
+In Azure CLI, use 'az login' to login and then run the following command:
 
 ```
 az ad sp create-for-rbac && az account show --query id -o tsv
@@ -93,7 +93,7 @@ In the .env file in the root directory, store the output of the above command in
 
 Set CLIENT_ID equal to the outputted appId.
 
-Set CLIENT_SERCRET equal to the outputted password.
+Set CLIENT_SECRET equal to the outputted password.
 
 Set TENANT_ID equal to the outputted tenant.
 
