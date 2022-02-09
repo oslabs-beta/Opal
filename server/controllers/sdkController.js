@@ -415,6 +415,7 @@ sdkController.setFunctionApp = (req, res, next) => {
 
 sdkController.setFunction = (req, res, next) => {
   console.log('entering setFunction');
+  console.log(req.body);
   const { workSpaceId, functionName } = req.body;
   res.locals.azure = {
     specificFunction: {
