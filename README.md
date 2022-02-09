@@ -11,7 +11,7 @@ An Azure Functions Monitoring Tool
 
 - [Getting Started](#getting-started)
 
-- [Using the App](#using-the-app)
+- [Connecting to Azure](#using-the-app)
 
 - [Built With](#built-with)
 
@@ -65,9 +65,9 @@ npm run build-prod
 npm run start-prod
 ```
 
-## Using the App
+## Connecting to Azure
 
-Opal relies on the Default Azure Credential part of the Azure Identity SDK for read access (no write access) to the functions on your account. As such, there are several different ways to use Opal.
+Opal relies on the Default Azure Credential part of the Azure Identity SDK for read access (no write access) to the functions on your account. As such, there are two different ways to use Opal.
 
 1. Without environment variables.
 
