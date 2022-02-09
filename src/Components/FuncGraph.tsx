@@ -34,34 +34,37 @@ interface Data {
   Errors: number;
 }
 
-export const LineGraph = ({ data, format, error }: GraphProps) => {
+export const FuncGraph = ({ data, format, error }: GraphProps) => {
   const randomColour = colours[Math.floor(Math.random() * colours.length)];
   const [time, setTime] = useState<object | null>(null);
-
+  console.log('entering funcGraph')
+  console.log('here is the data');
+  console.log(data);
   const createObj = () => {
+    console.log('running createObj');
     const arr: Array<object> = []!;
-
-    for (let i in data.timeseries) {
+    console.log('about to enter loop')
+    for (let i in data) {
+      console.log('looping');
       const obj: Data = { Time: "", Total: 0, Errors: 0 };
 
-      const mnt = moment(data.timeseries[i].timeStamp);
+      const mnt = moment(data[i].timeStamp);
 
       obj["Time"] = mnt.format("LT");
-      obj["Total"] = data.timeseries[i].total
-        ? Math.floor(data.timeseries[i].total)
-        : data.timeseries[i].average
-        ? Math.floor(data.timeseries[i].average)
+      obj["Total"] = data[i].total
+        ? Math.floor(data[i].total)
+        : data[i].average
+        ? Math.floor(data[i].average)
         : 0;
 
-      obj["Errors"] = error.timeseries[i].total
-        ? Math.floor(error.timeseries[i].total)
-        : error.timeseries[i].average
-        ? Math.floor(error.timeseries[i].average)
+      obj["Errors"] = error[i].total
+        ? Math.floor(error[i].total)
+        : error[i].average
+        ? Math.floor(error[i].average)
         : 0;
 
       arr.push(obj);
     }
-
     setTime(arr);
   };
 

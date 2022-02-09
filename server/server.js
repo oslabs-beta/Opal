@@ -4,6 +4,7 @@ import cors from 'cors';
 import sdkController from './controllers/sdkController.js';
 import metricsController from './controllers/metricsController.js';
 import tokenController from './controllers/tokenController.js';
+import sourceCodeController from './controllers/sourceCodeController.js';
 
 // Import routers
 import userRoutes from './routes/userRoutes.js';
@@ -48,6 +49,10 @@ app.post('/getAllFunctions', tokenController.getToken, sdkController.setSub, sdk
   res.json(res.locals.funcList);
 });
 
+app.post('/getFunctionSource', tokenController.getToken, sourceCodeController.getCode, (req, res) => {
+  res.send(res.locals.azure.code);
+});
+
 // DEBUGGING ONLY: Get a list of function applications.
 app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, (req, res) => {
   res.json([res.locals.functionApps, res.locals.insights]);
@@ -70,6 +75,7 @@ app.get('/getMetrics', sdkController.fetchSubscriptionIds, sdkController.fetchRe
 app.post('/getInsightsOnly', sdkController.setFunctionApp, metricsController.getMSInsightsMetrics, sdkController.formatAppDetail, (req, res) => {
   res.json(res.locals.insightsOnly);
 });
+
 
 // Global error handler.
 app.use((err, req, res, next) => {
