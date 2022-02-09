@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import { DefaultAzureCredential } from '@azure/identity';
 import { MetricsQueryClient, LogsQueryClient } from '@azure/monitor-query';
-import { MSWebOptions, MSInsightsOptions, MSStorageOptions } from '../constants/defaultOptions.js';
+import { MSWebOptions, MSInsightsOptions } from '../constants/defaultOptions.js';
 import { generateMetric1D, generateMetric2D } from '../utils/metricGenerator.js';
 config();
 
@@ -13,9 +13,6 @@ const logsQuery = new LogsQueryClient(credential);
 
 // Get metrics associated with a function application's MS Web provider.
 metricsController.getMSWebMetrics = async (req, res, next) => {
-  console.log('New Metrics Query Detected');
-  // Set granularity and timespan dynamically once they are passed from the frontend.
-  // For now, set them statically to hour-by-hour, for a 24-hour period.
   if (!res.locals.timespan) {
     res.locals.timespan = 'PT24H';
   }
@@ -25,11 +22,6 @@ metricsController.getMSWebMetrics = async (req, res, next) => {
     res.locals.granularity = 'PT1H';
   }
   let granularity = res.locals.granularity;
-  //let timespan = {duration: '2022-01-26T23:03:24.604Z/2022-01-27T23:03:24.604Z' }
-  //let timespan = {
-  //  start_time: '2022-02-06T21:03:24.604Z',
-  //  end_time: '2022-02-07T21:03:24.604Z'
-  //}
   let metrics;
   const metricsObj = {};
 
@@ -157,7 +149,7 @@ metricsController.getMSInsightsMetrics = async (req, res, next) => {
 };
 
 // Storage metrics controller is not currently being used.
-metricsController.getStorageMetrics = async (req, res, next) => {
+//metricsController.getStorageMetrics = async (req, res, next) => {
   // const metrics = generateMetric1D(MSStorageOptions);
   // const metricsArray = [];
   // for await (let resource of res.locals.storageList) {
@@ -175,111 +167,23 @@ metricsController.getStorageMetrics = async (req, res, next) => {
   //   metricsArray.push(result);
   // }
   // res.locals.storageMetrics = metricsArray;
-  return next();
-};
+//  return next();
+//};
 
 metricsController.retrieveFunctionLogs = async (req, res, next) => {
-  // For some reason only logres2 is working right now.
-  // See whether we can retrieve this with the QueryInsights SDK instead, since this uses specific table names.
-  // Also investigate impact of migration to workspaces on this.
-
+  //console.log('entering retrieveFunctionLogs');
   const { azureLogAnalyticsWorkspaceId, functionName } = res.locals.azure.specificFunction;
-
-  const kustoQuery0 = 'search * | distinct $table | sort by $table asc nulls last';
-
-  const kustoQuery1 = `AppExceptions | where OperationName contains \'${functionName}\'`;
-
-  const kustoQuery2 = `AppRequests | project TenantId, TimeGenerated, Id, Name, OperationName, Success, ResultCode, DurationMs, OperationId, AppRoleInstance, AppRoleName, Measurements, Type | where OperationName contains \'${functionName}\'`;
-
-  // Keeping out 'Properties,' which adds a lot of extra bulk.
-
-  const kustoQuery3 = `AppBrowserTimings | project AppRoleName, Measurements, Name, OperationId, OperationName, ProcessingDurationMs, ReceiveDurationMs, SendDurationMs, TotalDurationMs | where OperationName contains \'${functionName}\'`;
-
-  const kustoQuery4 = `AppMetrics | where OperationName contains \'${functionName}\'`;
-
-  const kustoQuery5 = 'AppEvents | project TimeGenerated, Name, AppRoleInstance | order by TimeGenerated asc | limit 10';
-
-  const kustoQuery6 = `AppSystemEvents | project TimeGenerated, ProblemId | where OperationName contains \'${functionName}\'`;
-
-  const kustoQuery7 = `AppRequests | top 20 by Name desc nulls last`;
-
-  /* Table Options
-  [ 'AppExceptions' ],
-[0]     [ 'AppMetrics' ],
-[0]     [ 'AppPerformanceCounters' ],
-[0]     [ 'AppRequests' ],
-[0]     [ 'AppSystemEvents' ],
-[0]     [ 'AppTraces' ],
-[0]     [ 'Usage' ]
-*/
-
-  // Note: Queries 1, 2, 3 currently work, queries 1 and 4 do not.
-
-  //   const logRes1 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery1, {
-  //     //duration: Durations.sevenDays,
-  //     duration: "P14D",
-  //   });
-  // console.log(logRes1.tables[0]);
-  // res.locals.funcResponse = metricsController.processTable(logRes1);
-
-  const logRes2 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery2, {
-    //duration: Durations.sevenDays,
+  const kustoQuery = `AppRequests | project TenantId, TimeGenerated, Id, Name, OperationName, Success, ResultCode, DurationMs, OperationId, AppRoleInstance, AppRoleName, Measurements, Type | where OperationName contains \'${functionName}\'`;
+  const logRes = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery, {
     duration: 'P14D',
   });
-  console.log(logRes2.tables[0]);
-  res.locals.funcResponse = metricsController.processTable(logRes2);
-
-  //   const logRes4 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery4, {
-  //     //duration: Durations.sevenDays,
-  //     duration: "P14D",
-  //   });
-  // console.log(logRes4.tables[0]);
-  // res.locals.funcResponse = metricsController.processTable(logRes4);
-
-  //   const logRes5 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery1, {
-  //     //duration: Durations.sevenDays,
-  //     duration: "P14D",
-  //   });
-  // console.log(logRes5.tables[0]);
-  // res.locals.funcResponse = metricsController.processTable(logRes5);
-
-  //   const logRes3 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery3, {
-  //     //duration: Durations.sevenDays,
-  //     duration: "P14D",
-  //  });
-  // console.log(logRes3.tables[0]);
-  // res.locals.funcResponse = metricsController.processTable(logRes3);
-
-  // const logRes6 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery6, {
-  //   //duration: Durations.sevenDays,
-  //   duration: "P14D",
-  // });
-  // console.log(logRes6.tables[0]);
-  // res.locals.funcResponse = metricsController.processTable(logRes6);
-
-  // const logRes7 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery7, {
-  //   //duration: Durations.sevenDays,
-  //   duration: "P14D",
-  // });
-  // console.log(logRes7.tables[0]);
-  // res.locals.funcResponse = metricsController.processTable(logRes7);
-
-  // const logRes0 = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery0, {
-  //   //duration: Durations.sevenDays,
-  //   duration: "P14D",
-  // });
-  // console.log(logRes0.tables[0]);
-  // res.locals.funcResponse = metricsController.processTable(logRes0);
-
+  //console.log(logRes.tables[0]);
+  res.locals.funcResponse = metricsController.processTable(logRes);
   return next();
 };
 
 // Deprecated.
 metricsController.applicationInsights = async (req, res, next) => {
-  //const APPINSIGHTS_INSTRUMENTATIONKEY = '31fb4e2d-a4e4-4315-831e-4e591186cbfe';
-  //appInsights.setup();
-  //appInsights.loadAppInsights();
-  //appInsights.trackPageView();
   return next();
 };
 
