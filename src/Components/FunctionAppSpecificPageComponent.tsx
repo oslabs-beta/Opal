@@ -1,9 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { AreaLineChart, LineGraph, Loader, ExecutionScatter, DelayGraph, BandWidthBar, FuncListComponent } from '.';
-import { getFuncAppData } from '../util/getFuncAppData';
-import { getFuncAppFunctions } from '../util/getFuncAppFunctions';
-import { Slider, Button, Container } from '@mui/material';
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import {
+  AreaLineChart,
+  LineGraph,
+  Loader,
+  ExecutionScatter,
+  DelayGraph,
+  BandWidthBar,
+  FuncListComponent,
+} from ".";
+import { getFuncAppData } from "../util/getFuncAppData";
+import { getFuncAppFunctions } from "../util/getFuncAppFunctions";
+import { Slider, Button, Container } from "@mui/material";
+import { lodash } from "lodash";
 
 interface SpecificFuncData {
   name: string;
@@ -27,24 +36,24 @@ export const FunctionAppSpecificPage = () => {
   const [granularity, setGranularity] = useState<number>(3);
   let [submitClick, setSubmitClick] = useState<boolean>(false);
 
-  const resourceGroupId = location.state.resourceGroupId.split('/');
+  const resourceGroupId = location.state.resourceGroupId.split("/");
   const resourceGroupName = resourceGroupId[resourceGroupId.length - 1];
   const timeFrameMarks = [
-    { value: 0, label: '1 Hour'},
-    { value: 1, label: '24 Hours' },
-    { value: 2, label: '48 Hours' },
-    { value: 3, label: '1 Week'},
-    { value: 4, label: '1 Month'}
+    { value: 0, label: "1 Hour" },
+    { value: 1, label: "24 Hours" },
+    { value: 2, label: "48 Hours" },
+    { value: 3, label: "1 Week" },
+    { value: 4, label: "1 Month" },
   ];
   const granularityMarks = [
-    { value: 0, label: '5 Minutes'},
-    { value: 1, label: '15 Minutes'},
-    { value: 2, label: '30 Minutes'},
-    { value: 3, label: '1 Hour'},
-    { value: 4, label: '6 Hours'},
-    { value: 5, label: '12 Hours'},
-    { value: 6, label: '1 Day'}
-  ]
+    { value: 0, label: "5 Minutes" },
+    { value: 1, label: "15 Minutes" },
+    { value: 2, label: "30 Minutes" },
+    { value: 3, label: "1 Hour" },
+    { value: 4, label: "6 Hours" },
+    { value: 5, label: "12 Hours" },
+    { value: 6, label: "1 Day" },
+  ];
 
   useEffect(() => {
     setLoading(true);
@@ -67,18 +76,18 @@ export const FunctionAppSpecificPage = () => {
       });
   }, [location, resourceGroupName, submitClick]);
 
-  function handleTimeSpan (event, value) {
-    console.log('User adjusted the timespan slider to ' + value);
+  function handleTimeSpan(event, value) {
+    console.log("User adjusted the timespan slider to " + value);
     setTimeSpan(value);
   }
 
-  function handleGranularity (event, value) {
-    console.log('User adjusted the granularity to ' + value);
+  function handleGranularity(event, value) {
+    console.log("User adjusted the granularity to " + value);
     setGranularity(value);
   }
 
-  function handleSend () {
-    (submitClick === false) ? setSubmitClick(true) : setSubmitClick(false);
+  function handleSend() {
+    submitClick === false ? setSubmitClick(true) : setSubmitClick(false);
     console.log(submitClick);
   }
 
@@ -87,59 +96,101 @@ export const FunctionAppSpecificPage = () => {
   return (
     <>
       {loading ? (
-        <Loader theme='azure' />
+        <Loader theme="azure" />
       ) : data ? (
-        <div className='w-full flex justify-center mb-16'>
-          <div className='w-11/12'>
+        <div className="w-full flex justify-center mb-16">
+          <div className="w-11/12">
             <h1>Select Timespan</h1>
-            <Slider sx={{ width: 1/3}} aria-label='TimeSpan' value={timeSpan} valueLabelDisplay='auto' step={null} marks={timeFrameMarks} max={4} onChangeCommitted={handleTimeSpan}></Slider>
-            <h1>Select Granularity</h1>
-            <Slider sx={{ width: 1/3}} aria-label='Granularity' value={granularity} valueLabelDisplay='auto' step={null} marks={granularityMarks} max={6} onChangeCommitted={handleGranularity}></Slider><br />
-            <Button onClick={() => {
-              handleSend();
-              }}>Update Preferences</Button>
-            <br /><br />
-            <h1 className='text-2xl'>{data!.name}</h1>
+            <div>
+              <Slider
+                sx={{ width: 1 / 3 }}
+                aria-label="TimeSpan"
+                value={timeSpan}
+                valueLabelDisplay="auto"
+                step={null}
+                marks={timeFrameMarks}
+                max={4}
+                onChangeCommitted={handleTimeSpan}
+              ></Slider>
+              <h1>Select Granularity</h1>
+              <Slider
+                sx={{ width: 1 / 3 }}
+                aria-label="Granularity"
+                value={granularity}
+                valueLabelDisplay="auto"
+                step={null}
+                marks={granularityMarks}
+                max={6}
+                onChangeCommitted={handleGranularity}
+              ></Slider>
+              <br />
+              <Button
+                onClick={() => {
+                  handleSend();
+                }}
+              >
+                Update Preferences
+              </Button>
+            </div>
             <br />
             <br />
-            <div className='flex flex-col w-full h-auto justify-center items-center relative'>
+            <h1 className="text-2xl">{data!.name}</h1>
+            <br />
+            <br />
+            <div className="flex flex-col w-full h-auto justify-center items-center relative">
               <h1>Total Invocations v. Errors</h1>
-              <LineGraph data={data?.metrics[5]} format='1h' error={data?.metrics[3]} />
-              <div className='flex w-full flex-col'>
-                <div className='flex space-x-4 py-2'>
-                  <h1 className='text-blue-500  w-16 whitespace-nowrap'>Total : </h1>
+              <LineGraph
+                data={data?.metrics[5]}
+                format="1h"
+                error={data?.metrics[3]}
+              />
+              <div className="flex w-full flex-col">
+                <div className="flex space-x-4 py-2">
+                  <h1 className="text-blue-500  w-16 whitespace-nowrap">
+                    Total :{" "}
+                  </h1>
                   <p>{data?.metrics[5].description}</p>
                 </div>
-                <div className='flex space-x-6 py-2'>
-                  <h1 className='text-[red]  w-16 whitespace-nowrap'>Errors :</h1>
+                <div className="flex space-x-6 py-2">
+                  <h1 className="text-[red]  w-16 whitespace-nowrap">
+                    Errors :
+                  </h1>
                   <p>{data?.metrics[3].description}</p>
                 </div>
               </div>
             </div>
             <br />
             <br />
-            <div className='flex flex-col w-full h-auto justify-center items-center relative'>
+            <div className="flex flex-col w-full h-auto justify-center items-center relative">
               <h1>Data Sent v. Received</h1>
-              <BandWidthBar data={data?.metrics[0]} format='1h' error={data?.metrics[1]} />
-              <div className='flex w-full flex-col'>
-                <div className='flex space-x-4 py-2'>
-                  <h1 className='text-blue-500  w-16 whitespace-nowrap'>Received : </h1>
+              <BandWidthBar
+                data={data?.metrics[0]}
+                format="1h"
+                error={data?.metrics[1]}
+              />
+              <div className="flex w-full flex-col">
+                <div className="flex space-x-4 py-2">
+                  <h1 className="text-blue-500  w-16 whitespace-nowrap">
+                    Received :{" "}
+                  </h1>
                   <p>{data?.metrics[0].description}</p>
                 </div>
-                <div className='flex space-x-6 py-2'>
-                  <h1 className='text-[red]  w-16 whitespace-nowrap'>Sent :</h1>
+                <div className="flex space-x-6 py-2">
+                  <h1 className="text-[red]  w-16 whitespace-nowrap">Sent :</h1>
                   <p>{data?.metrics[1].description}</p>
                 </div>
               </div>
             </div>
             <br />
             <br />
-            <div className='flex flex-col w-full h-auto justify-center items-center relative'>
+            <div className="flex flex-col w-full h-auto justify-center items-center relative">
               <h1>Total Time to Respond (in MS)</h1>
-              <DelayGraph data={data?.metrics[6]} format='1h' />
-              <div className='flex w-full flex-col'>
-                <div className='flex space-x-4 py-2'>
-                  <h1 className='text-blue-500  w-16 whitespace-nowrap'>Delay (ms) : </h1>
+              <DelayGraph data={data?.metrics[6]} format="1h" />
+              <div className="flex w-full flex-col">
+                <div className="flex space-x-4 py-2">
+                  <h1 className="text-blue-500  w-16 whitespace-nowrap">
+                    Delay (ms) :{" "}
+                  </h1>
                   <p>{data?.metrics[6].description}</p>
                 </div>
               </div>
@@ -156,11 +207,11 @@ export const FunctionAppSpecificPage = () => {
                 </div>
               </div>
             </div>*/}
-            <div className='flex h-auto w-full'>
-              <div className='h-full p-5 border-t-2 border-[#363740] text-xl font-semibold'>
+            <div className="flex h-auto w-full">
+              <div className="h-full p-5 border-t-2 border-[#363740] text-xl font-semibold">
                 <h1>Functions</h1>
               </div>
-              <div className='h-full flex-grow border-l-2 border-t-2 border-[#363740] p-5'>
+              <div className="h-full flex-grow border-l-2 border-t-2 border-[#363740] p-5">
                 {functions &&
                   functions.map((func: any) => {
                     return (
@@ -172,7 +223,7 @@ export const FunctionAppSpecificPage = () => {
           </div>
         </div>
       ) : (
-        ''
+        ""
       )}
     </>
   );
