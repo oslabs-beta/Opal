@@ -34,7 +34,7 @@ In all cases, the following are required to use Opal:
 
 [NPM](https://www.npmjs.com/)
 
-An active Azure subscription that has Azure Functions deployed in it.
+An active [Azure subscription](https://azure.microsoft.com/en-us/free/) that has [Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal) deployed in it.
 
 ## Getting Started
 
