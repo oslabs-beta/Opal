@@ -38,7 +38,7 @@ export const FunctionAppSpecificPage = () => {
 
   const resourceGroupId = location.state.resourceGroupId.split("/");
   const resourceGroupName = resourceGroupId[resourceGroupId.length - 1];
-  
+
   const timeFrameMarks = [
     { value: 0, label: "1 Hour" },
     { value: 1, label: "24 Hours" },
@@ -111,7 +111,7 @@ export const FunctionAppSpecificPage = () => {
         <div className="w-full flex justify-center mb-16">
           <div className="w-11/12">
             <div className="w-full flex flex-col justify-center items-center">
-              <div className='text-center'>
+              <div className="text-center">
                 Estimated Cost of {data!.name} for Selected Period: <br />
                 {costEstimator(
                   data?.metrics,
@@ -152,7 +152,6 @@ export const FunctionAppSpecificPage = () => {
             </div>
             <br />
             <br />
-            <h1 className="text-2xl">{data!.name}</h1>
             <br />
             <br />
             <div className="flex flex-col w-full h-auto justify-center items-center relative">
