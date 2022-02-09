@@ -71,7 +71,7 @@ Opal relies on the Default Azure Credential part of the Azure Identity SDK for r
 
 1. Without environment variables.
 
-Opal can authenticate to your Azure Account with the Azure CLI or Azure Power Shell as long as at least one is locally installed and you are already logged into it. This is the way to run Opal that involves the least user setup. It grants access to metrics on the Function App level but does not grant access to metrics on the function level. To get access to metrics on the function level, use environment variables.
+Opal can authenticate to your Azure account with the Azure CLI or Azure Power Shell as long as at least one is locally installed and you are already logged into it. This is the way to run Opal that involves the least user setup. It grants access to metrics on the Function App level but does not grant access to metrics on the function level. To get access to metrics on the function level, use environment variables.
 
 [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 
@@ -97,6 +97,7 @@ CLIENT_SECRET=<password>
 TENANT_ID=<tenant>
 SUBSCRIPTION_ID='<the last value outputted (the value outside the object)>'
 ```
+
 In other words,
 
 Set CLIENT_ID equal to the outputted appId.
