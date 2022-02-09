@@ -23,22 +23,24 @@ An Azure Functions Monitoring Tool
 
 ## About Opal
 
-Opal is a tool for monitoring Azure Functions. Azure Functions is a leading "serverless" computing solution that allows developers to deploy their code without having to provision and maintain the servers they run on. Opal uses the Azure SDK and Azure REST API to query metrics about your Azure Functions, and displays them in graphs. This gives developers visibility into their Azure Functions in a way that is more pre-configured and cleaner than in the Azure Portal.
+Opal is a tool for monitoring Microsoft Azure Functions. Azure Functions are a leading "serverless" computing solution that allows developers to deploy code on-the-fly without the need to provision or maintain their own servers. Opal's code leverages a combination of Microsoft Azure JavaScript SDKs and REST APIs to query metrics associated with the user's Azure Functions, and visualizes those metrics through graphs rendered with the JS Recharts library. 
+
+Opal provides pre-configured, clean visualizations, permitting developers to efficiently analyze the current state of their Azure Function deployments without the learning curve or setup associated with the Azure Portal. Azure also permits users to programatically browse all Azure Function Applications and Functions with a single click. 
+
+Opal's currently supported metrics include, among other things, function invocations, success and error rates, response times, and estimated billing from selected Azure Functions.
 
 ## Prerequisites
-In all cases, the following are required to use Opal:
-
-[Git](https://git-scm.com/)
+Users must have NodeJS and the Node Package Manage installed in their local environment before installing Opal.
 
 [NodeJS](https://nodejs.org/en/)
 
 [NPM](https://www.npmjs.com/)
 
-An active [Azure subscription](https://azure.microsoft.com/en-us/free/) that has [Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal) deployed in it.
+Opal requires an active [Azure subscription](https://azure.microsoft.com/en-us/free/) with deployed [Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal).
 
 ## Getting Started
 
-1. Clone the repo
+1. Clone the repo.
 
 ```
 git clone https://github.com/oslabs-beta/Opal
@@ -48,76 +50,55 @@ cd Opal
 2. Install the package dependencies.
 
 ```
-npm i
+npm install
 ```
 
-3. Build the app.
+3. Build the app
 
 ```
 npm run build-prod
 ```
 
-4. Check the below "Connecting to Azure" section to confirm how you wish to authenticate to your Azure account.
+4. Select a method of authenticaticating to your Azure account. (See 'Connecting to Azure' below.)
 
-5. Run the app.
+5. Run the app
 
 ```
-npm run start-prod
+npm run start
 ```
 
 ## Connecting to Azure
 
-Opal relies on the Default Azure Credential part of the Azure Identity SDK for read access (no write methods) to the functions on your account. As such, there are two different ways to connect to your Azure account.
+Opal uses the Azure Identity SDK's DefaultAzureCredential to ensure read access to the functions on your account. Opal does not interfere with the user's Azure deployment, and does not write data to the user's account. Queries made through Opal utilize Azure SDKs and REST APIs, and may be subject to size or billing limitations imposed by the user's account. For more information, refer to [Azure's Cost Management and Billing documentation.](https://docs.microsoft.com/en-us/azure/cost-management-billing/)
 
-1. Without environment variables.
+Opal accesses function metrics through a combination of Azure SDK's DefaultAzureCredential and Azure REST APIs. The Azure SDK supports a [number of  authentication methods,](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet), including environmental variables, managed identity, Azure powershell, or Azure client. To authenticate to the Azure REST APIs, Opal requires setting environmental variables identifying the user's tenant, and a service principal with access to user's Azure functions.
 
-Opal can authenticate to your Azure account with the Azure CLI or Azure Power Shell as long as at least one is locally installed and you are already logged into it. This is the way to run Opal that involves the least user setup. It grants access to metrics on the Function App level but does not grant access to metrics on the function level. To get access to metrics on the function level, use environment variables.
-
-[Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
-
-[Azure PowerShell](https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-7.2.0)
-
-2. With environment variables
-
-Storing environment variables will allow you to access metrics on the Function App and the function level.
-
-In Azure CLI, use 'az login' to login and then run the following command:
+In Azure CLI, use 'az login' to login and run the following command to create a new service principal with "contributor" access to the account, and display the login credentials for the created service principal. (If you do not have Azure CLI installed locally, you can also [access it through the Azure Portal](https://docs.microsoft.com/en-us/azure/cloud-shell/overview).)
 
 ```
-az ad sp create-for-rbac && az account show --query id -o tsv
+az ad sp create-for-rbac --role contributor && az account show --query id -o tsv
 ```
 
-If you do not have Azure CLI installed locally, [access it through the Azure Portal](https://docs.microsoft.com/en-us/azure/cloud-shell/overview) and then run the above command.
-
-Create a .env file in the root directory, and store the output of the above command in the following format:
+Save the following information into an .env file in the root directory in which Opal was installed.
 
 ```
 CLIENT_ID=<appId>
 CLIENT_SECRET=<password>
 TENANT_ID=<tenant>
-SUBSCRIPTION_ID='<the last value outputted (the value outside the object)>'
 ```
-
-In other words,
-
-Set CLIENT_ID equal to the outputted appId.
-
-Set CLIENT_SECRET equal to the outputted password.
-
-Set TENANT_ID equal to the outputted tenant.
-
-Set SUBSCRIPTION_ID equal to the last value outputted (the value outputted outside the object), and wrap it in quotes.
 
 ## Built With
 Opal was built with the following frameworks / libraries:
 
-* Azure SDK
+* Azure JavaScript SDKs
 
 * Azure REST API
 
 * React
 
 * React Router
+
+* RechartJS
 
 * Redux
 
@@ -130,9 +111,13 @@ Opal was built with the following frameworks / libraries:
 
 ## Contributing
 
-We welcome contributions and issue submissions for any problems you encounter. To contribute, fork the repo and submit pull requests.
+We welcome contributions to the project, and encourage submissions for any problems you encounter. To contribute, please fork the repo and submit a pull request.
 
-Ideas for contributions: Adding AWS Lambda monitoring, to make Opal a more platform neutral serverless monitoring tool.
+Ideas for future developments and contributions include:
+
+* Adding AWS Lambda or Google Cloud monitoring, to make Opal a more platform-neutral serverless monitoring tool.
+* Updating the Opal server as Microsoft continues to release updates to its Azure SDKs.
+* Allowing for the display of additional metrics for function applications or functions.
 
 ## Authors
 Alma Eyre [Github](https://github.com/aselunar) | [LinkedIn](https://www.linkedin.com/in/alma-eyre/) <br>
