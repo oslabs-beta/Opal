@@ -22,12 +22,13 @@ export const FunctionSpecificPage = () => {
     console.log(details);
     Promise.resolve(details).then((res) => {
       setLoading(false);
+      console.log('response');
       console.log(res);
     });
   });
   return (
     <>
-      { loading ? 
+      { loading ?
         <Loader theme='azure' />
         :
         <div>

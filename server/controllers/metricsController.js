@@ -16,7 +16,7 @@ metricsController.getMSWebMetrics = async (req, res, next) => {
   if (!res.locals.timespan) {
     res.locals.timespan = 'PT24H';
   }
-  let timespan = {duration: res.locals.timespan};
+  let timespan = { duration: res.locals.timespan };
 
   if (!res.locals.granularity) {
     res.locals.granularity = 'PT1H';
@@ -90,7 +90,7 @@ metricsController.getMSInsightsMetrics = async (req, res, next) => {
   if (!res.locals.timespan) {
     res.locals.timespan = 'PT24H';
   }
-  let timespan = {duration: res.locals.timespan};
+  let timespan = { duration: res.locals.timespan };
 
   if (!res.locals.granularity) {
     res.locals.granularity = 'PT1H';
@@ -150,34 +150,35 @@ metricsController.getMSInsightsMetrics = async (req, res, next) => {
 
 // Storage metrics controller is not currently being used.
 //metricsController.getStorageMetrics = async (req, res, next) => {
-  // const metrics = generateMetric1D(MSStorageOptions);
-  // const metricsArray = [];
-  // for await (let resource of res.locals.storageList) {
-  //   const resId = resource.id;
-  //   if (!resId) {
-  //     return next({
-  //       err: 'Resource ID must be set to fetch metrics for resource.',
-  //     });
-  //   }
-  //   const result = await metricQuery.queryResource(resId, metrics, {
-  //     granularity: 'PT1H',
-  //     timespan: { duration: 'PT24H' },
-  //     //aggregations: ['Count']
-  //   });
-  //   metricsArray.push(result);
-  // }
-  // res.locals.storageMetrics = metricsArray;
+// const metrics = generateMetric1D(MSStorageOptions);
+// const metricsArray = [];
+// for await (let resource of res.locals.storageList) {
+//   const resId = resource.id;
+//   if (!resId) {
+//     return next({
+//       err: 'Resource ID must be set to fetch metrics for resource.',
+//     });
+//   }
+//   const result = await metricQuery.queryResource(resId, metrics, {
+//     granularity: 'PT1H',
+//     timespan: { duration: 'PT24H' },
+//     //aggregations: ['Count']
+//   });
+//   metricsArray.push(result);
+// }
+// res.locals.storageMetrics = metricsArray;
 //  return next();
 //};
 
 metricsController.retrieveFunctionLogs = async (req, res, next) => {
   //console.log('entering retrieveFunctionLogs');
   const { azureLogAnalyticsWorkspaceId, functionName } = res.locals.azure.specificFunction;
-  const kustoQuery = `AppRequests | project TenantId, TimeGenerated, Id, Name, OperationName, Success, ResultCode, DurationMs, OperationId, AppRoleInstance, AppRoleName, Measurements, Type | where OperationName contains \'${functionName}\'`;
+  const kustoQuery = `AppRequests | project OperationName, TimeGenerated, Success, ResultCode, DurationMs | where OperationName contains \'${functionName}\'`;
   const logRes = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery, {
     duration: 'P14D',
   });
   //console.log(logRes.tables[0]);
+  // Removed the following: Id, OperationId, TenantId, Measurements, AppRoleName, Type, Name, AppRoleInstance
   res.locals.funcResponse = metricsController.processTable(logRes);
   return next();
 };
@@ -188,20 +189,24 @@ metricsController.applicationInsights = async (req, res, next) => {
 };
 
 metricsController.processTable = function (logObject) {
+  console.log('log object at tables 0');
+  console.log(logObject.tables[0]);
+
   const table = logObject.tables[0];
   const columnArray = [];
   table.columns.forEach((column) => {
     columnArray.push(column.name);
   });
   const logArray = [];
-  table.rows.forEach((row) => {
-    const logEntry = {};
-    for (let i = 0; i < table.rows.length; i++) {
-      let currentRow = table.rows[i];
-      logEntry[columnArray[i]] = currentRow[i];
+
+  for (let row = 0; row < table.rows.length; row++) {
+    let logEntry = {};
+    for (let prop = 0; prop < table.rows[row].length; prop++) {
+      let currentRow = table.rows[row];
+      logEntry[columnArray[prop]] = currentRow[prop];
     }
     logArray.push(logEntry);
-  });
+  }
   return logArray;
 };
 
