@@ -30,6 +30,12 @@ export const OverviewPage = () => {
             for (let i in result) {
               for (let x in result[i]) {
                 for (let y in result[i][x]) {
+                  if (!sessionStorage.getItem("workSpaceId")) {
+                    sessionStorage.setItem(
+                      "workSpaceId",
+                      result[i][x][y].workSpaceId || ''
+                    );
+                  }
                   // @ts-ignore
                   graphArr.push(result[i][x][y]);
                 }
@@ -41,19 +47,19 @@ export const OverviewPage = () => {
           setData(graphArr);
           if (sessionStorage.getItem("executionObj")) {
             //@ts-ignore
-            console.log('hi there', JSON.parse(sessionStorage.getItem("executionObj" || "{}")));
-            const executionObj = JSON.parse(sessionStorage.getItem("executionObj") || "{}");
+            const executionObj = JSON.parse(
+              sessionStorage.getItem("executionObj") || "{}"
+            );
             const functions: any = getAllFunctions({ executionObj });
             Promise.resolve(functions).then((result: any) => {
               // setLoading(false);
-              sessionStorage.setItem('functions', JSON.stringify(result));
+              sessionStorage.setItem("functions", JSON.stringify(result));
             });
           }
         })
         .catch((err) => console.log(err));
     }
   }, []);
-  
 
   return (
     <>
