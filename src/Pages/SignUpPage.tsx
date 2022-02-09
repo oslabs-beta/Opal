@@ -129,8 +129,6 @@ export const SignUpPage = () => {
     if(e.key === 'Enter') handleSubmit();
   }
 
-  // console.log(Username.current.value);
-
   return (
     <div className="min-h-full h-screen w-full bg-[#363740] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       {loading ? (
