@@ -3,6 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { AreaLineChart, LineGraph, Loader, ExecutionScatter, DelayGraph, BandWidthBar, FuncListComponent } from '.';
 import { getFuncAppData } from '../util/getFuncAppData';
 import { getFuncAppFunctions } from '../util/getFuncAppFunctions';
+import { costEstimator } from '../util/costEstimator'
+import { XCircleIcon, CheckCircleIcon } from '@heroicons/react/solid';
+import { motion } from 'framer-motion';
 import { Slider, Button, Container } from '@mui/material';
 
 interface SpecificFuncData {
@@ -67,6 +70,20 @@ export const FunctionAppSpecificPage = () => {
       });
   }, [location, resourceGroupName, submitClick]);
 
+  function convertTimeSpan(num) {
+    for (let timeFrame of timeFrameMarks) {
+      if (timeFrame.value === num) return timeFrame.label;
+    };
+    return null;
+  }
+
+  function convertGranularity (num) {
+    for (let gran of granularityMarks) {
+      if (gran.value === num) return gran.label;
+    }
+    return null;
+  }
+
   function handleTimeSpan (event, value) {
     console.log('User adjusted the timespan slider to ' + value);
     setTimeSpan(value);
@@ -91,6 +108,9 @@ export const FunctionAppSpecificPage = () => {
       ) : data ? (
         <div className='w-full flex justify-center mb-16'>
           <div className='w-11/12'>
+            Estimated Cost of {data!.name} for Selected Period: <br />
+            {costEstimator(data?.metrics, convertGranularity(granularity), convertTimeSpan(timeSpan))}
+            <br /><br />
             <h1>Select Timespan</h1>
             <Slider sx={{ width: 1/3}} aria-label='TimeSpan' value={timeSpan} valueLabelDisplay='auto' step={null} marks={timeFrameMarks} max={4} onChangeCommitted={handleTimeSpan}></Slider>
             <h1>Select Granularity</h1>
