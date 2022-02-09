@@ -173,13 +173,15 @@ metricsController.getMSInsightsMetrics = async (req, res, next) => {
 metricsController.retrieveFunctionLogs = async (req, res, next) => {
   //console.log('entering retrieveFunctionLogs');
   const { azureLogAnalyticsWorkspaceId, functionName } = res.locals.azure.specificFunction;
-  const kustoQuery = `AppRequests | project OperationName, TimeGenerated, Success, ResultCode, DurationMs | where OperationName contains \'${functionName}\'`;
+  const kustoQuery = `AppRequests | project OperationName, TimeGenerated, Success, ResultCode, DurationMs | where OperationName contains \'${functionName}\' | sort by TimeGenerated asc nulls first`;
   const logRes = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery, {
-    duration: 'P14D',
+    duration: 'P1D',
   });
   //console.log(logRes.tables[0]);
   // Removed the following: Id, OperationId, TenantId, Measurements, AppRoleName, Type, Name, AppRoleInstance
   res.locals.funcResponse = metricsController.processTable(logRes);
+  //console.log('Func Response');
+  //console.log(res.locals.funcResponse);
   return next();
 };
 
@@ -189,8 +191,8 @@ metricsController.applicationInsights = async (req, res, next) => {
 };
 
 metricsController.processTable = function (logObject) {
-  console.log('log object at tables 0');
-  console.log(logObject.tables[0]);
+  //console.log('log object at tables 0');
+  //console.log(logObject.tables[0]);
 
   const table = logObject.tables[0];
   const columnArray = [];
@@ -199,15 +201,61 @@ metricsController.processTable = function (logObject) {
   });
   const logArray = [];
 
+  // Date rounding function.
+  function roundDate (mins, dateVal) {
+    let ms = 1000 * 60 * mins;
+    return new Date(Math.round(dateVal.getTime() / ms) * ms).toString();
+  }
+
+  // Process tables and round dates from TimeGenerated.
   for (let row = 0; row < table.rows.length; row++) {
     let logEntry = {};
     for (let prop = 0; prop < table.rows[row].length; prop++) {
       let currentRow = table.rows[row];
-      logEntry[columnArray[prop]] = currentRow[prop];
+      if (columnArray[prop] !== 'TimeGenerated') {
+        logEntry[columnArray[prop]] = currentRow[prop];
+      } else {
+        //console.log('found a time');
+        logEntry.timeStamp = roundDate(60, currentRow[prop]);
+      }
     }
     logArray.push(logEntry);
   }
-  return logArray;
+
+  // Convert into a timeseries.
+  const seriesMap = new Map();
+  for (let data of logArray) {
+    if (!seriesMap.has(data.timeStamp)) {
+      // set properties of timeseries if not already set.
+      seriesMap.set(data.timeStamp, {
+        operationName: data.OperationName,
+        timeStamp: data.timeStamp,
+        successCount: data.ResultCode === "200" ? 1 : 0,
+        failCount: data.ResultCode !== "200" ? 1: 0,
+      });
+    } else {
+      let oldSuccess = seriesMap.get(data.timeStamp).successCount;
+      let oldFail = seriesMap.get(data.timeStamp).failCount;
+      console.log('old success WAS ' + oldSuccess);
+      console.log('oldFail WAS ' + oldFail);
+      data.ResultCode === "200" ? ++oldSuccess : ++oldFail;
+      console.log('old success IS NOW ' + oldSuccess);
+      console.log('oldFail IS NOW ' + oldFail);
+      seriesMap.set(data.timeStamp, {
+        operationName: data.OperationName,
+        successCount: oldSuccess,
+        failCount: oldFail,
+        timeStamp: data.timeStamp
+      });
+    }
+  }
+
+  //console.log('HERE IS THE MAP');
+  //console.log(seriesMap.values());
+  //return array of values in the map.
+  // Check whether sorting matters
+  const values = seriesMap.values();
+  return Array.from(values);
 };
 
 export default metricsController;
