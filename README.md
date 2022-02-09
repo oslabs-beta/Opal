@@ -67,7 +67,7 @@ npm run start-prod
 
 ## Connecting to Azure
 
-Opal relies on the Default Azure Credential part of the Azure Identity SDK for read access (no write access) to the functions on your account. As such, there are two different ways to use Opal.
+Opal relies on the Default Azure Credential part of the Azure Identity SDK for read access (no write methods) to the functions on your account. As such, there are two different ways to use Opal.
 
 1. Without environment variables.
 
@@ -90,9 +90,13 @@ az ad sp create-for-rbac && az account show --query id -o tsv
 If you do not have Azure CLI installed locally, [access it through the Azure Portal](https://docs.microsoft.com/en-us/azure/cloud-shell/overview) and then run the above command.
 
 In the .env file in the root directory, store the output of the above command in the following format:
+
 Set CLIENT_ID equal to the outputted appId.
+
 Set CLIENT_SERCRET equal to the outputted password.
+
 Set TENANT_ID equal to the outputted tenant.
+
 Set SUBSCRIPTION_ID equal to the last value outputted (the value outputted outside the object), and wrap it in quotes.
 
 ## Built With
