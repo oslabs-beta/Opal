@@ -75,7 +75,16 @@ Opal can authenticate to your Azure Account with the Azure Cli or Azure Power Sh
 
 2. Environment variables
 
-In the .env file in the root directory.
+In Azure CLI run the following command:
+
+```
+az ad sp create-for-rbac
+```
+
+If you do not have Azure CLI installed locally, [access it through the Azure Portal ](https://docs.microsoft.com/en-us/azure/cloud-shell/overview) and then run the above command.
+
+In the .env file in the root directory, store the output of the above command in the following format:
+
 
 
 
