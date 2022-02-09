@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion'
-import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/solid';
 import { FuncListComponent } from '.';
 
 export const FunctionsPage = () => {
