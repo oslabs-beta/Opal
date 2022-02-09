@@ -1,3 +1,6 @@
+import { BandWidthBar } from './BandWidthBar';
+import { ExecutionScatter } from './ExecutionScatter';
+
 export { AreaLineChart } from './AreaChart';
 
 export { LineGraph } from './LineGraph';
@@ -20,4 +23,12 @@ export { Sidebar } from './Sidebar';
 
 export { Loader } from './LoaderComponent';
 
-export { ListComponent } from './ListComponent';
+export { ExecutionScatter } from './ExecutionScatter';
+
+export { DelayGraph } from './DelayGraph';
+
+export { BandWidthBar } from './BandWidthBar';
+
+export { FuncAppListComponent } from './FuncAppListComponent';
+
+export { FuncListComponent } from './FuncListComponent';
