@@ -125,6 +125,10 @@ export const SignUpPage = () => {
     }
   };
 
+  const handleKeyDown = e => {
+    if(e.key === 'Enter') handleSubmit();
+  }
+
   // console.log(Username.current.value);
 
   return (
@@ -257,6 +261,7 @@ export const SignUpPage = () => {
                 }`}
                 type="password"
                 placeholder="Re-Type Password"
+                onKeyPress={handleKeyDown}
               />
             </div>
 
