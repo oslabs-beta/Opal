@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
@@ -14,17 +13,8 @@ import { getFuncAppData } from "../util/getFuncAppData";
 import { getFuncAppFunctions } from "../util/getFuncAppFunctions";
 import { Slider, Button, Container } from "@mui/material";
 import { lodash } from "lodash";
-=======
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { AreaLineChart, LineGraph, Loader, ExecutionScatter, DelayGraph, BandWidthBar, FuncListComponent } from '.';
-import { getFuncAppData } from '../util/getFuncAppData';
-import { getFuncAppFunctions } from '../util/getFuncAppFunctions';
+
 import { costEstimator } from '../util/costEstimator'
-import { XCircleIcon, CheckCircleIcon } from '@heroicons/react/solid';
-import { motion } from 'framer-motion';
-import { Slider, Button, Container } from '@mui/material';
->>>>>>> dev
 
 interface SpecificFuncData {
   name: string;
