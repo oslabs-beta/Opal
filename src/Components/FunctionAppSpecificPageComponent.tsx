@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { AreaLineChart, LineGraph, Loader } from '.';
-// Why can't we import this in the same line as above?
-import { BandWidthBar } from './BandWidthBar';
-import { DelayGraph } from './DelayGraph';
-import { ExecutionScatter } from './ExecutionScatter';
+import { AreaLineChart, LineGraph, Loader, ExecutionScatter, DelayGraph, BandWidthBar, FuncListComponent } from '.';
 import { getFuncAppData } from '../util/getFuncAppData';
 import { getFuncAppFunctions } from '../util/getFuncAppFunctions';
-import { XCircleIcon, CheckCircleIcon } from '@heroicons/react/solid';
-import { motion } from 'framer-motion';
 
 interface SpecificFuncData {
   name: string;
@@ -127,29 +121,7 @@ export const FunctionAppSpecificPage = () => {
                 {functions &&
                   functions.map((func: any) => {
                     return (
-                      <motion.div
-                        whileHover={{ scale: 1.025 }}
-                        key={func.name}
-                        className='p-6 mb-4 shadow-md border-2 rounded-lg flex justify-between cursor-pointer hover:bg-[#e5e7eb] hover:shadow-xl'
-                      >
-                        <h1>{func.properties.name}</h1>
-                        <div>
-                          {func.properties.isDisabled ? (
-                            <div className='flex space-x-4 items-center'>
-                              <h1 className='font-medium'>Disabled</h1>
-                              <XCircleIcon className='w-6 h-6 text-red-500' />
-                            </div>
-                          ) : (
-                            <div className='flex space-x-10 items-center justify-between '>
-                              <h1>{func.properties.language}</h1>
-                              <div className='flex space-x-4 items-center '>
-                                <h1 className='font-medium'>Active</h1>
-                                <CheckCircleIcon className='w-6 h-6 text-green-500' />
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </motion.div>
+                      <FuncListComponent key={func.shortname} data={func} />
                     );
                   })}
               </div>
