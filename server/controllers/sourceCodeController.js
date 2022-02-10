@@ -1,9 +1,4 @@
 import { config } from 'dotenv';
-import { DefaultAzureCredential } from '@azure/identity';
-import { ResourceManagementClient } from '@azure/arm-resources';
-import { SubscriptionClient } from '@azure/arm-resources-subscriptions';
-import { OperationalInsightsManagementClient } from '@azure/arm-operationalinsights';
-import fetch from 'node-fetch';
 import axios from 'axios'
 config();
 
