@@ -54,6 +54,8 @@ export const FunctionSpecificPage = () => {
       setFuncData(res.data);
       setLoading(false);
     });
+    
+    return () => {}
   }, [location.state.properties.name, workSpaceId, submitClick]);
 
   function handleTimeSpan(event, value) {
