@@ -35,23 +35,13 @@ interface Data {
 
 export const FuncGraph = ({ data }: GraphProps) => {
   const [time, setTime] = useState<object | null>(null);
-  console.log('entering funcGraph')
-  console.log('here is the data');
-  console.log(data);
-  console.log('here is the current time ' + time)
   const createObj = () => {
-    console.log('running createObj');
     //const arr: Array<object> = [];
     const arr: Array<object> = []!;
-    console.log('arr');
-    console.log(arr);
-    console.log('about to enter loop')
     for (let i in data) {
-      console.log('looping once');
       const obj: Data = { Time: "", Success: 0, Fail: 0};
       const mnt = moment(data[i].timeStamp);
       obj["Time"] = mnt.format("LT");
-      console.log(obj["Time"]);
       obj["Success"] = data[i].successCount
         ? data[i].successCount : 0;
 

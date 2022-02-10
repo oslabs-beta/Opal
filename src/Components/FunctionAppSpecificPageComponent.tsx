@@ -9,7 +9,7 @@ import {
 } from ".";
 import { getFuncAppData } from "../util/getFuncAppData";
 import { getFuncAppFunctions } from "../util/getFuncAppFunctions";
-import { Slider, Button, Container } from "@mui/material";
+import { Slider, Button } from "@mui/material";
 // import { lodash } from "lodash";
 
 import { costEstimator } from "../util/costEstimator";
@@ -214,16 +214,6 @@ export const FunctionAppSpecificPage = () => {
             </div>
             <br />
             <br />
-            {/*<div className='flex flex-col w-full h-auto justify-center items-center relative'>
-              <h1>Cost Per Hour</h1>
-              <ExecutionScatter executionUnits={data?.metrics[4]} executionCount={data?.metrics[5]} format='1h' />
-              <div className='flex w-full flex-col'>
-                <div className='flex space-x-4 py-2'>
-                  <h1 className='text-blue-500  w-16 whitespace-nowrap'>Approx. Cost Per Hr,. : </h1>
-                  <p>{data?.metrics[4].description}</p>
-                </div>
-              </div>
-            </div>*/}
             <div className="flex h-auto w-full">
               <div className="h-full p-5 border-t-2 border-[#363740] text-xl font-semibold">
                 <h1>Functions</h1>
