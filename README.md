@@ -183,7 +183,7 @@ Opal was built with the following frameworks / libraries:
 
 ## Contributing
 
-We welcome contributions to the project, and encourage submissions for any problems you encounter. To contribute, please fork the repo and submit a pull request.
+We welcome contributions to the project, and encourage submissions for any problems you encounter. To contribute, please fork the repo and submit a pull request to the dev branch.
 
 Ideas for future developments and contributions include:
 
