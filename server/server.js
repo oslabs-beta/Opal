@@ -28,41 +28,36 @@ app.get('/executionOnly', sdkController.executionOnly, sdkController.fetchSubscr
   res.json(res.locals.executionObj);
 });
 
-// Secondary route: On selecting a specific function application, get more metrics.
+// On selecting a specific function application, get more metrics.
 app.post('/getAppDetails', sdkController.setFunctionApp, metricsController.getMSWebMetrics, metricsController.getMSInsightsMetrics, sdkController.formatAppDetail, (req, res) => {
   res.json(res.locals.appDetail);
 });
 
-// Future update: Check if the client already has a token set to avoid unnecessarily duplication.
-// Tertiary route: Get all of the functions associated with a specific function application.
+// Get all of the functions associated with a specific function application.
 app.post('/getFunctions', sdkController.setResource, tokenController.getToken, sdkController.getAllFunctions, (req, res) => {
   res.json(res.locals.allFunctions);
 });
 
-// Quaternary route: Get metrics associated with a specific function within a function application.
+// Get metrics associated with a specific function within a function application.
 app.post('/getSpecificFunctionMetrics', sdkController.setFunction, metricsController.retrieveFunctionLogs, (req, res) => {
   res.json(res.locals.funcResponse);
 });
 
-// Fifth route: Get a list of all functions associated with the account.
+// Get a list of all functions associated with the account.
 app.post('/getAllFunctions', tokenController.getToken, sdkController.setSub, sdkController.getFunctionList, (req, res) => {
   res.json(res.locals.funcList);
 });
 
-app.post('/getFunctionSource', tokenController.getToken, sourceCodeController.getCode, (req, res) => {
-  res.send(res.locals.azure.code);
-});
+// In development: get source code for a given function (REST API Route).
+//app.post('/getFunctionSource', tokenController.getToken, sourceCodeController.getCode, (req, res) => {
+//  res.send(res.locals.azure.code);
+//});
 
 // DEBUGGING ONLY: Get a list of function applications.
 app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, (req, res) => {
   res.json([res.locals.functionApps, res.locals.insights]);
   }
 );
-
-// DEBUGGING ONLY: Get application insight data only.
-app.get('/applicationInsights', metricsController.applicationInsights, (req, res) => {
-  console.log('finished');
-});
 
 // DEBUGGING ONLY: Get a list of all metrics that exist for a given function.
 app.get('/getMetrics', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, metricsController.getMSWebMetrics, (req, res) => {
@@ -75,7 +70,6 @@ app.get('/getMetrics', sdkController.fetchSubscriptionIds, sdkController.fetchRe
 app.post('/getInsightsOnly', sdkController.setFunctionApp, metricsController.getMSInsightsMetrics, sdkController.formatAppDetail, (req, res) => {
   res.json(res.locals.insightsOnly);
 });
-
 
 // Global error handler.
 app.use((err, req, res, next) => {
