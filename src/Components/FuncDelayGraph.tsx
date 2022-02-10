@@ -34,9 +34,6 @@ interface Data {
 
 export const FuncDelayGraph = ({ data }: GraphProps) => {
   const [time, setTime] = useState<object | null>(null);
-  console.log('inFuncDelayGraph');
-  console.log('here is the current data in FuncDelayGraph');
-  console.log(data);
   const createObj = () => {
     const arr: Array<object> = []!;
 
