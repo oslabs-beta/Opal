@@ -33,7 +33,6 @@ sdkController.fetchSubscriptionIds = async (req, res, next) => {
   //This is using .list().byPage() await .next().value because we are using a forEach loop.
   //If we iterate with a for loop, we can use await .list() and for await ().
   for await (const sub of subscriptions) {
-    await console.log("sub in fetchSubscriptionIds", sub);
     res.locals.subscriptions[sub.subscriptionId] = {
       tenantId: sub.tenantId,
       displayName: sub.displayName,
