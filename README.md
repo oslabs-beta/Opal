@@ -80,7 +80,7 @@ npm run start-prod
 
 1. Base Functionality
 
-If the user is already logged in to Azure through an existing authentication flow (Managed Identity, Azure CLI, PowerShell etc.), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`. 
+If the user is already logged in to Azure through an existing authentication flow (Azure CLI, Azure PowerShell, Managed Identity etc.), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`. 
 
 For more information about your options for authenticating to Azure, review the [DefaultAzureCredential docs](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
 
