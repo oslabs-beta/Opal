@@ -42,7 +42,7 @@ Opal requires an active [Azure subscription](https://azure.microsoft.com/en-us/f
 
 ## Getting Started
 
-1. Clone the repo. If using [Git](https://git-scm.com/), run:
+1. Clone this repo. If using [Git](https://git-scm.com/), run:
 
 ```
 git clone https://github.com/oslabs-beta/Opal
@@ -61,9 +61,9 @@ npm install
 npm run build-prod
 ```
 
-4. Be authenticated to your Azure account 
+4. Be authenticated to an Azure account (see 'Connecting to Azure')
  
-See 'Connecting to Azure.'
+
 
 5. Run the app.
 
@@ -76,15 +76,13 @@ npm run start-prod
 
 1. Base Functionality
 
-Opal uses the Azure SDK's 'DefaultAzureCredential' class to authenticate the user directly to Azure. For example, an Azure CLI user can simply type `az login`. 
+If the user is already logged in to Azure through an existing authentication flow (Managed Identity, Azure CLI, Powershell etc.), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`. 
 
-If the user is already logged in to Azure through an existing authentication flow (Managed Identity, Azure CLI, Powershell etc.), Opal's base functionality is accessible out-of-the-box with no configuration. For more information about your options for authenticating to Azure, review the [DefaultAzureCredential docs.](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
+For more information about your options for authenticating to Azure, review the [DefaultAzureCredential docs.](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
 
 2. Additional Functionality
 
-Using Opal to access the metrics of <em>children</em> of Azure functions requires sending a bearer token to Azure REST APIs. 
-
-Opal will use HTTPS and OAUTH 2.0 to securely handle the token-generation process for you, if you place a .env file in Opal's root directory identifying a service principal that is authorized to access your Azure subscription.
+Using Opal to access additional metrics, such as those for <em>children</em> of Azure functions requires sending a bearer token to Azure REST APIs. Opal will use HTTPS and OAUTH 2.0 to securely handle the token-generation process for you, as long as you place a .env file in Opal's root directory identifying a service principal that is authorized to access your Azure subscription.
 
 ```
 AZURE_CLIENT_ID=<appId>
@@ -95,15 +93,17 @@ AZURE_TENANT_ID=<tenant>
 If you have not generated a service principal for this account, run the following commands and save the output to a .env file as described above.
 
 `az login` 
+
 `az account list --query "[].{id:id}" --output tsv`
+
 `az ad sp create-for-rbac --role contributor --scope subscriptions/<subscription1> subscriptions/<subscription2> subscriptions/<subscription3>`
 
-In either case, the service principal is used only to <em>read</em>, and never to write, any data to your Azure account.
+Creating a service principal is optional and is not required to use Opal's basic functionality. Regardless, the service principal is used only to <em>read</em>, and never to write, any data to your Azure account. 
 
 
 ## More Information
 
-Opal accesses function metrics using Azure SDK's DefaultAzureCredential and Azure REST APIs. This DefaultAzureCredential supports [multuple authentication methods,](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet). 
+Opal accesses function metrics using Azure SDK's DefaultAzureCredential and Azure REST APIs. This DefaultAzureCredential supports [multiple authentication methods](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet). 
 
 Opal does not interfere with the user's Azure deployment, does not write data to the user's Azure account, and does not store the data it reads from the user's Azure account. 
 
