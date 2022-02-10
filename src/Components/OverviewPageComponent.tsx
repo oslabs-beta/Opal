@@ -8,7 +8,7 @@ export const OverviewPage = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-  
+
   useEffect(() => {
     if (!sessionStorage.getItem("executionObj")) {
       const graphs:any = [];
@@ -46,11 +46,22 @@ export const OverviewPage = () => {
             const functions: any = getAllFunctions({ executionObj });
             Promise.resolve(functions).then((result: any) => {
               // setLoading(false);
-              sessionStorage.setItem("functions", JSON.stringify(result));
+              if (!result) {
+                console.log('failed to receive data');
+                sessionStorage.setItem("functions", JSON.stringify({
+                  functions: []
+                }));
+              } else {
+                sessionStorage.setItem("functions", JSON.stringify(result));
+              }
+            }).catch(() => {
+              sessionStorage.setItem("functions", JSON.stringify({
+                functions: []
+              }));
             });
           }
         })
-        .catch((err) => console.log(err));   
+        .catch((err) => console.log(err));
     }
 
     return () => {}
