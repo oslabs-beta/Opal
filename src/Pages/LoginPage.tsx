@@ -62,6 +62,10 @@ export const LoginPage = () => {
     }
   }
 
+  const handleKeyDown = e => {
+    if(e.key === 'Enter') handleSubmit();
+  }
+
   return (
     <div className="min-h-full h-screen w-full bg-[#363740] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       {loading ? (
@@ -113,6 +117,7 @@ export const LoginPage = () => {
             </label>
             <input
               onChange={() => setPasswordErr(false)}
+              onKeyPress={handleKeyDown}
               ref={Password}
               className={`border-2 mb-4 px-4 py-3 font-light rounded-lg focus:outline-none focus:border-rose-500 focus:border-3 ${
                 passwordErr ? "border-red-500 placeholder:text-red-500" : ""

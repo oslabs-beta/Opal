@@ -14,11 +14,11 @@ const credentialChain = new ChainedTokenCredential(credentialDefault, credential
 
 // const subscriptionId = process.env.SUBSCRIPTION_ID;
 
-const subscriptionClient = new SubscriptionClient(credentialChain);
+const subscriptionClient = new SubscriptionClient(credentialDefault);
 
 const subscriptionList = async () => {
     const subscriptions = await subscriptionClient.subscriptions.list({top: null});
-    console.log(await "subscriptions", subscriptions);
+    await console.log("subscriptions", subscriptions);
     const subscriptionArray = [];
     for await (const subscription of subscriptions){
         console.log(await "subscription", subscription)

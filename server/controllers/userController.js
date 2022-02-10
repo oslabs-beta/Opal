@@ -1,20 +1,22 @@
-import db from "../models/UserModel.js";
+import db from '../models/UserModel.js';
+import bcrypt from 'bcryptjs';
 
 const userController = {};
 
 userController.checkUserCred = async (req, res, next) => {
   const { Username, Email } = req.body;
 
-  const q = "SELECT * FROM users WHERE Username = $1 OR Email = $2";
+  const q = 'SELECT * FROM users WHERE Username = $1 OR Email = $2';
   try {
     const response = await db.query(q, [Username, Email]);
     if (response.rows.length > 0) {
       return next({
         message: {
-          msg: "The username or email is already in use",
+          msg: 'The username or email is already in use',
           errors: { email: true, username: true },
           error: true,
-        }, status: 409
+        },
+        status: 409,
       });
     }
   } catch (err) {
@@ -27,30 +29,38 @@ userController.checkUserCred = async (req, res, next) => {
 userController.addUserCred = async (req, res, next) => {
   const { Username, Email, FirstName, LastName, Password } = req.body;
 
+  const saltRounds = 10;
+  const salt = bcrypt.genSaltSync(saltRounds);
+  const hash = bcrypt.hashSync(Password, salt);
+
   const q =
-    "INSERT INTO users (username, email, firstName, lastName, password) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+    'INSERT INTO users (username, email, firstName, lastName, password) VALUES ($1, $2, $3, $4, $5) RETURNING *';
   await db.query(
     q,
-    [Username, Email, FirstName, LastName, Password],
+    [Username, Email, FirstName, LastName, hash],
     (err, result) => {
       if (err) {
-        console.log("this is the error being triggered", err);
-        return next({ message: {
-          msg: "The username or email is already in use",
-          errors: { email: true, username: true },
-          error: true,
-        }, status: 400});
+        console.log('this is the error being triggered', err);
+        return next({
+          message: {
+            msg: 'The username or email is already in use',
+            errors: { email: true, username: true },
+            error: true,
+          },
+          status: 400,
+        });
       } else {
         if (result.rows.length < 0) {
           return next({
             message: {
-              msg: "There was an error creating your account",
+              msg: 'There was an error creating your account',
               errors: { all: true },
               error: true,
-            }, status: 400
+            },
+            status: 400,
           });
         }
-        console.log(result)
+        console.log(result);
         res.locals.user = true;
         res.locals.userInfo = result.rows[0];
         return next();
@@ -62,7 +72,7 @@ userController.addUserCred = async (req, res, next) => {
 userController.login = async (req, res, next) => {
   const { User, Password } = req.body;
 
-  const q = "SELECT * FROM users WHERE Username = $1 OR Email = $1";
+  const q = 'SELECT * FROM users WHERE Username = $1 OR Email = $1';
   //query is not finding anything so account for that!
   try {
     const response = await db.query(q, [User]);
@@ -71,7 +81,7 @@ userController.login = async (req, res, next) => {
       return next({
         message: {
           error: true,
-          msg: "The username or email you gave does not exist.",
+          msg: 'The username or email you gave does not exist.',
           errors: { user: true, password: true },
         },
         status: 404,
@@ -81,7 +91,8 @@ userController.login = async (req, res, next) => {
         User === response.rows[0].username ||
         User === response.rows[0].email
       ) {
-        if (Password === response.rows[0].password) {
+        const match = await bcrypt.compare(Password, response.rows[0].password);
+        if (match) {
           res.locals.user = true;
           res.locals.userInfo = response.rows[0];
           return next();
@@ -90,7 +101,7 @@ userController.login = async (req, res, next) => {
           return next({
             message: {
               error: true,
-              msg: "email or password is incorrect.",
+              msg: 'email or password is incorrect.',
               errors: { user: true, password: true },
             },
             status: 400,
@@ -101,9 +112,10 @@ userController.login = async (req, res, next) => {
         return next({
           message: {
             error: true,
-            msg: "The username or email you gave does not exist",
+            msg: 'The username or email you gave does not exist',
             errors: { user: true, password: true },
-          }, status: 400
+          },
+          status: 400,
         });
       }
     }
