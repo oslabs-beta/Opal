@@ -5,7 +5,7 @@ An Azure Functions Monitoring Tool
 
 # Table of Contents
 
-- [About Opal](#about-opal) 
+- [About Opal](#about-opal)
 
 - [Prerequisites](#prerequisites)
 
@@ -14,7 +14,7 @@ An Azure Functions Monitoring Tool
 - [Connecting to Azure](#connecting-to-azure)
 
 - [Azure Account Access](#azure-account-access)
-  
+
 - [How to Use The App](#how-to-use-the-app)
 
 - [FAQ](#faq)
@@ -29,9 +29,9 @@ An Azure Functions Monitoring Tool
 
 ## About Opal
 
-Opal is a tool for monitoring Microsoft Azure Functions. Azure Functions are a leading "serverless" computing solution that allows developers to deploy code on-the-fly without the need to provision or maintain their own servers. Opal's code leverages a combination of Microsoft Azure JavaScript SDKs and REST APIs to query metrics associated with the user's Azure Functions, and visualizes those metrics through graphs rendered with the JS Recharts library. 
+Opal is a tool for monitoring Microsoft Azure Functions. Azure Functions are a leading "serverless" computing solution that allows developers to deploy code on-the-fly without the need to provision or maintain their own servers. Opal's code leverages a combination of Microsoft Azure JavaScript SDKs and REST APIs to query metrics associated with the user's Azure Functions, and visualizes those metrics through graphs rendered with the JS Recharts library.
 
-Opal provides pre-configured, clean visualizations, permitting developers to efficiently analyze the current state of their Azure Function deployments without the learning curve or setup associated with the Azure Portal. Opal also permits users to programatically browse all Azure Function Apps and Functions with a single click. 
+Opal provides pre-configured, clean visualizations, permitting developers to efficiently analyze the current state of their Azure Function deployments without the learning curve or setup associated with the Azure Portal. Opal also permits users to programatically browse all Azure Function Apps and Functions with a single click.
 
 Currently supported metrics in Opal include, among other things, function invocations, success and error rates, response times, and estimated billing from selected Azure Functions.
 
@@ -45,7 +45,7 @@ Currently supported metrics in Opal include, among other things, function invoca
 
 ## Getting Started
 <br />
-<b>1. Clone this repo.</b> 
+<b>1. Clone this repo.</b>
 
 If using [Git](https://git-scm.com/), run:
 ```
@@ -69,7 +69,7 @@ npm run build-prod
 
 <br />
 <b>4. Authenticate.</b><br />
-  
+
 Be authenticated to an Azure account. (See 'Connecting to Azure' for more information.)
 
 <br />
@@ -84,7 +84,7 @@ npm run start-prod
 
 <b>1. Base Functionality</b>
 
-If the user is already logged in to Azure through an existing authentication flow (Azure CLI, Azure PowerShell, Managed Identity, Environment Variables, etc.), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`. 
+If the user is already logged in to Azure through an existing authentication flow (e.g., Azure CLI, Azure PowerShell, Managed Identity, Environment Variables), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`.
 
 For more information about your options for authenticating to Azure, review the [DefaultAzureCredential docs](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
 
@@ -107,9 +107,9 @@ and use the output to create the above .env file.
 
 ## Azure Account Access
 
-Opal accesses function metrics using Azure SDK's DefaultAzureCredential and Azure REST APIs. The DefaultAzureCredential supports [multiple authentication methods](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet). 
+Opal accesses function metrics using Azure SDK's DefaultAzureCredential and Azure REST APIs. The DefaultAzureCredential supports [multiple authentication methods](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
 
-Opal does not interfere with the user's Azure deployment, does not write data to the user's Azure account, and does not store the data it reads from the user's Azure account. 
+Opal does not interfere with the user's Azure deployment, does not write data to the user's Azure account, and does not store the data it reads from the user's Azure account.
 
 Queries made through Opal utilize Azure SDKs and REST APIs, and may be subject to size or billing limitations imposed by the user's account. For more information, please refer to [Azure's Cost Management and Billing documentation](https://docs.microsoft.com/en-us/azure/cost-management-billing/) for the rules that may govern your subscription.
 
@@ -133,14 +133,16 @@ You can see a list of all of your Function Apps or functions by clicking "Functi
 
 * <b>Function App View</b>
 
-You can access more detailed metrics in a specific Function App either by clicking on that Function App in the "Overview" or from the List View. 
+You can access more detailed metrics in a specific Function App either by selecting that Function App on the <b>"Overview"</b> page, or selecting that Function App in the <b>"List View." </b>
+
 
 To change the timespan and granularity, please use the corresponding sliders and click <b>"Update Preferences"</b>.
 <p><img src="assets/tutorial/functionapp.gif" width="720px" /></p>
 
 * <b>Function View</b>
 
-You can access specific metrics for a function either by scrolling down in the corresponding "Function App View" and clicking that function or from the "List View".
+You can access specific metrics for a function (i.e., the child of a FunctionApp) either by scrolling down in the corresponding "Function App View" and selecting that function, or by selecting that function from the "List View".
+
 <p><img src="assets/tutorial/functionspecific.gif" width="720px" /></p>
 
 Timespan and granularity can be chosen in the Function View in the same was as above.
@@ -153,7 +155,7 @@ Due to Azure SDK limitations, the "List View" for functions and the "Function Vi
 
 By default, service principals are associated with a single subscription. If you did not specify a subscription when creating your service principal (or specified only one), you may not be able to see functions from other subscriptions.
 
-To fix this, create a new service principal and then replace the data in your .env with data for a new service principal with access to each of your subscriptions. First list all of your subscriptions with this Azure CLI command:
+To fix this, create a new service principal, and then replace the data in your .env with data for a new service principal that has access to all of your subscriptions. First list all of your subscriptions with this Azure CLI command:
 
 `az account list --query "[].{id:id}" --output tsv`
 
@@ -166,17 +168,16 @@ Use the output of the above command to update your .env file according to the in
 <br />
 <b>2. What information do I need to provide to log in to Opal?</b><br /><br />
 
-On initial login, users only to create a username and password. 
+On initial login, users are prompted to select a name, username, email address, and password.
 
 <br />
 <b>3. What information will Opal store about me?</b><br /><br />
 
-The only information Opal stores is an email address and a (hashed) password.
-
+Only the information in Question #2. The user's password itself is not stored. Opal stores only a password hash.
 <br />
 <b>4. Does Opal maintain any information about my Azure account?</b><br /><br />
 
-No. Opal stores no information about your account. Opal simply acts as a client for a variety of Azure SDKs and endpoints to allow you to retrieve data from your Azure subscriptions in a single location.
+No. Opal stores no information about your Azure account. Opal simply acts as a client for a variety of Azure SDKs and endpoints to allow you to retrieve data from your Azure subscriptions in a single location.
 
 <br />
 <b>5. Do I need to enter to use my real email?</b><br /><br />
@@ -192,17 +193,17 @@ Opal was built with the following frameworks / libraries:
 
 * Azure REST API
 
-* Kusto Query Language (KQL) 
+* Kusto Query Language (KQL)
 
 * React
 
 * React Router
 
 * RechartJS
-  
+
 * Tailwind
 
-* Framer Motion 
+* Framer Motion
 
 * Redux
 
@@ -211,7 +212,7 @@ Opal was built with the following frameworks / libraries:
 * Express
 
 * PostgreSQL
-  
+
 
 ## Contributing
 
