@@ -8,9 +8,10 @@ export const OverviewPage = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-
+  
   useEffect(() => {
     if (!sessionStorage.getItem("executionObj")) {
+      const graphs:any = [];
       setLoading(true);
       const data: any = getExecOnlyData();
 
@@ -27,11 +28,15 @@ export const OverviewPage = () => {
                       "workSpaceId",
                       result[i][x][y].workSpaceId || ''
                     );
+
                   }
+                  graphs.push(result[i][x][y]);
                 }
               }
             }
           }
+
+          sessionStorage.setItem('graphs', JSON.stringify(graphs));
 
           if (sessionStorage.getItem("executionObj")) {
             //@ts-ignore
