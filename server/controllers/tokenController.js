@@ -1,20 +1,20 @@
-// Decide whether to use fetch or axios consistently across controllers.
 import fetch from 'node-fetch';
 import { config } from 'dotenv';
 config();
 
 const tokenController = {};
 
-// If need to change login functionality, need these to be defined elsewhere.
+//Import environmental variables.
 const TENANT_ID = process.env.AZURE_TENANT_ID;
 const CLIENT_ID = process.env.AZURE_CLIENT_ID;
 const CLIENT_SECRET = process.env.AZURE_CLIENT_SECRET;
 
-tokenController.checkToken = async (req, res, next) => {
-  // Consider adding route to temporarily store bearer tokens.
-};
-
 tokenController.getToken = async (req, res, next) => {
+  if (!TENANT_ID || !CLIENT_ID || !CLIENT_SECRET) {
+    return next({
+      err: 'Cannot retrieve bearer token: missing environmental variables for service principal.'
+    });
+  }
   // Unless the user already has a token stored (not yet implemented), get a new token.
   const azureManagementURL = 'https://management.azure.com/';
   const grantType = 'client_credentials';

@@ -8,10 +8,10 @@ export const OverviewPage = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-  
+
   useEffect(() => {
     if (!sessionStorage.getItem("executionObj")) {
-      const graphs:any = [];
+      const graphs: any = [];
       setLoading(true);
       const data: any = getExecOnlyData();
 
@@ -26,9 +26,8 @@ export const OverviewPage = () => {
                   if (!sessionStorage.getItem("workSpaceId")) {
                     sessionStorage.setItem(
                       "workSpaceId",
-                      result[i][x][y].workSpaceId || ''
+                      result[i][x][y].workSpaceId || ""
                     );
-
                   }
                   graphs.push(result[i][x][y]);
                 }
@@ -36,7 +35,7 @@ export const OverviewPage = () => {
             }
           }
 
-          sessionStorage.setItem('graphs', JSON.stringify(graphs));
+          sessionStorage.setItem("graphs", JSON.stringify(graphs));
 
           if (sessionStorage.getItem("executionObj")) {
             //@ts-ignore
@@ -46,22 +45,34 @@ export const OverviewPage = () => {
             const functions: any = getAllFunctions({ executionObj });
             Promise.resolve(functions).then((result: any) => {
               // setLoading(false);
-              sessionStorage.setItem("functions", JSON.stringify(result));
+              if (!result) {
+                console.log('failed to receive data');
+                sessionStorage.setItem("functions", JSON.stringify({
+                  functions: []
+                }));
+              } else {
+                sessionStorage.setItem("functions", JSON.stringify(result));
+              }
+            }).catch(() => {
+              sessionStorage.setItem("functions", JSON.stringify({
+                functions: []
+              }));
             });
           }
         })
-        .catch((err) => console.log(err));   
+        .catch((err) => console.log(err));
     }
 
-    return () => {}
-
+    return () => {};
   }, []);
 
-  let subscriptions:any = [];
+  let subscriptions: any = [];
   if (sessionStorage.getItem("executionObj")) {
     const obj = JSON.parse(sessionStorage.getItem("executionObj") || "{}");
     for (let i in obj) {
-      subscriptions.push(<Subscription key={i} name={i} resourceGrp={obj[i]}/>)
+      subscriptions.push(
+        <Subscription key={i} name={i} resourceGrp={obj[i]} />
+      );
     }
   }
 
@@ -72,9 +83,7 @@ export const OverviewPage = () => {
       ) : (
         <div>
           <div className="flex flex-wrap w-full justify-center items-center p-5">
-            {
-              subscriptions
-            }
+            {subscriptions}
           </div>
         </div>
       )}

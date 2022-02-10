@@ -3,10 +3,10 @@ import axios from "axios";
 const baseUrl = "http://localhost:3000/getSpecificFunctionMetrics";
 
 /**
- * 
- * @param data { workSpaceId, functionName }
+ *
+ * @param data { workSpaceId, functionName, granularity, timespan }
  * @function async to fetch all information about a specific function in there users account
- * @returns an array of all information pertaining to a specific function 
+ * @returns an array of all information pertaining to a specific function
  */
 
 export const getFuncDetails = async (data) => {

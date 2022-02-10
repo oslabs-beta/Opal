@@ -12,26 +12,18 @@ const credential = new DefaultAzureCredential();
 
 const sdkController = {};
 
+// If only getting execution counts for Function Applications, set the executionOnly property to true.
 sdkController.executionOnly = async (req, res, next) => {
   res.locals.executionOnly = true;
   return next();
 };
 
+// Get all subscriptions associated with the given credential.
 sdkController.fetchSubscriptionIds = async (req, res, next) => {
-  // get all subscriptions associated with the given credential.
-  // look up iterator functionality in relation to promise use.
-  // subscriptions are accessed through an iterator.
-  // may need to iterate through pages of subscriptions.
   const subClient = new SubscriptionClient(credential);
   const subscriptions = subClient.subscriptions.list();
-  // const nextSub = await subscriptions.next();
-  // nextSub.value will return an array of subscriptions.
-  // for our purposes, all we need is the subscriptionId.
-  // return an array of subscription ids.
 
   res.locals.subscriptions = {};
-  //This is using .list().byPage() await .next().value because we are using a forEach loop.
-  //If we iterate with a for loop, we can use await .list() and for await ().
   for await (const sub of subscriptions) {
     res.locals.subscriptions[sub.subscriptionId] = {
       tenantId: sub.tenantId,
@@ -47,41 +39,28 @@ sdkController.fetchSubscriptionIds = async (req, res, next) => {
     let workspaces = await opClient.workspaces.list();
     res.locals.subscriptions[sub.subscriptionId].workSpaceArray = [];
     for await (const workspace of workspaces) {
-      console.log(workspace);
       res.locals.subscriptions[sub.subscriptionId].workSpaceArray.push(workspace.customerId);
-      console.log('workSpaceArray');
-      console.log(res.locals.subscriptions[sub.subscriptionId].workSpaceArray);
     }
-
-
   }
   return next();
 };
 
+// Get all resource groups associated with the given subscription.
 sdkController.fetchResourceGroups = async (req, res, next) => {
   for (let sub in res.locals.subscriptions) {
     res.locals.subscriptions[sub].rmc = new ResourceManagementClient(credential, sub);
     const groups = res.locals.subscriptions[sub].rmc.resourceGroups.list({ top: null });
     const groupsByPage = groups.byPage();
     const groupsPerSub = await groupsByPage.next();
-    //Because we aren't iterating we need to use the .next() property.
-
     const opClient = new OperationalInsightsManagementClient(credential, res.locals.subscriptions[sub].subscriptionId);
-    console.log('groupsPerSub is');
-    console.log(groupsPerSub.value);
     let workspaces = await opClient.workspaces.list();
-    console.log('WORK SPACE');
-    const awaited = await workspaces.next();
-    console.log(awaited);
-
+    await workspaces.next();
     res.locals.subscriptions[sub].resourceGroups = groupsPerSub.value;
   }
-  // console.log('fetching resource groups took');
-  // console.log(end - start);
-  // console.log('milliseconds');
   return next();
 };
 
+// Get all resources associated with the given resource group.
 sdkController.fetchResources = async (req, res, next) => {
   const functionAppArray = [];
   const insightsList = [];
@@ -90,14 +69,13 @@ sdkController.fetchResources = async (req, res, next) => {
     const currentSub = subscriptions[sub];
     for (let group in currentSub.resourceGroups) {
       const currentGroup = currentSub.resourceGroups[group];
-      // add resource management client for this specific resource group.
+
+      // Add a resource management client, and store it on the currentSub object on res.locals.
       const rmc = currentSub.rmc;
-      // get list of resources associated with that group.
+
+      // List resources.
       const resources = rmc.resources.listByResourceGroup(currentGroup.name);
-      // const resourcesByPage = resources.byPage();
-      // assume only one page
-      // get list of all resources in a given group.
-      // const allResources = await resourcesByPage.next();
+
       const functionList = [];
 
       // Sort resources into Function Applications and Insights. Ignore others.
@@ -119,7 +97,7 @@ sdkController.fetchResources = async (req, res, next) => {
       // Pair every insight component with its corresponding function application.
       insightsList.forEach((app) => {
         for (const functionApp of functionList) {
-          // Convert both to lowercase to avoid capitalization issues.
+          // Convert both to lowercase to avoid capitalization inconsistencies that appear in results retrieved through SDK.
           const fatl = functionApp.name.toLowerCase();
           const atl = app.name.toLowerCase();
           if (fatl === atl) {
@@ -135,24 +113,32 @@ sdkController.fetchResources = async (req, res, next) => {
     }
   }
 
-  // delete the RMC once it's no longer needed.
+  // Delete the RMC once it's no longer needed, so that circular reference issues are avoided when JSONifying the object.
   for (const sub in res.locals.subscriptions) {
     delete res.locals.subscriptions[sub].rmc;
   }
 
   res.locals.functionApps = functionAppArray;
   res.locals.insights = insightsList;
+
   return next();
 };
 
+// Format the object of execution counts before it goes back to the client.
 sdkController.formatExecutions = (req, res, next) => {
   const executionObj = {};
+
+  // Iterate through subscriptions.
   for (let sub in res.locals.subscriptions) {
     executionObj[sub] = {};
+
+    // Iterate through resource groups.
     for (let group of res.locals.subscriptions[sub].resourceGroups) {
       if (group.functionList.length) {
         executionObj[sub][group.name] = {};
         let currentFuncArray = group.functionList;
+
+        // Iterate through resources (function apps).
         currentFuncArray.forEach((func) => {
           let functionCount = {
             name: func.name,
@@ -167,11 +153,12 @@ sdkController.formatExecutions = (req, res, next) => {
             metricName: 'ExecutionCount',
             timeseries: res.locals.webMetrics[func.name].metrics[0].timeseries,
           };
+
+          // Set insightId identifier for tracking metrics available only through Insights providers.
           if (func.insightId !== undefined) {
             functionCount.insightId = func.insightId;
           }
           if (res.locals.subscriptions[sub].workSpaceArray[0] !== undefined) {
-            //console.log(res.locals.subscriptions[sub]);
             functionCount.workSpaceId = res.locals.subscriptions[sub].workSpaceArray[0];
           } else {
           }
@@ -184,11 +171,12 @@ sdkController.formatExecutions = (req, res, next) => {
       }
     }
   }
+
   res.locals.executionObj = executionObj;
   return next();
 };
 
-// This should be renamed -- this just gets all functions associated with one function app.
+// Get all functions associated with a particular function app.
 sdkController.getAllFunctions = async (req, res, next) => {
   const { subscriptionIdentifier, resourceGroupName, appName } = res.locals.azure.functionData;
   try {
@@ -205,32 +193,12 @@ sdkController.getAllFunctions = async (req, res, next) => {
         return next();
       });
   } catch (err) {
-    console.log('ERROR in web data');
     return next(err);
   }
 };
 
-// This route gets all functions associated with all subscribers and resource groups fed in from frontend.
-// Like need this to be async, but confirm.
+// Get all functions associated with all resource groups and subscribers. Data is reflected from frontend after it receives the execution-count object.
 sdkController.getFunctionList = async (req, res, next) => {
-  /*
-    {
-      subscriptions: [
-        {
-          subName:
-          resourceGroups: [
-            {
-              resourceGroupName:
-              resources: [
-               "resource1, resource2"
-              ]
-            }
-          ]
-        }
-      ]
-    }
-    */
-  //console.log('entering getFunctionList');
   res.locals.funcList = {
     functions: [],
   };
@@ -238,10 +206,16 @@ sdkController.getFunctionList = async (req, res, next) => {
   const funcSub = [];
   const funcResGrp = [];
   const funcRes = [];
+
+  // Iterate through each subscriber.
   for (let sub in res.locals.azure.subList) {
     let currentSub = res.locals.azure.subList[sub];
+
+    // Iterate through resource groups.
     for (let resGroup in currentSub) {
       let currentGrp = currentSub[resGroup];
+
+      // Iterate through resources.
       for (let resource = 0; resource < currentGrp.length; resource++) {
         let currentRes = currentGrp[resource];
         const fetchURL = `https://management.azure.com/subscriptions/${sub}/resourceGroups/${resGroup}/providers/Microsoft.Web/sites/${currentRes}/functions?api-version=2021-01-01`;
@@ -259,15 +233,13 @@ sdkController.getFunctionList = async (req, res, next) => {
     }
   }
   Promise.all(funcPromise).then((resultArray) => {
-    // For each requested resource in the promise array.
+    // Iterate through each requested resource in the promise array.
     for (let i = 0; i < resultArray.length; i++) {
-      //console.log('here is one result from the promise aray');
-      //console.log(resultArray[i].data.value);
       let currentFuncAppData = resultArray[i].data.value;
-      // For each function within each requested resource.
+
+      // Iterate through each function within each requested resource.
       for (let j = 0; j < currentFuncAppData.length; j++) {
         let currentFuncData = currentFuncAppData[j];
-        //console.log(currentFuncData);
         let currentSub = funcSub[i];
         let currentGrp = funcResGrp[i];
         let currentRes = funcRes[i];
@@ -285,52 +257,29 @@ sdkController.getFunctionList = async (req, res, next) => {
         res.locals.funcList.functions.push(currentFunc);
       }
     }
-    //console.log('complete');
-    //console.log(res.locals.funcList);
+
     return next();
   });
-  //.then(() => {
-  //  console.log('successfully resolved');
-  //  console.log(res.locals.funcList);
-  //  return next();
-  //})
-  //.catch((err) => {
-  // Fix error handling here.
-  //  console.log('did not successfully resolve');
-  //  return next(`hit err of ${err}`);
-  //});
 };
 
+// Retrieve subscriber list sent from frontend.
 sdkController.setSub = (req, res, next) => {
   res.locals.azure.subList = req.body;
   return next();
-  /*
-    {
-      subscriptions: [
-        {
-          subName:
-          resourceGroups: [
-            {
-              resourceGroupName:
-              resources: [
-               "resource1, resource2"
-              ]
-            }
-          ]
-        }
-      ]
-    }
-    */
 };
 
+// When sending back more specific data about a function application, format it to object expected by frontend.
 sdkController.formatAppDetail = (req, res, next) => {
   const selectedApp = res.locals.functionApps[0];
   const metricsArray = res.locals.webMetrics[selectedApp.name].metrics;
   const insightsArray = res.locals.insightsMetrics[0].metrics;
-  const metricsObj = {};
+
+  // Push insights to the metrics array.
   insightsArray.forEach((insight) => {
     metricsArray.push(insight);
   });
+
+  // Format functionApp detail object.
   res.locals.appDetail = {
     name: selectedApp.name,
     id: selectedApp.id,
@@ -339,9 +288,11 @@ sdkController.formatAppDetail = (req, res, next) => {
     location: selectedApp.location,
     metrics: metricsArray,
   };
+
   return next();
 };
 
+// Format data from frontend, timespan, and granularity into format accessible to backend.
 sdkController.setFunctionApp = (req, res, next) => {
   // Both single-function and multi-function routes should be relying on same data in res.locals.
   const { name, id, location, insightId, resourceGroupId, resourceGroupName, workSpaceId, granularity, timespan } = req.body;
@@ -359,7 +310,7 @@ sdkController.setFunctionApp = (req, res, next) => {
   });
   res.locals.executionOnly = false;
 
-  // If timeframe is set, translate timeframe to data usable by sdkController.
+  // If timeframe is set, translate timeframe to ISO8601 format expected by Azure SDK.
   switch (timespan) {
     case 0:
       res.locals.timespan = 'PT1H';
@@ -381,6 +332,7 @@ sdkController.setFunctionApp = (req, res, next) => {
       break;
   }
 
+  // If granularity is set, translate granularity to ISO8601 format expected by Azure SDK.
   switch (granularity) {
     case 0:
       res.locals.granularity = 'PT5M';
@@ -407,26 +359,78 @@ sdkController.setFunctionApp = (req, res, next) => {
       res.locals.granularity = 'PT1H';
       break;
   }
-
-  //console.log('received timespan of');
-  //console.log(res.locals.timespan);
-
   return next();
 };
 
+// Transform data from frontend seeking metrics for a specific function.
 sdkController.setFunction = (req, res, next) => {
-  console.log('entering setFunction');
-  console.log(req.body);
-  const { workSpaceId, functionName } = req.body;
+  let { workSpaceId, functionName, timespan, granularity } = req.body;
+
+  // Convert timespans to ISO8601 format. For now, this is the same timespan convert as is used for function applications.
+  switch (timespan) {
+    case 0:
+      timespan = 'PT1H';
+      break;
+    case 1:
+      timespan = 'PT24H';
+      break;
+    case 2:
+      timespan = 'PT48H';
+      break;
+    case 3:
+      timespan = 'P7D';
+      break;
+    case 4:
+      timespan = 'P1M';
+      break;
+    default:
+      timespan = 'PT24H';
+      break;
+  }
+
+  // Convert granularity signifier from frontend to format expected by table-processing function for Azure logs.
+  // 0 = 5 minutes, 1 = 15 minutes, 2 = 30 minutes, 3 = 60 minutes, 4 = 6 hours, 5 = 12 hours, 6 = 24 hours.
+
+  switch (granularity) {
+    case 0:
+      granularity = 5;
+      break;
+    case 1:
+      granularity = 15;
+      break;
+    case 2:
+      granularity = 30;
+      break;
+    case 3:
+      granularity = 60;
+      break;
+    case 4:
+      granularity = 360;
+      break;
+    case 5:
+      granularity = 720;
+      break;
+    case 6:
+      granularity = 1440;
+      break;
+    default:
+      granularity = 60;
+      break;
+  }
+
+  // Add formatted request for function data to res.locals.
   res.locals.azure = {
     specificFunction: {
       azureLogAnalyticsWorkspaceId: workSpaceId,
       functionName: functionName,
+      timespan: timespan,
+      granularity: granularity,
     },
   };
   return next();
 };
 
+// Format selection of a specific resource (function application).
 sdkController.setResource = (req, res, next) => {
   const { subscription, resourceGroupName, appName } = req.body;
   res.locals.azure = {

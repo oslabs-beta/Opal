@@ -1,3 +1,4 @@
+// Converts metrics stored in constants file into useable arrays for queries.
 const generateMetric1D = function (resObj) {
   let metricArray = [];
   for (let key in resObj) {

@@ -13,15 +13,18 @@ const logsQuery = new LogsQueryClient(credential);
 
 // Get metrics associated with a function application's MS Web provider.
 metricsController.getMSWebMetrics = async (req, res, next) => {
+  // Default timespan, if not set, is one day.
   if (!res.locals.timespan) {
     res.locals.timespan = 'PT24H';
   }
   let timespan = { duration: res.locals.timespan };
 
+  // Default granularity, if not set, is one hour.
   if (!res.locals.granularity) {
     res.locals.granularity = 'PT1H';
   }
   let granularity = res.locals.granularity;
+
   let metrics;
   const metricsObj = {};
 
@@ -30,6 +33,7 @@ metricsController.getMSWebMetrics = async (req, res, next) => {
     metrics = ['FunctionExecutionCount'];
   } else {
     // If seeking all metrics, get all metrics.
+    // Pull metrics at current stage from constants file.
     metrics = generateMetric1D(MSWebOptions);
   }
 
@@ -38,7 +42,6 @@ metricsController.getMSWebMetrics = async (req, res, next) => {
 
   // Query MS Web metrics for every functionApp in the collection of function applications.
   for (let funcApp of res.locals.functionApps) {
-    // Consistent formatting of error message.
     if (!funcApp.id) {
       return next({
         err: 'Error: A resource ID must be set in order to fetch metrics for a function.',
@@ -59,7 +62,7 @@ metricsController.getMSWebMetrics = async (req, res, next) => {
     funcNameArray.push(funcApp.name);
   }
 
-  // Consider Promise.allSettled if we want to accept possibility that fewer than all queries will run.
+  // Consider Promise.allSettled for circumstances in which fewer than all queries will run.
   Promise.all(funcQueryArray)
     .then((queryResultArray) => {
       for (let i = 0; i < queryResultArray.length; i++) {
@@ -83,21 +86,19 @@ metricsController.getMSWebMetrics = async (req, res, next) => {
 
 // Retrieve the MS Insights metrics associated with a function application.
 metricsController.getMSInsightsMetrics = async (req, res, next) => {
-  // Set granularity and timespan dynamically once they are passed from the frontend.
-  // For now, set them statically to hour-by-hour, for a 24-hour period.
-  //let timespan = {duration: 'PT24H'};
-  //let timespan = {duration: '2022-01-26T23:03:24.604Z/2022-01-27T23:03:24.604Z' }
+  // Default timespan is one day.
   if (!res.locals.timespan) {
     res.locals.timespan = 'PT24H';
   }
   let timespan = { duration: res.locals.timespan };
 
+  // Default granularity is one hour.
   if (!res.locals.granularity) {
     res.locals.granularity = 'PT1H';
   }
   let granularity = res.locals.granularity;
 
-  // For now, metrics are selected statically.
+  // Pull metrics at current stage from constants file.
   const metrics = generateMetric2D(MSInsightsOptions).split(',');
   const metricsArray = [];
 
@@ -115,7 +116,6 @@ metricsController.getMSInsightsMetrics = async (req, res, next) => {
     const result = metricQuery.queryResource(resId, metrics, {
       granularity: granularity,
       timespan: timespan,
-      //aggregations: ['Count']
     });
 
     // Push the results of the query and the function's name into parallel arrays.
@@ -148,8 +148,95 @@ metricsController.getMSInsightsMetrics = async (req, res, next) => {
     });
 };
 
-// Storage metrics controller is not currently being used.
-//metricsController.getStorageMetrics = async (req, res, next) => {
+metricsController.retrieveFunctionLogs = async (req, res, next) => {
+  const { azureLogAnalyticsWorkspaceId, functionName, granularity, timespan } = res.locals.azure.specificFunction;
+  const kustoQuery = `AppRequests | project OperationName, TimeGenerated, Success, ResultCode, DurationMs | where OperationName contains \'${functionName}\' | sort by TimeGenerated asc nulls first`;
+  const logRes = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery, {
+    duration: timespan,
+  });
+  // Properties removed from query: Id, OperationId, TenantId, Measurements, AppRoleName, Type, Name, AppRoleInstance.
+  res.locals.funcResponse = metricsController.processTable(logRes, granularity);
+  return next();
+};
+
+metricsController.processTable = function (logObject, granularity) {
+  const table = logObject.tables[0];
+  const columnArray = [];
+  table.columns.forEach((column) => {
+    columnArray.push(column.name);
+  });
+  const logArray = [];
+
+  // Round date to selected granularity.
+  function roundDate (mins, dateVal) {
+    let ms = 1000 * 60 * mins;
+    return new Date(Math.round(dateVal.getTime() / ms) * ms).toString();
+  }
+
+  // Process tables and round dates from TimeGenerated.
+  for (let row = 0; row < table.rows.length; row++) {
+    let logEntry = {};
+    for (let prop = 0; prop < table.rows[row].length; prop++) {
+      let currentRow = table.rows[row];
+      if (columnArray[prop] !== 'TimeGenerated') {
+        logEntry[columnArray[prop]] = currentRow[prop];
+      } else {
+        logEntry.timeStamp = roundDate(granularity, currentRow[prop]);
+      }
+    }
+    logArray.push(logEntry);
+  }
+  // Convert into a timeseries.
+  const seriesMap = new Map();
+  // Generate timeseries and sum success and failure counts.
+  for (let data of logArray) {
+    if (!seriesMap.has(data.timeStamp)) {
+      // If we do not have this time in our map, create an object, initializing successCount, failCount, and delayArray.
+      let currentDelay = data.DurationMs;
+      seriesMap.set(data.timeStamp, {
+        operationName: data.OperationName,
+        timeStamp: data.timeStamp,
+        successCount: data.ResultCode === "200" ? 1 : 0,
+        failCount: data.ResultCode !== "200" ? 1: 0,
+        delayArray: [currentDelay]
+      });
+      console.log('MAP');
+      console.log(seriesMap.get(data.timeStamp));
+    } else {
+      // If we already have this time in our map, increment the success or failure counter, push new delay to array.
+      const delayArray = seriesMap.get(data.timeStamp).delayArray;
+      delayArray.push(data.DurationMs);
+      let currentSuccess = seriesMap.get(data.timeStamp).successCount;
+      let currentFail = seriesMap.get(data.timeStamp).failCount;
+      data.ResultCode === "200" ? ++currentSuccess : ++currentFail;
+      seriesMap.set(data.timeStamp, {
+        operationName: data.OperationName,
+        successCount: currentSuccess,
+        failCount: currentFail,
+        timeStamp: data.timeStamp,
+        delayArray: delayArray,
+      });
+    }
+  }
+
+  // Convert Map iterator to an array.
+  const values = seriesMap.values();
+  const outputTableArray = Array.from(values);
+
+  // In the output table, reduce the 'delay' array into a single integer that represents the average delay during that timespan.
+  outputTableArray.forEach((timeseries) => {
+    let delayArr = timeseries.delayArray;
+    let delayArrLen = delayArr.length;
+    if (!delayArrLen) timeseries.delay = 0;
+    else timeseries.delay = Math.trunc(delayArr.reduce((prev, cur) => prev + cur) / delayArr.length);
+    delete timeseries.delayArray;
+  });
+  return outputTableArray;
+};
+
+
+// Currently not using storage controller, but may be used for future development.
+// metricsController.getStorageMetrics = async (req, res, next) => {
 // const metrics = generateMetric1D(MSStorageOptions);
 // const metricsArray = [];
 // for await (let resource of res.locals.storageList) {
@@ -168,101 +255,6 @@ metricsController.getMSInsightsMetrics = async (req, res, next) => {
 // }
 // res.locals.storageMetrics = metricsArray;
 //  return next();
-//};
-
-metricsController.retrieveFunctionLogs = async (req, res, next) => {
-  //console.log('entering retrieveFunctionLogs');
-  const { azureLogAnalyticsWorkspaceId, functionName } = res.locals.azure.specificFunction;
-  const kustoQuery = `AppRequests | project OperationName, TimeGenerated, Success, ResultCode, DurationMs | where OperationName contains \'${functionName}\' | sort by TimeGenerated asc nulls first`;
-  const logRes = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery, {
-    duration: 'P1D',
-  });
-  //console.log(logRes.tables[0]);
-  // Removed the following: Id, OperationId, TenantId, Measurements, AppRoleName, Type, Name, AppRoleInstance
-  res.locals.funcResponse = metricsController.processTable(logRes);
-  //console.log('Func Response');
-  //console.log(res.locals.funcResponse);
-  return next();
-};
-
-// Deprecated.
-metricsController.applicationInsights = async (req, res, next) => {
-  return next();
-};
-
-metricsController.processTable = function (logObject) {
-  //console.log('log object at tables 0');
-  //console.log(logObject.tables[0]);
-
-  const table = logObject.tables[0];
-  const columnArray = [];
-  table.columns.forEach((column) => {
-    columnArray.push(column.name);
-  });
-  const logArray = [];
-
-  // Date rounding function.
-  function roundDate (mins, dateVal) {
-    let ms = 1000 * 60 * mins;
-    return new Date(Math.round(dateVal.getTime() / ms) * ms).toString();
-  }
-
-  // Process tables and round dates from TimeGenerated.
-  for (let row = 0; row < table.rows.length; row++) {
-    let logEntry = {};
-    for (let prop = 0; prop < table.rows[row].length; prop++) {
-      let currentRow = table.rows[row];
-      if (columnArray[prop] !== 'TimeGenerated') {
-        logEntry[columnArray[prop]] = currentRow[prop];
-      } else {
-        //console.log('found a time');
-        logEntry.timeStamp = roundDate(60, currentRow[prop]);
-      }
-    }
-    logArray.push(logEntry);
-  }
-  console.log('logArray');
-  console.log(logArray);
-  // Convert into a timeseries.
-  const seriesMap = new Map();
-
-  // Generate timeseries and sum success and failure counts.
-  for (let data of logArray) {
-    if (!seriesMap.has(data.timeStamp)) {
-      // If we do not have this time in our map, create an object, initializing successCount, failCount, and delayArray.
-      let currentDelay = data.DurationMs;
-      console.log('CURRENTDELAY');
-      console.log(currentDelay);
-      seriesMap.set(data.timeStamp, {
-        operationName: data.OperationName,
-        timeStamp: data.timeStamp,
-        successCount: data.ResultCode === "200" ? 1 : 0,
-        failCount: data.ResultCode !== "200" ? 1: 0,
-        delayArray: [currentDelay]
-      });
-      console.log('MAP');
-      console.log(seriesMap.get(data.timeStamp));
-    } else {
-      // If we already have this time in our map, increment the success or failure counter, push new delay to array.
-      // Get method will still pass by reference and can be edited.
-      const delayArray = seriesMap.get(data.timeStamp);
-      console.log('DELAYARRAY');
-      console.log(delayArray);
-
-      let currentSuccess = seriesMap.get(data.timeStamp).successCount;
-      let currentFail = seriesMap.get(data.timeStamp).failCount;
-      data.ResultCode === "200" ? ++currentSuccess : ++currentFail;
-      seriesMap.set(data.timeStamp, {
-        operationName: data.OperationName,
-        successCount: currentSuccess,
-        failCount: currentFail,
-        timeStamp: data.timeStamp,
-      });
-    }
-  }
-
-  const values = seriesMap.values();
-  return Array.from(values);
-};
+// };
 
 export default metricsController;

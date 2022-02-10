@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { ResourceGroup } from ".";
+import { useNavigate } from "react-router-dom";
+import { AreaLineChart, ResourceGroup } from ".";
 
 interface Props {
   name: string;
@@ -9,7 +10,18 @@ interface Props {
 export const Subscription = ({ resourceGrp, name }: Props) => {
   const [active, setActive] = useState<string | null>("all");
 
-  const rGrp: Array<JSX.Element> = [];
+  const rGrp: Array<JSX.Element> = [
+    <div
+      className={`border-b-2 cursor-pointer p-5 hover:bg-sky-500 hover:text-white ${
+        "all" === active && "bg-sky-500 text-white"
+      }`}
+      onClick={() => setActive("all")}
+      key={"all"}
+    >
+      all
+    </div>,
+  ];
+
   const graphs: Array<any> = [];
 
   for (let i in resourceGrp) {
@@ -57,8 +69,8 @@ export const Subscription = ({ resourceGrp, name }: Props) => {
             </h1>
             <div className="flex flex-wrap justify-center items-center">
               {graphs &&
-                graphs?.map((d) => {
-                  return <ResourceGroup data={d} />;
+                graphs?.map((d:any, idx:number) => {
+                  return <ResourceGroup key={idx} data={d} />;
                 })}
             </div>
           </>
@@ -69,8 +81,8 @@ export const Subscription = ({ resourceGrp, name }: Props) => {
             </h1>
             <div className="flex flex-wrap justify-center items-center">
               {graphs &&
-                graphs?.map((d) => {
-                  return <ResourceGroup data={d} />;
+                graphs?.map((d:any, idx:number) => {
+                  return <ResourceGroup key={idx} data={d} />;
                 })}
             </div>
           </>
