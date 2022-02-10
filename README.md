@@ -84,7 +84,7 @@ npm run start-prod
 
 <b>1. Base Functionality</b>
 
-If the user is already logged in to Azure through an existing authentication flow (Azure CLI, Azure PowerShell, Managed Identity etc.), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`. 
+If the user is already logged in to Azure through an existing authentication flow (Azure CLI, Azure PowerShell, Managed Identity, Environment Variables, etc.), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`. 
 
 For more information about your options for authenticating to Azure, review the [DefaultAzureCredential docs](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
 
@@ -122,16 +122,17 @@ Create a login. After logging in, select the Azure icon (additional cloud provid
 When the app renders, Opal displays graphs of the function execution count for every Function App in your tenant. This is the Overview. From the Overview, you can see recent function execution count for every Function App in your tenant.
 <p><img src="assets/tutorial/overview.gif" width="720px"></p>
 
-You can access more detailed metrics in a specific Function App by either clicking on that Function App from the Overview or by selecting the Function App component of the sidebar and then selecting the Function App whose metrics you want to examine. This is the Function App view. The Function App view lets you select timespan and granularity for the graphs displayed. If there is some delay in re-rendering the metrics graphs after you customize the timespan and granularity, please select "Update Preferences".
+You can access more detailed metrics in a specific Function App by either clicking on that Function App from the Overview or by selecting the Function App component of the sidebar and then selecting the Function App whose metrics you want to examine. This is the <b>"Function App"</b> view. 
 <p><img src="assets/tutorial/functionapp.gif" width="720px" /></p>
 
-Metrics on specific functions are also available by scrolling down in the Function App view and selecting the specific function within that Function App. This is the Functions view. 
+The Function App view lets you select timespan and granularity for the graphs displayed. If there is a delay in re-rendering the metrics graphs after you customize the timespan and granularity, please select "Update Preferences".
 <p><img src="assets/tutorial/functionspecific.gif" width="720px" /></p>
 
-You can also see a list of all functions in your tenant by selecting the Functions component of the sidebar. This lists all functions in your tenant. Selecting a function from this list, will take you to the Functions view for that function. 
+You can also see a list of all functions in your tenant by selecting the Functions component of the sidebar. This is the <b>"Functions View.</b>
+Metrics on specific functions are also available by scrolling down in the Function App view and selecting the specific function within that Function App. 
 <p><img src="assets/tutorial/specificfunc.gif" width="720px" /></p>
 
-Due to Azure SDK limitations, the functions list and the Functions view are only available if the user also authenticates a service principal through a .env.
+Due to Azure SDK limitations, the "Functions List" and the "Functions View" are only available if the user also adds service principal information to their .env.
 
 ## FAQ
 
