@@ -1,8 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { FunctionApp } from '../../Types';
 
-export const FuncAppListComponent = ({ data }) => {
+interface Props {
+  data: FunctionApp
+}
+
+export const FuncAppListComponent = ({ data }: Props) => {
   const navigate = useNavigate();
 
   return (
@@ -10,7 +15,8 @@ export const FuncAppListComponent = ({ data }) => {
       navigate(`/azure/functionApp/${data.name}`, { state: data })
     }>
       <h1>{data.name}</h1>
-      <div>
+      <div className='flex space-x-4'>
+        <h1>{data.resourceGroupName}</h1>
         <h1>{data.subscriptionDisplayName}</h1>
       </div>
     </motion.div>

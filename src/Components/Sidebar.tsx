@@ -2,12 +2,15 @@ import React, { useState } from "react";
 
 import { motion } from "framer-motion";
 import { changeTab } from "../redux/slices/dashSlice";
-import { ChartBarIcon } from "@heroicons/react/outline";
-import { CubeTransparentIcon } from "@heroicons/react/outline";
-import { LogoutIcon } from "@heroicons/react/outline";
-import { UserIcon } from "@heroicons/react/outline";
-import { CloudIcon } from "@heroicons/react/outline";
-import { BookOpenIcon } from "@heroicons/react/outline";
+import {
+  UserIcon,
+  CloudIcon,
+  BookOpenIcon,
+  LogoutIcon,
+  CubeTransparentIcon,
+  ChartBarIcon,
+} from "@heroicons/react/outline";
+
 import { useAppSelector } from "../redux/hooks";
 import { useDispatch } from "react-redux";
 import { useNavigate, NavLink } from "react-router-dom";

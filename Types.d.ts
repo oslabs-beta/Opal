@@ -20,6 +20,7 @@ export interface FunctionApp {
   metricName: string;
   name: string;
   resourceGroupId: string;
+  resourceGroupName: string;
   subscriptionDisplayName: string;
   subscriptionId: string;
   subscriptionNamespaceId: string;
