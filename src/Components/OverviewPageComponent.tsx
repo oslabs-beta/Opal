@@ -45,7 +45,18 @@ export const OverviewPage = () => {
             const functions: any = getAllFunctions({ executionObj });
             Promise.resolve(functions).then((result: any) => {
               // setLoading(false);
-              sessionStorage.setItem("functions", JSON.stringify(result));
+              if (!result) {
+                console.log('failed to receive data');
+                sessionStorage.setItem("functions", JSON.stringify({
+                  functions: []
+                }));
+              } else {
+                sessionStorage.setItem("functions", JSON.stringify(result));
+              }
+            }).catch(() => {
+              sessionStorage.setItem("functions", JSON.stringify({
+                functions: []
+              }));
             });
           }
         })

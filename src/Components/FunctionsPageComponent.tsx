@@ -3,13 +3,12 @@ import React, { useState } from "react";
 import { FuncListComponent } from ".";
 
 export const FunctionsPage = () => {
-  const [data, setData] = useState(
-    JSON.parse(sessionStorage.getItem("functions") || "{}")
-  );
+  const [data, setData] = useState(JSON.parse(sessionStorage.getItem('functions') || '{"functions": "[]"}'));
 
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
+
     <div className="flex justify-center w-full h-auto">
       <div className="w-11/12">
         <div className="flex justify-center items-center w-full rounded-lg mb-10 ">
@@ -25,7 +24,7 @@ export const FunctionsPage = () => {
           </div>
         </div>
         <div className="w-full">
-          {data.functions.length > 0 &&
+          {data.functions.length > 0 ?
             data.functions.map((func) => {
               if (func.shortname.includes(searchQuery.toLowerCase())) {
                 console.log(func);
@@ -33,7 +32,15 @@ export const FunctionsPage = () => {
               } else {
                 return null;
               }
-            })}
+            }) : (
+              <div>
+                <h1><strong>Error: Cannot retrieve function list. Environmental variables for service principal are not set.</strong></h1>
+                <br />
+                <h2>Please review the Opal README for more information.</h2>
+                <br />
+                <button className='flex justify-center w-full h-auto' onClick={() => window.location.replace('/azure/overview')}>Click to Refresh</button>
+              </div>
+            )}
         </div>
       </div>
     </div>
