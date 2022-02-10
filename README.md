@@ -1,4 +1,4 @@
-<p style="text-align:center"><img src="assets/images/opalheader.png"></p>
+<p><img src="assets/images/opalheader.png"></p>
 
 # Opal
 An Azure Functions Monitoring Tool
@@ -31,18 +31,17 @@ An Azure Functions Monitoring Tool
 
 Opal is a tool for monitoring Microsoft Azure Functions. Azure Functions are a leading "serverless" computing solution that allows developers to deploy code on-the-fly without the need to provision or maintain their own servers. Opal's code leverages a combination of Microsoft Azure JavaScript SDKs and REST APIs to query metrics associated with the user's Azure Functions, and visualizes those metrics through graphs rendered with the JS Recharts library. 
 
-Opal provides pre-configured, clean visualizations, permitting developers to efficiently analyze the current state of their Azure Function deployments without the learning curve or setup associated with the Azure Portal. Also, Opal permits users to programatically browse all Azure Function Apps and Functions with a single click. 
+Opal provides pre-configured, clean visualizations, permitting developers to efficiently analyze the current state of their Azure Function deployments without the learning curve or setup associated with the Azure Portal. Opal also permits users to programatically browse all Azure Function Apps and Functions with a single click. 
 
 Currently supported metrics in Opal include, among other things, function invocations, success and error rates, response times, and estimated billing from selected Azure Functions.
 
 ## Prerequisites
-Users must have NodeJS and the Node Package Manage installed in their local environment before installing Opal.
 
-[NodeJS](https://nodejs.org/en/)
+* [NodeJS](https://nodejs.org/en/)
 
-[NPM](https://www.npmjs.com/)
+* [NPM](https://www.npmjs.com/)
 
-Opal requires an active [Azure subscription](https://azure.microsoft.com/en-us/free/) with deployed [Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal).
+* An active [Azure subscription](https://azure.microsoft.com/en-us/free/) with deployed [Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal).
 
 ## Getting Started
 
@@ -66,7 +65,9 @@ npm install
 npm run build-prod
 ```
 
-<b>4. Be authenticated to an Azure account (see 'Connecting to Azure')</b>
+<b>4. Authenticate.
+  
+Be authenticated to an Azure account. (See 'Connecting to Azure' for more information.)</b>
 
 
 <b>5. Run the app.</b>
@@ -108,29 +109,30 @@ Opal does not interfere with the user's Azure deployment, does not write data to
 
 Queries made through Opal utilize Azure SDKs and REST APIs, and may be subject to size or billing limitations imposed by the user's account. For more information, please refer to [Azure's Cost Management and Billing documentation](https://docs.microsoft.com/en-us/azure/cost-management-billing/) for the rules that may govern your subscription.
 
+
 ## How To Use The App
 
 On first load, you will be prompted to create an email and password.
-<p style="text-align:center"><img src="assets/tutorial/login.gif" width="720px" /></p>
+<p><img src="assets/tutorial/login.gif" width="720px" /></p>
 
 When the app renders, Opal displays graphs of the function execution count for every Function App in your tenant. This is the Overview. From the Overview, you can see recent function execution count for every Function App in your tenant.
-<p style="text-align:center"><img src="assets/tutorial/overview.gif" width="720px"></p>
+<p><img src="assets/tutorial/overview.gif" width="720px"></p>
 
-You can access more detailed metrics in a specific Function App by either clicking on that Function App from the Overview or by selecting the Function App component of the sidebar and then selecting the Function App you want to view metrics for. This is the Function App view. The Function App view lets you select timespan and granularity for the graphs displayed. If there is some delay in re-rendering the metrics graphs after you customize the timespan and granularity, please select "Update Preferences".
-<p style="text-align:center"><img src="assets/tutorial/functionapp.gif" width="720px" /></p>
+You can access more detailed metrics in a specific Function App by either clicking on that Function App from the Overview or by selecting the Function App component of the sidebar and then selecting the Function App whose metrics you want to examine. This is the Function App view. The Function App view lets you select timespan and granularity for the graphs displayed. If there is some delay in re-rendering the metrics graphs after you customize the timespan and granularity, please select "Update Preferences".
+<p><img src="assets/tutorial/functionapp.gif" width="720px" /></p>
 
 Metrics on specific functions are also available by scrolling down in the Function App view and selecting the specific function within that Function App. This is the Functions view. 
-<p style="text-align:center"><img src="assets/tutorial/functionspecific.gif" width="720px" /></p>
+<p><img src="assets/tutorial/functionspecific.gif" width="720px" /></p>
 
 You can also see a list of all functions in your tenant by selecting the Functions component of the sidebar. This lists all functions in your tenant. Selecting a function from this list, will take you to the Functions view for that function. 
-<p style="text-align:center"><img src="assets/tutorial/specificfunc.gif" width="720px" /></p>
+<p><img src="assets/tutorial/specificfunc.gif" width="720px" /></p>
 
 Due to Azure SDK limitations, the functions list and the Functions view are only available if the user also authenticates a service principal through a .env.
 
 
 ## FAQ
 
-1. Why can't I see the functions from some of my subscriptions?
+<b>1. Why can't I see the functions from some of my subscriptions?</b>
 
 By default, service principals are associated with a single subscription. If you did not specify a subscription when creating your service principal (or specified only one), you may not be able to see functions from other subscriptions.
 
@@ -144,19 +146,19 @@ Then use the output of the above command to define scope when creating a service
 
 Use the output of the above command to update your .env file according to the instructions in step 2 of [Connecting to Azure](#connecting-to-azure).
 
-2. What information do I need to provide to log in to Opal?
+<b>2. What information do I need to provide to log in to Opal?</b>
 
 On initial login, users only to create a username and password. 
 
-3. What information will Opal store about me?
+<b>3. What information will Opal store about me?</b>
 
 The only information Opal stores is an email address and a (hashed) password.
 
-4. Does Opal maintain any information about my Azure account?
+<b>4. Does Opal maintain any information about my Azure account?</b>
 
 No. Opal stores no information about your account. Opal simply acts as a client for a variety of Azure SDKs and endpoints to allow you to retrieve data from your Azure subscriptions in a single location.
 
-5. Do I need to enter to use my real email?
+<b>5. Do I need to enter to use my real email?</b>
 
 No. There are no consequences to creating a dummy email if you prefer not to be identified. But please avoid e-mail addresses that may legitimately be used by others.
 
@@ -199,6 +201,7 @@ Ideas for future developments and contributions include:
 * Adding support for AWS Lambda or Google Cloud Functions, to make Opal a more platform-neutral serverless monitoring tool.
 * Updating the Opal server as Microsoft continues to release updates to its Azure SDKs.
 * Allowing for the display of additional metrics for Function Apps or functions.
+
 
 ## Authors
 Alma Eyre [Github](https://github.com/aselunar) | [LinkedIn](https://www.linkedin.com/in/alma-eyre/) <br>
