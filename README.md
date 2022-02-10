@@ -118,7 +118,7 @@ Queries made through Opal utilize Azure SDKs and REST APIs, and may be subject t
 
 * <b>Login</b>
 
-Create a login. After logging in, select the Azure icon (additional cloud providers coming soon).
+Create a login. After logging in, select the Azure icon (additional cloud providers will be added in a future patch).
 <p><img src="assets/tutorial/login.gif" width="720px" /></p>
 
 * <b>Overview</b>
@@ -128,7 +128,7 @@ When the app renders, Opal displays graphs of the function execution count for e
 
 * <b>List View</b>
 
-You can see a list of all of your Function Apps or functions by clicking "Function Apps" or "Functions" in the sidebar. This is the <b>"List View"</b>. In the "List View", users can click a specific Function App or function to navigate to the view for that Function App or function. A search bar is provided for ease of navigation.
+You can see a list of all of your Function Apps or functions by clicking "Function Apps" or "Functions" in the sidebar. You can click a specific Function App or function to navigate to the view for that Function App or function. A search bar is provided for ease of navigation.
 <p><img src="assets/tutorial/specificfunc.gif" width="720px" /></p>
 
 * <b>Function App View</b>
@@ -143,7 +143,7 @@ To change the timespan and granularity, please use the corresponding sliders and
 You can access specific metrics for a function either by scrolling down in the corresponding "Function App View" and clicking that function or from the "List View".
 <p><img src="assets/tutorial/functionspecific.gif" width="720px" /></p>
 
-Due to Azure SDK limitations, the List View for functions and the "Function View" are only available if the user also adds service principal information to their .env.
+Due to Azure SDK limitations, the "List View" for functions and the "Function View" are only available if the user also adds service principal information to their .env.
 
 ## FAQ
 
