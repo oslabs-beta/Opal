@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import moment from "moment";
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -29,36 +29,29 @@ interface GraphProps {
 
 interface Data {
   Time: string;
-  Success: number;
-  Fail: number;
+  Delay: number;
 }
 
-export const FuncGraph = ({ data }: GraphProps) => {
+export const FuncDelayGraph = ({ data, format}: GraphProps) => {
   const [time, setTime] = useState<object | null>(null);
-  console.log('entering funcGraph')
-  console.log('here is the data');
-  console.log(data);
-  console.log('here is the current time ' + time)
-  const createObj = () => {
-    console.log('running createObj');
-    //const arr: Array<object> = [];
-    const arr: Array<object> = []!;
-    console.log('arr');
-    console.log(arr);
-    console.log('about to enter loop')
-    for (let i in data) {
-      console.log('looping once');
-      const obj: Data = { Time: "", Success: 0, Fail: 0};
-      const mnt = moment(data[i].timeStamp);
-      obj["Time"] = mnt.format("LT");
-      console.log(obj["Time"]);
-      obj["Success"] = data[i].successCount
-        ? data[i].successCount : 0;
 
-      obj["Fail"] = data[i].failCount ?
-      data[i].failCount : 0;
+  const createObj = () => {
+    const arr: Array<object> = []!;
+
+    for (let i in data) {
+      const obj: Data = { Time: "", Delay: 0 };
+
+      const mnt = moment(data[i].timeStamp);
+
+      obj["Time"] = mnt.format("LT");
+
+      obj["Delay"] = data[i].delay
+        ? data[i].delay
+        : 0
+
       arr.push(obj);
     }
+
     setTime(arr);
   };
 
@@ -66,10 +59,10 @@ export const FuncGraph = ({ data }: GraphProps) => {
 
   return (
     <>
-    <h1 className='flex items-center justify-center'>Successful Requests (200) v. Failed Requests</h1>
+    <h1 className='flex items-center justify-center'>Function Response Time</h1>
     <div className='relative -left-8' style={{ width: "100%", height: 300 }}>
       <ResponsiveContainer>
-        <LineChart
+        <AreaChart
           // @ts-ignore
           data={time}
           margin={{
@@ -90,22 +83,14 @@ export const FuncGraph = ({ data }: GraphProps) => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line
+          <Area
             type="monotone"
-            dataKey="Success"
-            stroke="blue"
-            fillOpacity={1}
-            fill="url(#colorUv)"
+            dataKey="Delay"
+            stroke="purple"
+            fill="purple"
             activeDot={{ r: 6 }}
           />
-          <Line
-            type="monotone"
-            dataKey="Fail"
-            stroke="red"
-            fill="red"
-            activeDot={{ r: 6 }}
-          />
-        </LineChart>
+        </AreaChart>
       </ResponsiveContainer>
     </div>
     </>

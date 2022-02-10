@@ -1,5 +1,7 @@
 export { AreaLineChart } from './AreaChart';
 
+export { FuncDelayGraph } from './FuncDelayGraph';
+
 export { LineGraph } from './LineGraph';
 
 export { FunctionAppPage } from './FunctionAppPageComponent';
