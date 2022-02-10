@@ -1,3 +1,4 @@
+//All files in this folder are for troubleshooting Azure SDK methods.
 //Gets all Function Apps from a single Azure subscription. This version uses @azure/arm-resources-subscriptions
 import { InteractiveBrowserCredential, DefaultAzureCredential, AzureCliCredential, ChainedTokenCredential }  from "@azure/identity";
 import { ResourceManagementClient } from "@azure/arm-resources";
