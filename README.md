@@ -85,6 +85,7 @@ If the user is already logged in to Azure through an existing authentication flo
 
 For more information about your options for authenticating to Azure, review the [DefaultAzureCredential docs](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
 
+
 <b>2. Additional Functionality</b>
 
 Using Opal to access metrics on individual <em>functions</em> in a Function App requires sending a bearer token to Azure REST APIs. Opal will use HTTPS and OAUTH 2.0 to securely handle the token-generation process for you, as long as you place a .env file in Opal's root directory identifying a service principal that is authorized to access your Azure subscription.
@@ -146,17 +147,21 @@ Then use the output of the above command to define scope when creating a service
 
 Use the output of the above command to update your .env file according to the instructions in step 2 of [Connecting to Azure](#connecting-to-azure).
 
+
 <b>2. What information do I need to provide to log in to Opal?</b>
 
 On initial login, users only to create a username and password. 
+
 
 <b>3. What information will Opal store about me?</b>
 
 The only information Opal stores is an email address and a (hashed) password.
 
+
 <b>4. Does Opal maintain any information about my Azure account?</b>
 
 No. Opal stores no information about your account. Opal simply acts as a client for a variety of Azure SDKs and endpoints to allow you to retrieve data from your Azure subscriptions in a single location.
+
 
 <b>5. Do I need to enter to use my real email?</b>
 
