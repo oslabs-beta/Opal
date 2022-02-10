@@ -5,7 +5,7 @@ An Azure Functions Monitoring Tool
 
 # Table of Contents
 
-- [About Opal](#about-opal) 
+- [About Opal](#about-opal)
 
 - [Prerequisites](#prerequisites)
 
@@ -14,7 +14,7 @@ An Azure Functions Monitoring Tool
 - [Connecting to Azure](#connecting-to-azure)
 
 - [Azure Account Access](#azure-account-access)
-  
+
 - [How to Use The App](#how-to-use-the-app)
 
 - [FAQ](#faq)
@@ -29,9 +29,9 @@ An Azure Functions Monitoring Tool
 
 ## About Opal
 
-Opal is a tool for monitoring Microsoft Azure Functions. Azure Functions are a leading "serverless" computing solution that allows developers to deploy code on-the-fly without the need to provision or maintain their own servers. Opal's code leverages a combination of Microsoft Azure JavaScript SDKs and REST APIs to query metrics associated with the user's Azure Functions, and visualizes those metrics through graphs rendered with the JS Recharts library. 
+Opal is a tool for monitoring Microsoft Azure Functions. Azure Functions are a leading "serverless" computing solution that allows developers to deploy code on-the-fly without the need to provision or maintain their own servers. Opal's code leverages a combination of Microsoft Azure JavaScript SDKs and REST APIs to query metrics associated with the user's Azure Functions, and visualizes those metrics through graphs rendered with the JS Recharts library.
 
-Opal provides pre-configured, clean visualizations, permitting developers to efficiently analyze the current state of their Azure Function deployments without the learning curve or setup associated with the Azure Portal. Opal also permits users to programatically browse all Azure Function Apps and Functions with a single click. 
+Opal provides pre-configured, clean visualizations, permitting developers to efficiently analyze the current state of their Azure Function deployments without the learning curve or setup associated with the Azure Portal. Opal also permits users to programatically browse all Azure Function Apps and Functions with a single click.
 
 Currently supported metrics in Opal include, among other things, function invocations, success and error rates, response times, and estimated billing from selected Azure Functions.
 
@@ -45,7 +45,7 @@ Currently supported metrics in Opal include, among other things, function invoca
 
 ## Getting Started
 <br />
-<b>1. Clone this repo.</b> 
+<b>1. Clone this repo.</b>
 
 If using [Git](https://git-scm.com/), run:
 ```
@@ -69,7 +69,7 @@ npm run build-prod
 
 <br />
 <b>4. Authenticate.</b><br />
-  
+
 Be authenticated to an Azure account. (See 'Connecting to Azure' for more information.)
 
 <br />
@@ -84,7 +84,7 @@ npm run start-prod
 
 <b>1. Base Functionality</b>
 
-If the user is already logged in to Azure through an existing authentication flow (e.g., Azure CLI, Azure PowerShell, Managed Identity, Environment Variables), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`. 
+If the user is already logged in to Azure through an existing authentication flow (e.g., Azure CLI, Azure PowerShell, Managed Identity, Environment Variables), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`.
 
 For more information about your options for authenticating to Azure, review the [DefaultAzureCredential docs](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
 
@@ -107,9 +107,9 @@ and use the output to create the above .env file.
 
 ## Azure Account Access
 
-Opal accesses function metrics using Azure SDK's DefaultAzureCredential and Azure REST APIs. The DefaultAzureCredential supports [multiple authentication methods](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet). 
+Opal accesses function metrics using Azure SDK's DefaultAzureCredential and Azure REST APIs. The DefaultAzureCredential supports [multiple authentication methods](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
 
-Opal does not interfere with the user's Azure deployment, does not write data to the user's Azure account, and does not store the data it reads from the user's Azure account. 
+Opal does not interfere with the user's Azure deployment, does not write data to the user's Azure account, and does not store the data it reads from the user's Azure account.
 
 Queries made through Opal utilize Azure SDKs and REST APIs, and may be subject to size or billing limitations imposed by the user's account. For more information, please refer to [Azure's Cost Management and Billing documentation](https://docs.microsoft.com/en-us/azure/cost-management-billing/) for the rules that may govern your subscription.
 
@@ -118,7 +118,7 @@ Queries made through Opal utilize Azure SDKs and REST APIs, and may be subject t
 
 * <b>Login</b>
 
-Create a login. After logging in, select the Azure icon (additional cloud providers coming soon).
+Create a login. After logging in, select the Azure icon (additional cloud providers will be added in a future patch).
 <p><img src="assets/tutorial/login.gif" width="720px" /></p>
 
 * <b>Overview</b>
@@ -126,24 +126,28 @@ Create a login. After logging in, select the Azure icon (additional cloud provid
 When the app renders, Opal displays graphs of the function execution count for every Function App in your tenant. This is the <b>"Overview."</b> From the Overview, you can see recent function execution count for every Function App in your tenant.
 <p><img src="assets/tutorial/overview.gif" width="720px"></p>
 
+* <b>List View</b>
+
+You can see a list of all of your Function Apps or functions by clicking "Function Apps" or "Functions" in the sidebar. You can click a specific Function App or function to navigate to the view for that Function App or function. A search bar is provided for ease of navigation.
+<p><img src="assets/tutorial/specificfunc.gif" width="720px" /></p>
+
 * <b>Function App View</b>
 
-You can access more detailed metrics in a specific Function App by clicking on that Function App in the "Overview." Selecting "Function Apps" will bring up the <b>"List"</b> view. Then select the Function App whose metrics you want to examine. 
+You can access more detailed metrics in a specific Function App either by selecting that Function App on the <b>"Overview"</b> page, or selecting that Function App in the <b>"List View." </b>
 
-Selecting a Function App takes the user to the <b>"Function App"</b> view. To change the timespan and granularity, please use the corresponding sliders and click <b>"Update Preferences"</b>.
+
+To change the timespan and granularity, please use the corresponding sliders and click <b>"Update Preferences"</b>.
 <p><img src="assets/tutorial/functionapp.gif" width="720px" /></p>
 
 * <b>Function View</b>
 
-The user can access selected metrics for specific functions (i.e., the children of FunctionApps) in the <b>"List"</b> view (after clicking "Functions" in the sidebar). Alternatively, users can scroll down in the Function App view to select any of the functions that are children of that Function App.
+You can access specific metrics for a function (i.e., the child of a FunctionApp) either by scrolling down in the corresponding "Function App View" and selecting that function, or by selecting that function from the "List View".
+
 <p><img src="assets/tutorial/functionspecific.gif" width="720px" /></p>
 
-* <b>List View</b>
+Timespan and granularity can be chosen in the Function View in the same was as above.
 
-You can also see a list of all of your Function Apps or functions by clicking "Function Apps" or "Functions" in the sidebar. This is the <b>"List View"</b>. In the "List View," users can click a specific Function App or function to navigate to view for that Function App or function. A search bar is provided for ease of navigation.
-<p><img src="assets/tutorial/specificfunc.gif" width="720px" /></p>
-
-Due to Azure SDK limitations, the "Functions List" and the "Functions View" are only available if the user also adds service principal information to their .env.
+Due to Azure SDK limitations, the "List View" for functions and the "Function View" are only available if the user also adds service principal information to their .env.
 
 ## FAQ
 
@@ -189,17 +193,17 @@ Opal was built with the following frameworks / libraries:
 
 * Azure REST API
 
-* Kusto Query Language (KQL) 
+* Kusto Query Language (KQL)
 
 * React
 
 * React Router
 
 * RechartJS
-  
+
 * Tailwind
 
-* Framer Motion 
+* Framer Motion
 
 * Redux
 
@@ -208,7 +212,7 @@ Opal was built with the following frameworks / libraries:
 * Express
 
 * PostgreSQL
-  
+
 
 ## Contributing
 
