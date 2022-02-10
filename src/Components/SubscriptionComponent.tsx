@@ -9,7 +9,18 @@ interface Props {
 export const Subscription = ({ resourceGrp, name }: Props) => {
   const [active, setActive] = useState<string | null>("all");
 
-  const rGrp: Array<JSX.Element> = [];
+  const rGrp: Array<JSX.Element> = [
+    <div
+      className={`border-b-2 cursor-pointer p-5 hover:bg-sky-500 hover:text-white ${
+        "all" === active && "bg-sky-500 text-white"
+      }`}
+      onClick={() => setActive("all")}
+      key={"all"}
+    >
+      all
+    </div>,
+  ];
+  
   const graphs: Array<any> = [];
 
   for (let i in resourceGrp) {
