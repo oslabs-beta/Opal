@@ -111,9 +111,12 @@ Opal does not interfere with the user's Azure deployment, does not write data to
 
 ## How To Use The App
 
-When the app loads, Opal displays graphs of the function execution count for every Function App in your tenant. You can also see a list of all Function Apps in your 
+When the app loads, Opal displays graphs of the function execution count for every Function App in your tenant. This is the Overview. From the Overview, you can see recent function execution count for every Function App in your tenant.
 
-Click on 
+You can access more detailed metrics in a specific Function App by either clicking on that Function App from the Overview or by selecting the Function App component of the sidebar and then selecting the Function App you want to view metrics for. This is the Function App view. The Function App view lets you select timespan and granularity for the graphs displayed. If there is some delay in re-rendering the metrics graphs after you customize the timespan and granularity, please select "Update Preferences".
+
+Metrics on specific functions are also available by srolling down in the Function App view and selecting the specific function within that Function App. This is the Functions view. You can also see a list of all functions in your tenant by selecting the Functions component of the sidebar. This lists all functions in your tenant. Selecting a function from this list, will take you to the Functions view for that function. Due to Azure SDK limitations, the functions list and the Function view are only available for users that authenticate with .env variables.
+
 
 ## Built With
 
