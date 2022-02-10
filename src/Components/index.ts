@@ -1,5 +1,7 @@
 export { AreaLineChart } from './AreaChart';
 
+export { FuncDelayGraph } from './FuncDelayGraph';
+
 export { LineGraph } from './LineGraph';
 
 export { FunctionAppPage } from './FunctionAppPageComponent';
@@ -33,3 +35,5 @@ export { FuncListComponent } from './FuncListComponent';
 export { FuncGraph } from './FuncGraph';
 
 export { Subscription } from './SubscriptionComponent';
+
+export { ResourceGroup } from './ResourceGroupComponent';

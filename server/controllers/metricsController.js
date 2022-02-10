@@ -172,14 +172,14 @@ metricsController.getMSInsightsMetrics = async (req, res, next) => {
 
 metricsController.retrieveFunctionLogs = async (req, res, next) => {
   //console.log('entering retrieveFunctionLogs');
-  const { azureLogAnalyticsWorkspaceId, functionName } = res.locals.azure.specificFunction;
+  const { azureLogAnalyticsWorkspaceId, functionName, granularity, timespan } = res.locals.azure.specificFunction;
   const kustoQuery = `AppRequests | project OperationName, TimeGenerated, Success, ResultCode, DurationMs | where OperationName contains \'${functionName}\' | sort by TimeGenerated asc nulls first`;
   const logRes = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery, {
-    duration: 'P1D',
+    duration: timespan,
   });
   //console.log(logRes.tables[0]);
   // Removed the following: Id, OperationId, TenantId, Measurements, AppRoleName, Type, Name, AppRoleInstance
-  res.locals.funcResponse = metricsController.processTable(logRes);
+  res.locals.funcResponse = metricsController.processTable(logRes, granularity);
   //console.log('Func Response');
   //console.log(res.locals.funcResponse);
   return next();
@@ -190,7 +190,7 @@ metricsController.applicationInsights = async (req, res, next) => {
   return next();
 };
 
-metricsController.processTable = function (logObject) {
+metricsController.processTable = function (logObject, granularity) {
   //console.log('log object at tables 0');
   //console.log(logObject.tables[0]);
 
@@ -216,46 +216,60 @@ metricsController.processTable = function (logObject) {
         logEntry[columnArray[prop]] = currentRow[prop];
       } else {
         //console.log('found a time');
-        logEntry.timeStamp = roundDate(60, currentRow[prop]);
+        logEntry.timeStamp = roundDate(granularity, currentRow[prop]);
       }
     }
     logArray.push(logEntry);
   }
-
+  console.log('logArray');
+  console.log(logArray);
   // Convert into a timeseries.
   const seriesMap = new Map();
+
+  // Generate timeseries and sum success and failure counts.
   for (let data of logArray) {
     if (!seriesMap.has(data.timeStamp)) {
-      // set properties of timeseries if not already set.
+      // If we do not have this time in our map, create an object, initializing successCount, failCount, and delayArray.
+      let currentDelay = data.DurationMs;
       seriesMap.set(data.timeStamp, {
         operationName: data.OperationName,
         timeStamp: data.timeStamp,
         successCount: data.ResultCode === "200" ? 1 : 0,
         failCount: data.ResultCode !== "200" ? 1: 0,
+        delayArray: [currentDelay]
       });
+      console.log('MAP');
+      console.log(seriesMap.get(data.timeStamp));
     } else {
-      let oldSuccess = seriesMap.get(data.timeStamp).successCount;
-      let oldFail = seriesMap.get(data.timeStamp).failCount;
-      console.log('old success WAS ' + oldSuccess);
-      console.log('oldFail WAS ' + oldFail);
-      data.ResultCode === "200" ? ++oldSuccess : ++oldFail;
-      console.log('old success IS NOW ' + oldSuccess);
-      console.log('oldFail IS NOW ' + oldFail);
+      // If we already have this time in our map, increment the success or failure counter, push new delay to array.
+      // Get method will still pass by reference and can be edited.
+      const delayArray = seriesMap.get(data.timeStamp).delayArray;
+      delayArray.push(data.DurationMs);
+      let currentSuccess = seriesMap.get(data.timeStamp).successCount;
+      let currentFail = seriesMap.get(data.timeStamp).failCount;
+      data.ResultCode === "200" ? ++currentSuccess : ++currentFail;
       seriesMap.set(data.timeStamp, {
         operationName: data.OperationName,
-        successCount: oldSuccess,
-        failCount: oldFail,
-        timeStamp: data.timeStamp
+        successCount: currentSuccess,
+        failCount: currentFail,
+        timeStamp: data.timeStamp,
+        delayArray: delayArray,
       });
     }
   }
-
-  //console.log('HERE IS THE MAP');
-  //console.log(seriesMap.values());
-  //return array of values in the map.
-  // Check whether sorting matters
   const values = seriesMap.values();
-  return Array.from(values);
+  const outputTableArray = Array.from(values);
+  outputTableArray.forEach((timeseries) => {
+    let delayArr = timeseries.delayArray;
+    let delayArrLen = delayArr.length;
+    if (!delayArrLen) timeseries.delay = 0;
+    else timeseries.delay = Math.trunc(delayArr.reduce((prev, cur) => prev + cur) / delayArr.length);
+    // Frontend doesn't need array from which average was generated.
+    delete timeseries.delayArray;
+  });
+  console.log('outputTableArray');
+  console.log(outputTableArray)
+  return outputTableArray;
 };
 
 export default metricsController;

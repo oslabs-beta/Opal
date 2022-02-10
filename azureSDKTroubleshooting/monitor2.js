@@ -9,6 +9,7 @@ import /** as*/ dotenv from 'dotenv';
 dotenv.config();
 
 //If we pass in a metricsResourceId for an individual function we get a BadRequest as a response. Only function apps can be targeted.
+// 'RestError: Microsoft.Web/sites/functions is not a supported platform metric namespace, supported ones are Microsoft.AnalysisServices/servers,'
 const metricsResourceId = process.env.RESOURCE_ID;
 
 export async function main() {

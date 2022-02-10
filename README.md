@@ -42,7 +42,7 @@ Opal requires an active [Azure subscription](https://azure.microsoft.com/en-us/f
 
 ## Getting Started
 
-1. Clone the repo.
+1. Clone the repo. If using [Git](https://git-scm.com/) run:
 
 ```
 git clone https://github.com/oslabs-beta/Opal
@@ -66,7 +66,7 @@ npm run build-prod
 5. Run the app.
 
 ```
-npm run start
+npm run start-prod
 ```
 
 ## Connecting to Azure
@@ -80,8 +80,14 @@ In Azure CLI, use 'az login' to login. Create a new service principal "contribut
 ```
 az login
 az account list --query "[].{id:id}" --output tsv
-az ad sp create-for-rbac --role contributor --scope subscriptions/subcription1 subscriptions/subscription2 subscriptions/subscription3
 ```
+
+Use the output of the above command to run the following command separating subscriptions with spaces.
+
+```
+az ad sp create-for-rbac --role contributor --scope subscriptions/<subscription1> subscriptions/<subscription2> subscriptions/<subscription3> <etc>
+```
+
 These commands will display the credentials to log in through this service principal.
 
 
@@ -97,9 +103,9 @@ AZURE_TENANT_ID=<tenant>
 
 ## More Information
 
-Opal accesses function metrics using Azure SDK's DefaultAzureCredential and Azure REST APIs. The Azure SDK supports [multuple authentication methods,](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet). 
+Opal accesses function metrics using Azure SDK's DefaultAzureCredential and Azure REST APIs. This DefaultAzureCredential supports [multuple authentication methods,](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet). 
 
-Opal does not interfere with the user's Azure deployment, and does not write data to the user's account. However, queries made through Opal utilize Azure SDKs and REST APIs, and may be subject to size or billing limitations imposed by the user's account. For more information, please refer to [Azure's Cost Management and Billing documentation](https://docs.microsoft.com/en-us/azure/cost-management-billing/) for the rules that may govern your subscription.
+Opal does not interfere with the user's Azure deployment, does not write data to the user's Azure account, and does not store the data it reads from the user's Azure account. However, queries made through Opal utilize Azure SDKs and REST APIs, and may be subject to size or billing limitations imposed by the user's account. For more information, please refer to [Azure's Cost Management and Billing documentation](https://docs.microsoft.com/en-us/azure/cost-management-billing/) for the rules that may govern your subscription.
 
 
 ## Built With

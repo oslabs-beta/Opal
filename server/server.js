@@ -41,8 +41,6 @@ app.post('/getFunctions', sdkController.setResource, tokenController.getToken, s
 
 // Quaternary route: Get metrics associated with a specific function within a function application.
 app.post('/getSpecificFunctionMetrics', sdkController.setFunction, metricsController.retrieveFunctionLogs, (req, res) => {
-  console.log('sending func response');
-  console.log(res.locals.funcResponse);
   res.json(res.locals.funcResponse);
 });
 

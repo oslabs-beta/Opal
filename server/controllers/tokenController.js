@@ -1,17 +1,14 @@
 // Decide whether to use fetch or axios consistently across controllers.
 import fetch from 'node-fetch';
-// wont need this version later on.
-//import { DefaultAzureCredential } from '@azure/identity';
-//import { SubscriptionClient } from '@azure/arm-resources-subscriptions';
 import { config } from 'dotenv';
 config();
 
 const tokenController = {};
 
 // If need to change login functionality, need these to be defined elsewhere.
-const TENANT_ID = process.env.TENANT_ID;
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const TENANT_ID = process.env.AZURE_TENANT_ID;
+const CLIENT_ID = process.env.AZURE_CLIENT_ID;
+const CLIENT_SECRET = process.env.AZURE_CLIENT_SECRET;
 
 tokenController.checkToken = async (req, res, next) => {
   // Consider adding route to temporarily store bearer tokens.
