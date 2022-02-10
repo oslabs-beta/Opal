@@ -61,7 +61,9 @@ npm install
 npm run build-prod
 ```
 
-4. Authenticate to your Azure account. (See 'Connecting to Azure.')
+4. Be authenticated to your Azure account 
+ 
+See 'Connecting to Azure.'
 
 5. Run the app.
 
@@ -69,37 +71,30 @@ npm run build-prod
 npm run start-prod
 ```
 
+
 ## Connecting to Azure
 
-If you already have a service principal configured with 'contributor' access to the subscriptions containing your Azure Functions, skip to step two.
+1. Base Functionality
 
-1. Create a service principal.
+Opal uses the Azure SDK's 'DefaultAzureCredential' class to authenticate the user directly to Azure. For example, an Azure CLI user can simply type `az login`. If the user is already logged in to Azure through an existing authentication flow (Managed Identity, Azure CLI, Powershell etc.), Opal's base functionality is accessible out-of-the-box with no configuration. For more information about your options for authenticating to Azure, review the [DefaultAzureCredential docs.](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
 
-In Azure CLI, use 'az login' to login. Create a new service principal "contributor" (or comparable) access to your subscriptions. If you have more than one subscription, all subscriptions must be listed in the grant of access rights. (If you do not have Azure CLI installed locally, you can also [access it through the Azure Portal](https://docs.microsoft.com/en-us/azure/cloud-shell/overview).)
+2. Additional Functionality
 
-```
-az login
-az account list --query "[].{id:id}" --output tsv
-```
-
-Use the output of the above command to run the following command separating subscriptions with spaces.
-
-```
-az ad sp create-for-rbac --role contributor --scope subscriptions/<subscription1> subscriptions/<subscription2> subscriptions/<subscription3> <etc>
-```
-
-These commands will display the credentials to log in through this service principal.
-
-
-2. Set up environmental variables.
-
-Create a .env file in the root directory in which Opal was installed. These variables should be set to the following values from the created service principal.
+Using Opal to access the metrics of <em>children</em> of Azure functions requires sending a bearer token to Azure REST APIs. Opal will use HTTPS and OAUTH 2.0 to securely handle the token-generation process for you, if you place a .env file in Opal's root directory identifying a service principal that is authorized to access your Azure subscription.
 
 ```
 AZURE_CLIENT_ID=<appId>
 AZURE_CLIENT_SECRET=<password>
 AZURE_TENANT_ID=<tenant>
 ```
+
+If you have not generated a service principal for this account, run the following commands and save the output to a .env file as described above.
+
+`az login` 
+`az account list --query "[].{id:id}" --output tsv`
+`az ad sp create-for-rbac --role contributor --scope subscriptions/<subscription1> subscriptions/<subscription2> subscriptions/<subscription3>`
+
+In either case, the service principal is used only to <em>read</em>, and never to write, any data to your Azure account.
 
 ## More Information
 
@@ -132,6 +127,32 @@ Opal was built with the following frameworks / libraries:
 
 * PostgreSQL
 
+## FAQ
+
+* Why can't I see the functions from some of my subscriptions?
+
+By default, service principals are associated with a single subscription. If you did not specify a subscription when creating your service principal (or specified only one), you may not be able to see functions from other subscriptions.
+
+To fix this, replace the data in your .env with the data for a new service principal with access to each of your subscriptions.
+`az account list --query "[].{id:id}" --output tsv`
+`az ad sp create-for-rbac --role contributor --scope subscriptions/<subscription1> subscriptions/<subscription2> subscriptions/<subscription3>`
+
+* What information do I need to provide to log in to Opal?
+
+On initial login, users only to create a username and password. 
+
+* What information will Opal store about me?
+
+The only information Opal stores is an email address and a (hashed) password.
+
+* Does Opal maintain any information about my Azure account?
+
+No. Opal stores no information about your account. Opal simply acts as a client for a variety of Azure SDKs and endpoints to allow you to retrieve data from your Azure subscriptions in a single location.
+
+* Do I need to enter to use my real email?
+
+No. There are no consequences to creating a dummy email if you prefer not to be identified. But please avoid e-mail addresses that may legitimately be used by others.
+
 
 ## Contributing
 
@@ -150,4 +171,4 @@ Hussein Hamade [Github](https://github.com/hhamade98) | [LinkedIn](https://www.l
 Bill O'Connell [Github](https://github.com/wdoconnell) | [LinkedIn](https://www.linkedin.com/in/bill-o-connell-6b950177/) <br>
 
 ## License
-Distributed under the MIT license.
+Distributed under the [MIT License.](https://opensource.org/licenses/MIT)
