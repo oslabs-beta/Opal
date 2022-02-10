@@ -65,9 +65,9 @@ npm install
 npm run build-prod
 ```
 
-<b>4. Authenticate.
+<b>4. Authenticate.</b>
   
-Be authenticated to an Azure account. (See 'Connecting to Azure' for more information.)</b>
+Be authenticated to an Azure account. (See 'Connecting to Azure' for more information.)
 
 
 <b>5. Run the app.</b>
