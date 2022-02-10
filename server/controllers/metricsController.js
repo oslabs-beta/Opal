@@ -231,8 +231,6 @@ metricsController.processTable = function (logObject) {
     if (!seriesMap.has(data.timeStamp)) {
       // If we do not have this time in our map, create an object, initializing successCount, failCount, and delayArray.
       let currentDelay = data.DurationMs;
-      console.log('CURRENTDELAY');
-      console.log(currentDelay);
       seriesMap.set(data.timeStamp, {
         operationName: data.OperationName,
         timeStamp: data.timeStamp,
@@ -245,10 +243,8 @@ metricsController.processTable = function (logObject) {
     } else {
       // If we already have this time in our map, increment the success or failure counter, push new delay to array.
       // Get method will still pass by reference and can be edited.
-      const delayArray = seriesMap.get(data.timeStamp);
-      console.log('DELAYARRAY');
-      console.log(delayArray);
-
+      const delayArray = seriesMap.get(data.timeStamp).delayArray;
+      delayArray.push(data.DurationMs);
       let currentSuccess = seriesMap.get(data.timeStamp).successCount;
       let currentFail = seriesMap.get(data.timeStamp).failCount;
       data.ResultCode === "200" ? ++currentSuccess : ++currentFail;
@@ -257,12 +253,23 @@ metricsController.processTable = function (logObject) {
         successCount: currentSuccess,
         failCount: currentFail,
         timeStamp: data.timeStamp,
+        delayArray: delayArray,
       });
     }
   }
-
   const values = seriesMap.values();
-  return Array.from(values);
+  const outputTableArray = Array.from(values);
+  outputTableArray.forEach((timeseries) => {
+    let delayArr = timeseries.delayArray;
+    let delayArrLen = delayArr.length;
+    if (!delayArrLen) timeseries.delay = 0;
+    else timeseries.delay = Math.trunc(delayArr.reduce((prev, cur) => prev + cur) / delayArr.length);
+    // Frontend doesn't need array from which average was generated.
+    delete timeseries.delayArray;
+  });
+  console.log('outputTableArray');
+  console.log(outputTableArray)
+  return outputTableArray;
 };
 
 export default metricsController;

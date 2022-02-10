@@ -65,7 +65,6 @@ sdkController.fetchResourceGroups = async (req, res, next) => {
     const groupsByPage = groups.byPage();
     const groupsPerSub = await groupsByPage.next();
     //Because we aren't iterating we need to use the .next() property.
-
     const opClient = new OperationalInsightsManagementClient(credential, res.locals.subscriptions[sub].subscriptionId);
     console.log('groupsPerSub is');
     console.log(groupsPerSub.value);
@@ -76,9 +75,6 @@ sdkController.fetchResourceGroups = async (req, res, next) => {
 
     res.locals.subscriptions[sub].resourceGroups = groupsPerSub.value;
   }
-  // console.log('fetching resource groups took');
-  // console.log(end - start);
-  // console.log('milliseconds');
   return next();
 };
 
@@ -213,24 +209,6 @@ sdkController.getAllFunctions = async (req, res, next) => {
 // This route gets all functions associated with all subscribers and resource groups fed in from frontend.
 // Like need this to be async, but confirm.
 sdkController.getFunctionList = async (req, res, next) => {
-  /*
-    {
-      subscriptions: [
-        {
-          subName:
-          resourceGroups: [
-            {
-              resourceGroupName:
-              resources: [
-               "resource1, resource2"
-              ]
-            }
-          ]
-        }
-      ]
-    }
-    */
-  //console.log('entering getFunctionList');
   res.locals.funcList = {
     functions: [],
   };
@@ -261,13 +239,10 @@ sdkController.getFunctionList = async (req, res, next) => {
   Promise.all(funcPromise).then((resultArray) => {
     // For each requested resource in the promise array.
     for (let i = 0; i < resultArray.length; i++) {
-      //console.log('here is one result from the promise aray');
-      //console.log(resultArray[i].data.value);
       let currentFuncAppData = resultArray[i].data.value;
       // For each function within each requested resource.
       for (let j = 0; j < currentFuncAppData.length; j++) {
         let currentFuncData = currentFuncAppData[j];
-        //console.log(currentFuncData);
         let currentSub = funcSub[i];
         let currentGrp = funcResGrp[i];
         let currentRes = funcRes[i];
@@ -285,42 +260,13 @@ sdkController.getFunctionList = async (req, res, next) => {
         res.locals.funcList.functions.push(currentFunc);
       }
     }
-    //console.log('complete');
-    //console.log(res.locals.funcList);
     return next();
   });
-  //.then(() => {
-  //  console.log('successfully resolved');
-  //  console.log(res.locals.funcList);
-  //  return next();
-  //})
-  //.catch((err) => {
-  // Fix error handling here.
-  //  console.log('did not successfully resolve');
-  //  return next(`hit err of ${err}`);
-  //});
 };
 
 sdkController.setSub = (req, res, next) => {
   res.locals.azure.subList = req.body;
   return next();
-  /*
-    {
-      subscriptions: [
-        {
-          subName:
-          resourceGroups: [
-            {
-              resourceGroupName:
-              resources: [
-               "resource1, resource2"
-              ]
-            }
-          ]
-        }
-      ]
-    }
-    */
 };
 
 sdkController.formatAppDetail = (req, res, next) => {
@@ -407,10 +353,6 @@ sdkController.setFunctionApp = (req, res, next) => {
       res.locals.granularity = 'PT1H';
       break;
   }
-
-  //console.log('received timespan of');
-  //console.log(res.locals.timespan);
-
   return next();
 };
 

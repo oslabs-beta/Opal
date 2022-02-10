@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Loader, FuncGraph } from ".";
+import { Loader, FuncGraph, FuncDelayGraph } from ".";
 import { getFuncDetails } from "../util/getFuncDetails";
 
 interface LocationObj {
@@ -39,6 +39,8 @@ export const FunctionSpecificPage = () => {
         :
         <div>
           <FuncGraph data={funcData} format='1h'/>
+          <br /><br />
+          <FuncDelayGraph data={funcData} format='1h'/>
         </div>
       }
     </>
