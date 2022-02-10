@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AreaLineChart, ResourceGroup } from ".";
-import { motion } from 'framer-motion';
 
 interface Props {
   name: string;
@@ -60,7 +59,6 @@ export const Subscription = ({ resourceGrp, name }: Props) => {
         </div>
         <div className="flex w-full space-x-8  overflow-x-scroll">
           <div className="flex w-full justify-center">{rGrp}</div>
-          <motion.button type='button' onClick={() => {console.log('clicked refreshy')}} whileTap={{ scale: 0.9 }} animate={{ y:10 }} className="bg-blue-400  mb-4 w-1/7 p-4 rounded-lg text-white">Refresh</motion.button>
         </div>
       </div>
       <div className="flex flex-col justify-center items-center mt-5">
