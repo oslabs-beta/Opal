@@ -46,7 +46,7 @@ Opal requires an active [Azure subscription](https://azure.microsoft.com/en-us/f
 
 ## Getting Started
 
-<em>1. Clone this repo.</em> 
+<b>1. Clone this repo.</b> 
 
 If using [Git](https://git-scm.com/), run:
 ```
@@ -54,22 +54,22 @@ git clone https://github.com/oslabs-beta/Opal
 cd Opal
 ```
 
-<em>2. Install dependencies.</em>
+<b>2. Install dependencies.</b>
 
 ```
 npm install
 ```
 
-<em>3. Build the app.</em>
+<b>3. Build the app.</b>
 
 ```
 npm run build-prod
 ```
 
-<em>4. Be authenticated to an Azure account (see 'Connecting to Azure')</em>
+<b>4. Be authenticated to an Azure account (see 'Connecting to Azure')</b>
 
 
-<em>5. Run the app.</em>
+<b>5. Run the app.</b>
 
 ```
 npm run start-prod
@@ -78,13 +78,13 @@ npm run start-prod
 
 ## Connecting to Azure
 
-<em>1. Base Functionality</em>
+<b>1. Base Functionality</b>
 
 If the user is already logged in to Azure through an existing authentication flow (Managed Identity, Azure CLI, Powershell etc.), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`. 
 
 For more information about your options for authenticating to Azure, review the [DefaultAzureCredential docs](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
 
-<em>2. Additional Functionality</em>
+<b>2. Additional Functionality</b>
 
 Using Opal to access metrics on individual <em>functions</em> in a Function App requires sending a bearer token to Azure REST APIs. Opal will use HTTPS and OAUTH 2.0 to securely handle the token-generation process for you, as long as you place a .env file in Opal's root directory identifying a service principal that is authorized to access your Azure subscription.
 
