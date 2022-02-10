@@ -20,7 +20,7 @@ export const Subscription = ({ resourceGrp, name }: Props) => {
       all
     </div>,
   ];
-  
+
   const graphs: Array<any> = [];
 
   for (let i in resourceGrp) {
@@ -68,8 +68,8 @@ export const Subscription = ({ resourceGrp, name }: Props) => {
             </h1>
             <div className="flex flex-wrap justify-center items-center">
               {graphs &&
-                graphs?.map((d) => {
-                  return <ResourceGroup data={d} />;
+                graphs?.map((d:any, idx:number) => {
+                  return <ResourceGroup key={idx} data={d} />;
                 })}
             </div>
           </>
@@ -80,8 +80,8 @@ export const Subscription = ({ resourceGrp, name }: Props) => {
             </h1>
             <div className="flex flex-wrap justify-center items-center">
               {graphs &&
-                graphs?.map((d) => {
-                  return <ResourceGroup data={d} />;
+                graphs?.map((d:any, idx:number) => {
+                  return <ResourceGroup key={idx} data={d} />;
                 })}
             </div>
           </>
