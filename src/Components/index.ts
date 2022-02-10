@@ -30,4 +30,6 @@ export { FuncAppListComponent } from './FuncAppListComponent';
 
 export { FuncListComponent } from './FuncListComponent';
 
-export { FuncGraph } from './FuncGraph'
+export { FuncGraph } from './FuncGraph';
+
+export { Subscription } from './SubscriptionComponent';
