@@ -188,6 +188,7 @@ Ideas for future developments and contributions include:
 * Adding support for AWS Lambda or Google Cloud Functions, to make Opal a more platform-neutral serverless monitoring tool.
 * Updating the Opal server as Microsoft continues to release updates to its Azure SDKs.
 * Allowing for the display of additional metrics for Function Apps or functions.
+* Adding custom dashboards for logged-in users.
 
 ## Authors
 Alma Eyre [Github](https://github.com/aselunar) | [LinkedIn](https://www.linkedin.com/in/alma-eyre/) <br>
