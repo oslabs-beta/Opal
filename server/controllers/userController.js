@@ -124,4 +124,44 @@ userController.login = async (req, res, next) => {
   }
 };
 
+userController.update = async (req, res, next) => {
+  const { Firstname, Lastname, Username, Email, Password, id } = req.body;
+  for (const detail in req.body) {
+    if (req.body[detail] !== '') {
+      const q = `UPDATE users SET ${detail} =($1) WHERE id=($2)`;
+      await db.query(q, [req.body[detail], id], (err, result) => {
+        if (err) {
+          console.log(err);
+          return next(
+            res
+              .status(400)
+              .send({ mess: 'Error updating account details.', status: false })
+          );
+        }
+      });
+    }
+  }
+  return next();
+};
+
+userController.sendBack = async (req, res, next) => {
+  const { id } = req.body;
+
+  const q1 = 'SELECT * FROM users where id=($1)';
+  await db.query(q1, [id], (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    if (result) {
+      console.log(result);
+      res.locals.users = result.rows[0];
+      return next();
+    }
+  });
+
+  // res.locals.users = user.rows[0];
+  // console.log(res.locals.users);
+  // return next(res.locals.users);
+};
+
 export default userController;
