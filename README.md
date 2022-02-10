@@ -42,7 +42,7 @@ Opal requires an active [Azure subscription](https://azure.microsoft.com/en-us/f
 
 ## Getting Started
 
-1. Clone the repo. If using [Git](https://git-scm.com/) run:
+1. Clone the repo. If using [Git](https://git-scm.com/), run:
 
 ```
 git clone https://github.com/oslabs-beta/Opal
@@ -76,11 +76,15 @@ npm run start-prod
 
 1. Base Functionality
 
-Opal uses the Azure SDK's 'DefaultAzureCredential' class to authenticate the user directly to Azure. For example, an Azure CLI user can simply type `az login`. If the user is already logged in to Azure through an existing authentication flow (Managed Identity, Azure CLI, Powershell etc.), Opal's base functionality is accessible out-of-the-box with no configuration. For more information about your options for authenticating to Azure, review the [DefaultAzureCredential docs.](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
+Opal uses the Azure SDK's 'DefaultAzureCredential' class to authenticate the user directly to Azure. For example, an Azure CLI user can simply type `az login`. 
+
+If the user is already logged in to Azure through an existing authentication flow (Managed Identity, Azure CLI, Powershell etc.), Opal's base functionality is accessible out-of-the-box with no configuration. For more information about your options for authenticating to Azure, review the [DefaultAzureCredential docs.](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
 
 2. Additional Functionality
 
-Using Opal to access the metrics of <em>children</em> of Azure functions requires sending a bearer token to Azure REST APIs. Opal will use HTTPS and OAUTH 2.0 to securely handle the token-generation process for you, if you place a .env file in Opal's root directory identifying a service principal that is authorized to access your Azure subscription.
+Using Opal to access the metrics of <em>children</em> of Azure functions requires sending a bearer token to Azure REST APIs. 
+
+Opal will use HTTPS and OAUTH 2.0 to securely handle the token-generation process for you, if you place a .env file in Opal's root directory identifying a service principal that is authorized to access your Azure subscription.
 
 ```
 AZURE_CLIENT_ID=<appId>
@@ -96,11 +100,14 @@ If you have not generated a service principal for this account, run the followin
 
 In either case, the service principal is used only to <em>read</em>, and never to write, any data to your Azure account.
 
+
 ## More Information
 
 Opal accesses function metrics using Azure SDK's DefaultAzureCredential and Azure REST APIs. This DefaultAzureCredential supports [multuple authentication methods,](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet). 
 
-Opal does not interfere with the user's Azure deployment, does not write data to the user's Azure account, and does not store the data it reads from the user's Azure account. However, queries made through Opal utilize Azure SDKs and REST APIs, and may be subject to size or billing limitations imposed by the user's account. For more information, please refer to [Azure's Cost Management and Billing documentation](https://docs.microsoft.com/en-us/azure/cost-management-billing/) for the rules that may govern your subscription.
+Opal does not interfere with the user's Azure deployment, does not write data to the user's Azure account, and does not store the data it reads from the user's Azure account. 
+
+Queries made through Opal utilize Azure SDKs and REST APIs, and may be subject to size or billing limitations imposed by the user's account. For more information, please refer to [Azure's Cost Management and Billing documentation](https://docs.microsoft.com/en-us/azure/cost-management-billing/) for the rules that may govern your subscription.
 
 
 ## Built With
@@ -127,6 +134,8 @@ Opal was built with the following frameworks / libraries:
 
 * PostgreSQL
 
+
+
 ## FAQ
 
 * Why can't I see the functions from some of my subscriptions?
@@ -134,7 +143,9 @@ Opal was built with the following frameworks / libraries:
 By default, service principals are associated with a single subscription. If you did not specify a subscription when creating your service principal (or specified only one), you may not be able to see functions from other subscriptions.
 
 To fix this, replace the data in your .env with the data for a new service principal with access to each of your subscriptions.
+
 `az account list --query "[].{id:id}" --output tsv`
+
 `az ad sp create-for-rbac --role contributor --scope subscriptions/<subscription1> subscriptions/<subscription2> subscriptions/<subscription3>`
 
 * What information do I need to provide to log in to Opal?
