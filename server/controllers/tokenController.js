@@ -1,8 +1,5 @@
 // Decide whether to use fetch or axios consistently across controllers.
 import fetch from 'node-fetch';
-// wont need this version later on.
-//import { DefaultAzureCredential } from '@azure/identity';
-//import { SubscriptionClient } from '@azure/arm-resources-subscriptions';
 import { config } from 'dotenv';
 config();
 

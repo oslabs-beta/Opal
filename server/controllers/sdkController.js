@@ -53,7 +53,7 @@ sdkController.fetchSubscriptionIds = async (req, res, next) => {
       console.log(res.locals.subscriptions[sub.subscriptionId].workSpaceArray);
     }
 
-    
+
   }
   return next();
 };
@@ -107,7 +107,7 @@ sdkController.fetchResources = async (req, res, next) => {
         app.subscriptionNamespaceId = currentSub.id;
         app.subscriptionId = currentSub.subscriptionId;
         app.resourceGroupId = currentGroup.id;
-        app.resourceGroupName = currentSub.name;
+        app.resourceGroupName = currentSub.resourceGroups[group].name;
         if ((app.kind === 'functionapp' || app.kind === 'functionapp,linux') && (app.type === 'Microsoft.Web/sites' || app.type === 'microsoft.web/sites')) {
           // If type is 'function', sort it into an array of function apps.
           functionList.push(app);
