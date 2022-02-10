@@ -9,9 +9,9 @@ config();
 const tokenController = {};
 
 // If need to change login functionality, need these to be defined elsewhere.
-const TENANT_ID = process.env.TENANT_ID;
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const TENANT_ID = process.env.AZURE_TENANT_ID;
+const CLIENT_ID = process.env.AZURE_CLIENT_ID;
+const CLIENT_SECRET = process.env.AZURE_CLIENT_SECRET;
 
 tokenController.checkToken = async (req, res, next) => {
   // Consider adding route to temporarily store bearer tokens.
