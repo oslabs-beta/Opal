@@ -111,19 +111,19 @@ Queries made through Opal utilize Azure SDKs and REST APIs, and may be subject t
 ## How To Use The App
 
 On first load, you will be prompted to create an email and password.
-<img src="assets/tutorial/login.gif" width="720px"/>
+<img src="assets/tutorial/login.gif" width="720px" style="text-align:center"/>
 
 When the app renders, Opal displays graphs of the function execution count for every Function App in your tenant. This is the Overview. From the Overview, you can see recent function execution count for every Function App in your tenant.
-<img src="assets/tutorial/overview.gif" width="720px"/>
+<img src="assets/tutorial/overview.gif" width="720px" style="text-align:center"/>
 
 You can access more detailed metrics in a specific Function App by either clicking on that Function App from the Overview or by selecting the Function App component of the sidebar and then selecting the Function App you want to view metrics for. This is the Function App view. The Function App view lets you select timespan and granularity for the graphs displayed. If there is some delay in re-rendering the metrics graphs after you customize the timespan and granularity, please select "Update Preferences".
-<img src="assets/tutorial/functionapp.gif" width="720px"/>
+<img src="assets/tutorial/functionapp.gif" width="720px" style="text-align:center"/>
 
 Metrics on specific functions are also available by scrolling down in the Function App view and selecting the specific function within that Function App. This is the Functions view. 
-<img src="assets/tutorial/functionspecific.gif" width="720px"/>
+<img src="assets/tutorial/functionspecific.gif" width="720px" style="text-align:center"/>
 
 You can also see a list of all functions in your tenant by selecting the Functions component of the sidebar. This lists all functions in your tenant. Selecting a function from this list, will take you to the Functions view for that function. 
-<img src="assets/tutorial/specificfunc.gif width="720px"/>
+<img src="assets/tutorial/specificfunc.gif width="720px" style="text-align:center"/>
 
 Due to Azure SDK limitations, the functions list and the Functions view are only available if the user also authenticates a service principal through a .env.
 
