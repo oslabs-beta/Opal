@@ -134,7 +134,7 @@ You can also see a list of all functions in your tenant by selecting the Functio
 Due to Azure SDK limitations, the functions list and the Functions view are only available if the user also authenticates a service principal through a .env.
 
 ## FAQ
-<br />
+
 <b>1. Why can't I see the functions from some of my subscriptions?</b><br /><br />
 
 By default, service principals are associated with a single subscription. If you did not specify a subscription when creating your service principal (or specified only one), you may not be able to see functions from other subscriptions.
