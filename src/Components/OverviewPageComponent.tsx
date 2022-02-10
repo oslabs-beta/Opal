@@ -3,9 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { AreaLineChart, Loader, Subscription } from ".";
 import { getAllFunctions } from "../util/getAllFuncs";
 import { getExecOnlyData } from "../util/getExecOnlyData";
+import { activeDash } from "../redux/slices/dashSlice";
+import { useDispatch } from "react-redux";
 
 export const OverviewPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
 
@@ -19,6 +22,7 @@ export const OverviewPage = () => {
         .then((result: object) => {
           sessionStorage.setItem("executionObj", JSON.stringify(result));
           setLoading(false);
+          dispatch(activeDash())
           if (result) {
             for (let i in result) {
               for (let x in result[i]) {
@@ -44,6 +48,8 @@ export const OverviewPage = () => {
             );
             const functions: any = getAllFunctions({ executionObj });
             Promise.resolve(functions).then((result: any) => {
+              dispatch(activeDash())
+
               // setLoading(false);
               if (!result) {
                 console.log('failed to receive data');
@@ -59,6 +65,7 @@ export const OverviewPage = () => {
               }));
             });
           }
+
         })
         .catch((err) => console.log(err));
     }
