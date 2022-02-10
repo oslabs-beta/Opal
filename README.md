@@ -123,7 +123,7 @@ Metrics on specific functions are also available by scrolling down in the Functi
 <p style="text-align:center"><img src="assets/tutorial/functionspecific.gif" width="720px" /></p>
 
 You can also see a list of all functions in your tenant by selecting the Functions component of the sidebar. This lists all functions in your tenant. Selecting a function from this list, will take you to the Functions view for that function. 
-<p style="text-align:center"><img src="assets/tutorial/specificfunc.gif width="720px" /></p>
+<p style="text-align:center"><img src="assets/tutorial/specificfunc.gif" width="720px" /></p>
 
 Due to Azure SDK limitations, the functions list and the Functions view are only available if the user also authenticates a service principal through a .env.
 
