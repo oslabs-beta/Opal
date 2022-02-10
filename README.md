@@ -84,7 +84,7 @@ npm run start-prod
 
 <b>1. Base Functionality</b>
 
-If the user is already logged in to Azure through an existing authentication flow (Azure CLI, Azure PowerShell, Managed Identity, Environment Variables, etc.), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`. 
+If the user is already logged in to Azure through an existing authentication flow (e.g., Azure CLI, Azure PowerShell, Managed Identity, Environment Variables), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`. 
 
 For more information about your options for authenticating to Azure, review the [DefaultAzureCredential docs](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
 
@@ -128,14 +128,14 @@ When the app renders, Opal displays graphs of the function execution count for e
 
 * <b>Function App View</b>
 
-You can access more detailed metrics in a specific Function App either by clicking on that Function App in the "Overview." Selecting "Function Apps" will bring up (the <b>"List"</b> view). Then select the Function App whose metrics you want to examine. 
+You can access more detailed metrics in a specific Function App by clicking on that Function App in the "Overview." Selecting "Function Apps" will bring up the <b>"List"</b> view. Then select the Function App whose metrics you want to examine. 
 
 Selecting a Function App takes the user to the <b>"Function App"</b> view. To change the timespan and granularity, please use the corresponding sliders and click <b>"Update Preferences"</b>.
 <p><img src="assets/tutorial/functionapp.gif" width="720px" /></p>
 
 * <b>Function View</b>
 
-The user can access selected metrics for specific functions in the <b>"List"</b> view (after clicking "Functions" in the sidebar). Alternatively, users can scroll down in the Function App view to select any of the functions within that Function App.
+The user can access selected metrics for specific functions (i.e., the children of FunctionApps) in the <b>"List"</b> view (after clicking "Functions" in the sidebar). Alternatively, users can scroll down in the Function App view to select any of the functions that are children of that Function App.
 <p><img src="assets/tutorial/functionspecific.gif" width="720px" /></p>
 
 * <b>List View</b>
@@ -151,7 +151,7 @@ Due to Azure SDK limitations, the "Functions List" and the "Functions View" are 
 
 By default, service principals are associated with a single subscription. If you did not specify a subscription when creating your service principal (or specified only one), you may not be able to see functions from other subscriptions.
 
-To fix this, create a new service principal and then replace the data in your .env with data for a new service principal with access to each of your subscriptions. First list all of your subscriptions with this Azure CLI command:
+To fix this, create a new service principal, and then replace the data in your .env with data for a new service principal that has access to all of your subscriptions. First list all of your subscriptions with this Azure CLI command:
 
 `az account list --query "[].{id:id}" --output tsv`
 
@@ -164,17 +164,16 @@ Use the output of the above command to update your .env file according to the in
 <br />
 <b>2. What information do I need to provide to log in to Opal?</b><br /><br />
 
-On initial login, users only to create a username and password. 
+On initial login, users are prompted to select a name, username, email address, and password.
 
 <br />
 <b>3. What information will Opal store about me?</b><br /><br />
 
-The only information Opal stores is an email address and a (hashed) password.
-
+Only the information in Question #2. The user's password itself is not stored. Opal stores only a password hash.
 <br />
 <b>4. Does Opal maintain any information about my Azure account?</b><br /><br />
 
-No. Opal stores no information about your account. Opal simply acts as a client for a variety of Azure SDKs and endpoints to allow you to retrieve data from your Azure subscriptions in a single location.
+No. Opal stores no information about your Azure account. Opal simply acts as a client for a variety of Azure SDKs and endpoints to allow you to retrieve data from your Azure subscriptions in a single location.
 
 <br />
 <b>5. Do I need to enter to use my real email?</b><br /><br />
