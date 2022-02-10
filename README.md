@@ -84,7 +84,7 @@ npm run start-prod
 
 <b>1. Base Functionality</b>
 
-If the user is already logged in to Azure through an existing authentication flow (Managed Identity, Azure CLI, Powershell etc.), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`. 
+If the user is already logged in to Azure through an existing authentication flow (Azure CLI, Azure PowerShell, Managed Identity etc.), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`. 
 
 For more information about your options for authenticating to Azure, review the [DefaultAzureCredential docs](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
 
@@ -116,7 +116,7 @@ Queries made through Opal utilize Azure SDKs and REST APIs, and may be subject t
 
 ## How To Use The App
 
-On first load, you will be prompted to create an email and password.
+Create a login. After logging in, select the Azure icon (additional cloud providers coming soon).
 <p><img src="assets/tutorial/login.gif" width="720px" /></p>
 
 When the app renders, Opal displays graphs of the function execution count for every Function App in your tenant. This is the Overview. From the Overview, you can see recent function execution count for every Function App in your tenant.
@@ -201,13 +201,14 @@ Opal was built with the following frameworks / libraries:
 
 ## Contributing
 
-We welcome contributions to the project, and encourage submissions for any problems you encounter. To contribute, please fork the repo and submit a pull request.
+We welcome contributions to the project, and encourage submissions for any problems you encounter. To contribute, please fork the repo and submit a pull request to the dev branch.
 
 Ideas for future developments and contributions include:
 
 * Adding support for AWS Lambda or Google Cloud Functions, to make Opal a more platform-neutral serverless monitoring tool.
 * Updating the Opal server as Microsoft continues to release updates to its Azure SDKs.
 * Allowing for the display of additional metrics for Function Apps or functions.
+* Adding custom dashboards for logged-in users.
 
 
 ## Authors
