@@ -13,9 +13,11 @@ An Azure Functions Monitoring Tool
 
 - [Connecting to Azure](#connecting-to-azure)
 
-- [Built With](#built-with)
+- [Azure Account Access](#azure-account-access)
+  
+- [How to Use The App](#how-to-use-the-app)
 
-- [More Information](#more-information)
+- [Built With](#built-with)
 
 - [Contributing](#contributing)
 
@@ -101,12 +103,17 @@ AZURE_CLIENT_SECRET=<password>
 AZURE_TENANT_ID=<tenant>
 ```
 
-## More Information
+## Azure Account Access
 
 Opal accesses function metrics using Azure SDK's DefaultAzureCredential and Azure REST APIs. This DefaultAzureCredential supports [multuple authentication methods,](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet). 
 
 Opal does not interfere with the user's Azure deployment, does not write data to the user's Azure account, and does not store the data it reads from the user's Azure account. However, queries made through Opal utilize Azure SDKs and REST APIs, and may be subject to size or billing limitations imposed by the user's account. For more information, please refer to [Azure's Cost Management and Billing documentation](https://docs.microsoft.com/en-us/azure/cost-management-billing/) for the rules that may govern your subscription.
 
+## How To Use The App
+
+When the app loads, Opal displays graphs of the function execution count for every Function App in your tenant. You can also see a list of all Function Apps in your 
+
+Click on 
 
 ## Built With
 
