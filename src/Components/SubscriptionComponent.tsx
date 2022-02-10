@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { ResourceGroup } from ".";
+import { useNavigate } from "react-router-dom";
+import { AreaLineChart, ResourceGroup } from ".";
 
 interface Props {
   name: string;
