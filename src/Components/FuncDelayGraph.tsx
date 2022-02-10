@@ -32,26 +32,23 @@ interface Data {
   Delay: number;
 }
 
-export const FuncDelayGraph = ({ data, format}: GraphProps) => {
+export const FuncDelayGraph = ({ data }: GraphProps) => {
   const [time, setTime] = useState<object | null>(null);
-
+  console.log('inFuncDelayGraph');
+  console.log('here is the current data in FuncDelayGraph');
+  console.log(data);
   const createObj = () => {
     const arr: Array<object> = []!;
 
     for (let i in data) {
       const obj: Data = { Time: "", Delay: 0 };
-
       const mnt = moment(data[i].timeStamp);
-
       obj["Time"] = mnt.format("LT");
-
       obj["Delay"] = data[i].delay
         ? data[i].delay
         : 0
-
       arr.push(obj);
     }
-
     setTime(arr);
   };
 

@@ -172,14 +172,14 @@ metricsController.getMSInsightsMetrics = async (req, res, next) => {
 
 metricsController.retrieveFunctionLogs = async (req, res, next) => {
   //console.log('entering retrieveFunctionLogs');
-  const { azureLogAnalyticsWorkspaceId, functionName } = res.locals.azure.specificFunction;
+  const { azureLogAnalyticsWorkspaceId, functionName, granularity, timespan } = res.locals.azure.specificFunction;
   const kustoQuery = `AppRequests | project OperationName, TimeGenerated, Success, ResultCode, DurationMs | where OperationName contains \'${functionName}\' | sort by TimeGenerated asc nulls first`;
   const logRes = await logsQuery.queryWorkspace(azureLogAnalyticsWorkspaceId, kustoQuery, {
-    duration: 'P1D',
+    duration: timespan,
   });
   //console.log(logRes.tables[0]);
   // Removed the following: Id, OperationId, TenantId, Measurements, AppRoleName, Type, Name, AppRoleInstance
-  res.locals.funcResponse = metricsController.processTable(logRes);
+  res.locals.funcResponse = metricsController.processTable(logRes, granularity);
   //console.log('Func Response');
   //console.log(res.locals.funcResponse);
   return next();
@@ -190,7 +190,7 @@ metricsController.applicationInsights = async (req, res, next) => {
   return next();
 };
 
-metricsController.processTable = function (logObject) {
+metricsController.processTable = function (logObject, granularity) {
   //console.log('log object at tables 0');
   //console.log(logObject.tables[0]);
 
@@ -216,7 +216,7 @@ metricsController.processTable = function (logObject) {
         logEntry[columnArray[prop]] = currentRow[prop];
       } else {
         //console.log('found a time');
-        logEntry.timeStamp = roundDate(60, currentRow[prop]);
+        logEntry.timeStamp = roundDate(granularity, currentRow[prop]);
       }
     }
     logArray.push(logEntry);

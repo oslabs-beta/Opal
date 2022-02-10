@@ -359,11 +359,64 @@ sdkController.setFunctionApp = (req, res, next) => {
 sdkController.setFunction = (req, res, next) => {
   console.log('entering setFunction');
   console.log(req.body);
-  const { workSpaceId, functionName } = req.body;
+  let { workSpaceId, functionName, timespan, granularity } = req.body;
+
+  switch (timespan) {
+    case 0:
+      timespan = 'PT1H';
+      break;
+    case 1:
+      timespan = 'PT24H';
+      break;
+    case 2:
+      timespan = 'PT48H';
+      break;
+    case 3:
+      timespan = 'P7D';
+      break;
+    case 4:
+      timespan = 'P1M';
+      break;
+    default:
+      timespan = 'PT24H';
+      break;
+  }
+
+  // granularity should be in minutes
+  switch (granularity) {
+    case 0:
+      granularity = 5;
+      break;
+    case 1:
+      granularity = 15;
+      break;
+    case 2:
+      granularity = 30;
+      break;
+    case 3:
+      granularity = 60;
+      break;
+    case 4:
+      granularity = 360;
+      break;
+    case 5:
+      granularity = 720;
+      break;
+    case 6:
+      granularity = 1440;
+      break;
+    default:
+      granularity = 60;
+      break;
+  }
+
+
   res.locals.azure = {
     specificFunction: {
       azureLogAnalyticsWorkspaceId: workSpaceId,
       functionName: functionName,
+      timespan: timespan,
+      granularity: granularity
     },
   };
   return next();
