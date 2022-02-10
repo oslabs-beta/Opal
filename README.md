@@ -100,9 +100,26 @@ If you do not already have a service principal, create one with the following co
 and use the output to create the above .env file.
 
 
+<<<<<<< HEAD
 ## Azure Account Access
 
 Opal accesses function metrics using Azure SDK's DefaultAzureCredential and Azure REST APIs. The DefaultAzureCredential supports [multiple authentication methods](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet). 
+=======
+If you have not generated a service principal for this account, run the following commands and save the output to a .env file as described above.
+
+`az login` 
+
+`az account list --query "[].{id:id}" --output tsv`
+
+`az ad sp create-for-rbac --role contributor --scope subscriptions/<subscription1> subscriptions/<subscription2> subscriptions/<subscription3>`
+
+Creating a service principal is optional and is not required to use Opal's basic functionality. Regardless, the service principal is used only to <em>read</em>, and never to write, any data to your Azure account. 
+
+
+## Azure Account Access
+
+Opal accesses function metrics using Azure SDK's DefaultAzureCredential and Azure REST APIs. This DefaultAzureCredential supports [multiple authentication methods](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet). 
+>>>>>>> dev
 
 Opal does not interfere with the user's Azure deployment, does not write data to the user's Azure account, and does not store the data it reads from the user's Azure account. 
 
