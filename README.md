@@ -143,6 +143,8 @@ To change the timespan and granularity, please use the corresponding sliders and
 You can access specific metrics for a function either by scrolling down in the corresponding "Function App View" and clicking that function or from the "List View".
 <p><img src="assets/tutorial/functionspecific.gif" width="720px" /></p>
 
+Timespan and granularity can be chosen in the Function View in the same was as above.
+
 Due to Azure SDK limitations, the "List View" for functions and the "Function View" are only available if the user also adds service principal information to their .env.
 
 ## FAQ
