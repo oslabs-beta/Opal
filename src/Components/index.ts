@@ -33,3 +33,5 @@ export { FuncListComponent } from './FuncListComponent';
 export { FuncGraph } from './FuncGraph';
 
 export { Subscription } from './SubscriptionComponent';
+
+export { ResourceGroup } from './ResourceGroupComponent';
