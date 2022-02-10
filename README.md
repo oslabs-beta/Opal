@@ -132,7 +132,7 @@ Due to Azure SDK limitations, the functions list and the Functions view are only
 
 
 ## FAQ
-
+<br />
 <b>1. Why can't I see the functions from some of my subscriptions?</b>
 
 By default, service principals are associated with a single subscription. If you did not specify a subscription when creating your service principal (or specified only one), you may not be able to see functions from other subscriptions.
@@ -147,22 +147,22 @@ Then use the output of the above command to define scope when creating a service
 
 Use the output of the above command to update your .env file according to the instructions in step 2 of [Connecting to Azure](#connecting-to-azure).
 
-
+<br />
 <b>2. What information do I need to provide to log in to Opal?</b>
 
 On initial login, users only to create a username and password. 
 
-
+<br />
 <b>3. What information will Opal store about me?</b>
 
 The only information Opal stores is an email address and a (hashed) password.
 
-
+<br />
 <b>4. Does Opal maintain any information about my Azure account?</b>
 
 No. Opal stores no information about your account. Opal simply acts as a client for a variety of Azure SDKs and endpoints to allow you to retrieve data from your Azure subscriptions in a single location.
 
-
+<br />
 <b>5. Do I need to enter to use my real email?</b>
 
 No. There are no consequences to creating a dummy email if you prefer not to be identified. But please avoid e-mail addresses that may legitimately be used by others.
