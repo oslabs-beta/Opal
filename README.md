@@ -126,24 +126,24 @@ Create a login. After logging in, select the Azure icon (additional cloud provid
 When the app renders, Opal displays graphs of the function execution count for every Function App in your tenant. This is the <b>"Overview."</b> From the Overview, you can see recent function execution count for every Function App in your tenant.
 <p><img src="assets/tutorial/overview.gif" width="720px"></p>
 
+* <b>List View</b>
+
+You can see a list of all of your Function Apps or functions by clicking "Function Apps" or "Functions" in the sidebar. This is the <b>"List View"</b>. In the "List View", users can click a specific Function App or function to navigate to the view for that Function App or function. A search bar is provided for ease of navigation.
+<p><img src="assets/tutorial/specificfunc.gif" width="720px" /></p>
+
 * <b>Function App View</b>
 
-You can access more detailed metrics in a specific Function App either by clicking on that Function App in the "Overview." Selecting "Function Apps" will bring up (the <b>"List"</b> view). Then select the Function App whose metrics you want to examine. 
+You can access more detailed metrics in a specific Function App either by clicking on that Function App in the "Overview" or from the List View. 
 
-Selecting a Function App takes the user to the <b>"Function App"</b> view. To change the timespan and granularity, please use the corresponding sliders and click <b>"Update Preferences"</b>.
+To change the timespan and granularity, please use the corresponding sliders and click <b>"Update Preferences"</b>.
 <p><img src="assets/tutorial/functionapp.gif" width="720px" /></p>
 
 * <b>Function View</b>
 
-The user can access selected metrics for specific functions in the <b>"List"</b> view (after clicking "Functions" in the sidebar). Alternatively, users can scroll down in the Function App view to select any of the functions within that Function App.
+You can access specific metrics for a function either by scrolling down in the corresponding "Function App View" and clicking that function or from the "List View".
 <p><img src="assets/tutorial/functionspecific.gif" width="720px" /></p>
 
-* <b>List View</b>
-
-You can also see a list of all of your Function Apps or functions by clicking "Function Apps" or "Functions" in the sidebar. This is the <b>"List View"</b>. In the "List View," users can click a specific Function App or function to navigate to view for that Function App or function. A search bar is provided for ease of navigation.
-<p><img src="assets/tutorial/specificfunc.gif" width="720px" /></p>
-
-Due to Azure SDK limitations, the "Functions List" and the "Functions View" are only available if the user also adds service principal information to their .env.
+Due to Azure SDK limitations, the List View for functions and the "Function View" are only available if the user also adds service principal information to their .env.
 
 ## FAQ
 
