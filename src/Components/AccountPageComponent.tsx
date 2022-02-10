@@ -14,16 +14,21 @@ export const AccountPage = () => {
   const Password = useRef<refObj>(null);
   const ConfirmPass = useRef<refObj>(null);
 
-  // interface Query {
-  //   Firstname: Firstname.current.value | null;
-  //   Lastname: Lastname.current.value | null;
-  //   Username: Username.current.value | null;
-  //   Email: Email.current.value | null;
-  //   Password: Password.current.value | null;
-  //   ConfirmPass: ConfirmPass.current.value | null;
-  // }
+  async function handleSubmit() {
+    try{
 
-  const updateCred = axios.post('/user/update', {Username})
+      //@ts-ignore
+      const response = axios.put('http://localhost:3000/user/update', {Firstname: Firstname.current.value, Lastname: Lastname.current.value, Username: Username.current.value, Email: Email.current.value, Password: Password.current.value, id: user.id});
+      console.log(response);
+      console.log(response.PromiseStatus);
+      //@ts-ignore
+      const updatedUser = axios.get('http://localhost:3000/user/sendBack', { id: user.id });
+      console.log(updatedUser);
+    } catch (err) { 
+      console.log(err);
+    }
+  }
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-11/12 mb-20 flex flex-col justify-center items-center">
@@ -110,7 +115,7 @@ export const AccountPage = () => {
                 />
               </div>
               {/* @ts-ignore */}
-              <motion.button className="bg-sky-500 mt-4 mb-4 w-full p-4 rounded-lg text-white" whileTap={{ scale: 0.9 }} animate={{ y: 10 }} onClick={() => console.log(Firstname.current.value, Lastname.current.value, Email.current.value, Username.current.value, Passwor!.current.value, ConfirmPass.current.value) }>
+              <motion.button className="bg-sky-500 mt-4 mb-4 w-full p-4 rounded-lg text-white" whileTap={{ scale: 0.9 }} animate={{ y: 10 }} onClick={handleSubmit}>
                 Submit
               </motion.button>
             </div>
