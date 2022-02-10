@@ -49,7 +49,8 @@
     "build-prod": "cross-env NODE_ENV=production && webpack --mode production",
     "client": "cross-env NODE_ENV=development && webpack serve --hot --open --mode development",
     "server": "nodemon server/server.js",
-    "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\" --hot"
+    "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\" --hot",
+    "start-prod": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\""
   },
   "eslintConfig": {
     "extends": [
@@ -67,7 +68,6 @@
     "@typescript-eslint/eslint-plugin": "^5.10.0",
     "@typescript-eslint/parser": "^5.10.0",
     "autoprefixer": "^10.4.2",
-    "awesome-typescript-loader": "^5.2.1",
     "concurrently": "^7.0.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.7.0",
