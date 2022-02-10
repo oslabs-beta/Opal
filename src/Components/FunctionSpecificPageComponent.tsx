@@ -19,7 +19,7 @@ export const FunctionSpecificPage = () => {
   const [funcData, setFuncData] = useState<null | object>(null);
   const [timeSpan, setTimeSpan] = useState<number>(1);
   const [granularity, setGranularity] = useState<number>(3);
-  const [submitClick, setSubmitClick] = useState<boolean>(false);
+  const [submitClick, setSubmitClick] = useState<number>(0);
 
   const data: [] = [];
 
@@ -43,6 +43,7 @@ export const FunctionSpecificPage = () => {
   ];
 
   useEffect(() => {
+    setLoading(true);
     const details: any = getFuncDetails({
       workSpaceId,
       functionName: location.state.properties.name,
@@ -64,7 +65,7 @@ export const FunctionSpecificPage = () => {
   }
 
   function handleSend() {
-    submitClick === false ? setSubmitClick(true) : setSubmitClick(false);
+    setSubmitClick(submitClick + 1);
   }
 
   return (
