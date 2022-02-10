@@ -221,39 +221,46 @@ metricsController.processTable = function (logObject) {
     }
     logArray.push(logEntry);
   }
-
+  console.log('logArray');
+  console.log(logArray);
   // Convert into a timeseries.
   const seriesMap = new Map();
+
+  // Generate timeseries and sum success and failure counts.
   for (let data of logArray) {
     if (!seriesMap.has(data.timeStamp)) {
-      // set properties of timeseries if not already set.
+      // If we do not have this time in our map, create an object, initializing successCount, failCount, and delayArray.
+      let currentDelay = data.DurationMs;
+      console.log('CURRENTDELAY');
+      console.log(currentDelay);
       seriesMap.set(data.timeStamp, {
         operationName: data.OperationName,
         timeStamp: data.timeStamp,
         successCount: data.ResultCode === "200" ? 1 : 0,
         failCount: data.ResultCode !== "200" ? 1: 0,
+        delayArray: [currentDelay]
       });
+      console.log('MAP');
+      console.log(seriesMap.get(data.timeStamp));
     } else {
-      let oldSuccess = seriesMap.get(data.timeStamp).successCount;
-      let oldFail = seriesMap.get(data.timeStamp).failCount;
-      console.log('old success WAS ' + oldSuccess);
-      console.log('oldFail WAS ' + oldFail);
-      data.ResultCode === "200" ? ++oldSuccess : ++oldFail;
-      console.log('old success IS NOW ' + oldSuccess);
-      console.log('oldFail IS NOW ' + oldFail);
+      // If we already have this time in our map, increment the success or failure counter, push new delay to array.
+      // Get method will still pass by reference and can be edited.
+      const delayArray = seriesMap.get(data.timeStamp);
+      console.log('DELAYARRAY');
+      console.log(delayArray);
+
+      let currentSuccess = seriesMap.get(data.timeStamp).successCount;
+      let currentFail = seriesMap.get(data.timeStamp).failCount;
+      data.ResultCode === "200" ? ++currentSuccess : ++currentFail;
       seriesMap.set(data.timeStamp, {
         operationName: data.OperationName,
-        successCount: oldSuccess,
-        failCount: oldFail,
-        timeStamp: data.timeStamp
+        successCount: currentSuccess,
+        failCount: currentFail,
+        timeStamp: data.timeStamp,
       });
     }
   }
 
-  //console.log('HERE IS THE MAP');
-  //console.log(seriesMap.values());
-  //return array of values in the map.
-  // Check whether sorting matters
   const values = seriesMap.values();
   return Array.from(values);
 };
