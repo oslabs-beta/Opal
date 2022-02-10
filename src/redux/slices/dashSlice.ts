@@ -1,17 +1,24 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+let session;
+
+if (sessionStorage.getItem('disabled')) {
+    session = sessionStorage.getItem('disabled');
+}
+
 export const dashSlice = createSlice({
     name: 'Dashboard',
     initialState: {
-        tab: 'Overview'
+        disabled: (session || true)
     },
     reducers: {
-        changeTab: (state, action) => {
-            state.tab = action.payload;
+        activeDash: (state) => {
+            state.disabled = 'false';
+            sessionStorage.setItem('disabled', "false");
         }
     }
 })
 
-export const { changeTab } = dashSlice.actions;
+export const { activeDash } = dashSlice.actions;
 
 export default dashSlice.reducer;
