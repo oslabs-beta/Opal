@@ -1,3 +1,4 @@
+//All files in this folder are for troubleshooting Azure SDK methods.
 //Gets all Function Apps from a single Azure subscription. This version uses @azure/arm-resources-subscriptions
 import { InteractiveBrowserCredential, DefaultAzureCredential, AzureCliCredential, ChainedTokenCredential }  from "@azure/identity";
 import { ResourceManagementClient } from "@azure/arm-resources";
@@ -14,13 +15,14 @@ const credentialChain = new ChainedTokenCredential(credentialDefault, credential
 
 // const subscriptionId = process.env.SUBSCRIPTION_ID;
 
-const subscriptionClient = new SubscriptionClient(credentialChain);
+const subscriptionClient = new SubscriptionClient(credentialDefault);
 
 const subscriptionList = async () => {
     const subscriptions = await subscriptionClient.subscriptions.list({top: null});
-    console.log(await "subscriptions", subscriptions);
+    await console.log("subscriptions", subscriptions);
     const subscriptionArray = [];
     for await (const subscription of subscriptions){
+        console.log(await "subscription", subscription)
         subscriptionArray.push(subscription);
     }
     return subscriptionArray;

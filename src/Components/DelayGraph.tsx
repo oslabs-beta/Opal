@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import moment from "moment";
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -25,38 +25,30 @@ const colours = [
 interface GraphProps {
   data: any;
   format: string;
-  error: any;
 }
 
 interface Data {
   Time: string;
-  Total: number;
-  Errors: number;
+  Delay: number;
 }
 
-export const LineGraph = ({ data, format, error }: GraphProps) => {
-  const randomColour = colours[Math.floor(Math.random() * colours.length)];
+export const DelayGraph = ({ data, format}: GraphProps) => {
   const [time, setTime] = useState<object | null>(null);
 
   const createObj = () => {
     const arr: Array<object> = []!;
 
     for (let i in data.timeseries) {
-      const obj: Data = { Time: "", Total: 0, Errors: 0 };
+      const obj: Data = { Time: "", Delay: 0 };
 
       const mnt = moment(data.timeseries[i].timeStamp);
 
       obj["Time"] = mnt.format("LT");
-      obj["Total"] = data.timeseries[i].total
+
+      obj["Delay"] = data.timeseries[i].total
         ? Math.floor(data.timeseries[i].total)
         : data.timeseries[i].average
         ? Math.floor(data.timeseries[i].average)
-        : 0;
-
-      obj["Errors"] = error.timeseries[i].total
-        ? Math.floor(error.timeseries[i].total)
-        : error.timeseries[i].average
-        ? Math.floor(error.timeseries[i].average)
         : 0;
 
       arr.push(obj);
@@ -70,7 +62,7 @@ export const LineGraph = ({ data, format, error }: GraphProps) => {
   return (
     <div className='relative -left-8' style={{ width: "100%", height: 300 }}>
       <ResponsiveContainer>
-        <LineChart
+        <AreaChart
           // @ts-ignore
           data={time}
           margin={{
@@ -91,22 +83,14 @@ export const LineGraph = ({ data, format, error }: GraphProps) => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line
+          <Area
             type="monotone"
-            dataKey="Total"
-            stroke="blue"
-            fillOpacity={1}
-            fill="url(#colorUv)"
+            dataKey="Delay"
+            stroke="purple"
+            fill="purple"
             activeDot={{ r: 6 }}
           />
-          <Line
-            type="monotone"
-            dataKey="Errors"
-            stroke="red"
-            fill="red"
-            activeDot={{ r: 6 }}
-          />
-        </LineChart>
+        </AreaChart>
       </ResponsiveContainer>
     </div>
   );

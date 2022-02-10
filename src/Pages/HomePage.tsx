@@ -352,18 +352,6 @@ export const HomePage = () => {
           </svg>
         </div>
       </div>
-      <section className="w-full h-[1000px] flex justify-center items-center">
-        <h1 className="text-5xl text-black">this is the body of content</h1>
-      </section>
-      <section className="w-full h-[1000px] flex justify-center items-center">
-        <h1 className="text-5xl text-black">
-          this is the about us as a team section
-        </h1>
-      </section>
-      {/* <section></section> */}
-      <footer className="w-full h-[1000px] bg-[#111] flex justify-center items-center">
-        <h1 className="text-5xl text-white">Footer content</h1>
-      </footer>
     </div>
   );
 };
