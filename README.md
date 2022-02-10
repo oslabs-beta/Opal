@@ -46,30 +46,30 @@ Opal requires an active [Azure subscription](https://azure.microsoft.com/en-us/f
 
 ## Getting Started
 
-1. Clone this repo. If using [Git](https://git-scm.com/), run:
+<em>1. Clone this repo.</em> 
 
+If using [Git](https://git-scm.com/), run:
 ```
 git clone https://github.com/oslabs-beta/Opal
 cd Opal
 ```
 
-2. Install dependencies.
+<em>2. Install dependencies.</em>
 
 ```
 npm install
 ```
 
-3. Build the app.
+<em>3. Build the app.</em>
 
 ```
 npm run build-prod
 ```
 
-4. Be authenticated to an Azure account (see 'Connecting to Azure')
- 
+<em>4. Be authenticated to an Azure account (see 'Connecting to Azure')</em>
 
 
-5. Run the app.
+<em>5. Run the app.</em>
 
 ```
 npm run start-prod
@@ -78,13 +78,13 @@ npm run start-prod
 
 ## Connecting to Azure
 
-1. Base Functionality
+<em>1. Base Functionality</em>
 
 If the user is already logged in to Azure through an existing authentication flow (Managed Identity, Azure CLI, Powershell etc.), Opal's base functionality is accessible out-of-the-box with no configuration. If not currently logged in, use the method you typically use to authenticate to Azure. For example, an Azure CLI user can type `az login`. 
 
 For more information about your options for authenticating to Azure, review the [DefaultAzureCredential docs](https://docs.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet).
 
-2. Additional Functionality
+<em>2. Additional Functionality</em>
 
 Using Opal to access metrics on individual <em>functions</em> in a Function App requires sending a bearer token to Azure REST APIs. Opal will use HTTPS and OAUTH 2.0 to securely handle the token-generation process for you, as long as you place a .env file in Opal's root directory identifying a service principal that is authorized to access your Azure subscription.
 
@@ -130,7 +130,7 @@ Due to Azure SDK limitations, the functions list and the Functions view are only
 
 ## FAQ
 
-* Why can't I see the functions from some of my subscriptions?
+1. Why can't I see the functions from some of my subscriptions?
 
 By default, service principals are associated with a single subscription. If you did not specify a subscription when creating your service principal (or specified only one), you may not be able to see functions from other subscriptions.
 
@@ -144,19 +144,19 @@ Then use the output of the above command to define scope when creating a service
 
 Use the output of the above command to update your .env file according to the instructions in step 2 of [Connecting to Azure](#connecting-to-azure).
 
-* What information do I need to provide to log in to Opal?
+2. What information do I need to provide to log in to Opal?
 
 On initial login, users only to create a username and password. 
 
-* What information will Opal store about me?
+3. What information will Opal store about me?
 
 The only information Opal stores is an email address and a (hashed) password.
 
-* Does Opal maintain any information about my Azure account?
+4. Does Opal maintain any information about my Azure account?
 
 No. Opal stores no information about your account. Opal simply acts as a client for a variety of Azure SDKs and endpoints to allow you to retrieve data from your Azure subscriptions in a single location.
 
-* Do I need to enter to use my real email?
+5. Do I need to enter to use my real email?
 
 No. There are no consequences to creating a dummy email if you prefer not to be identified. But please avoid e-mail addresses that may legitimately be used by others.
 
