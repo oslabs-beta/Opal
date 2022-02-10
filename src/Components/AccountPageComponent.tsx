@@ -10,32 +10,28 @@ export const AccountPage = () => {
         <h1 className="text-blue-500 text-2xl mb-4">Account Details</h1>
         <div className="mb-10">
           <h1 className="text-xl mb-4">Current Opal Account Information</h1>
-          <div className="flex justify-between w-1/3">
-            <h2 className="">Username :</h2>
+          <div className="flex justify-between w-1/5">
+            <h2 className="">Username:&nbsp;&nbsp;</h2>
             <h2 className="">{user.username}</h2>
           </div>
-          <div className="flex justify-between w-1/3">
-            <h2 className="">First Name :</h2>
+          <div className="flex justify-between w-1/5">
+            <h2 className="">First Name:&nbsp;&nbsp;</h2>
             <h2 className="">{user.firstname}</h2>
           </div>
-          <div className="flex justify-between w-1/3">
-            <h2 className="">Last Name :</h2>
+          <div className="flex justify-between w-1/5">
+            <h2 className="">Last Name:&nbsp;&nbsp;</h2>
             <h2 className="">{user.lastname}</h2>
           </div>
-          <div className="flex justify-between w-1/3">
-            <h2 className="">Email :</h2>
+          <div className="flex justify-between w-1/5">
+            <h2 className="">Email:&nbsp;&nbsp;</h2>
             <h2 className="">{user.email}</h2>
-          </div>
-          <div className="flex justify-between w-1/3">
-            <h2 className="">Password :</h2>
-            <h2 className="">{user.password}</h2>
           </div>
         </div>
         <div className="flex w-full justify-center items-center">
           <div className="flex justify-center items-center bg-white drop-shadow-xl p-5 w-full xl:w-2/3 border-2 rounded space-x-10">
             <div className="w-2/3">
               <h1 className="mb-6 text-xl">
-                Edit the fields you would like to change.
+                Please edit any the fields you would like to change.
               </h1>
             </div>
             <div className="w-full grid">
