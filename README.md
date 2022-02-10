@@ -44,7 +44,7 @@ Currently supported metrics in Opal include, among other things, function invoca
 * An active [Azure subscription](https://azure.microsoft.com/en-us/free/) with deployed [Azure Functions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-function-app-portal).
 
 ## Getting Started
-
+<br />
 <b>1. Clone this repo.</b> 
 
 If using [Git](https://git-scm.com/), run:
@@ -53,23 +53,26 @@ git clone https://github.com/oslabs-beta/Opal
 cd Opal
 ```
 
+<br />
 <b>2. Install dependencies.</b>
 
 ```
 npm install
 ```
 
+<br />
 <b>3. Build the app.</b>
 
 ```
 npm run build-prod
 ```
 
-<b>4. Authenticate.</b>
+<br />
+<b>4. Authenticate.</b><br />
   
 Be authenticated to an Azure account. (See 'Connecting to Azure' for more information.)
 
-
+<br />
 <b>5. Run the app.</b>
 
 ```
@@ -133,7 +136,7 @@ Due to Azure SDK limitations, the functions list and the Functions view are only
 
 ## FAQ
 <br />
-<b>1. Why can't I see the functions from some of my subscriptions?</b>
+<b>1. Why can't I see the functions from some of my subscriptions?</b><br />
 
 By default, service principals are associated with a single subscription. If you did not specify a subscription when creating your service principal (or specified only one), you may not be able to see functions from other subscriptions.
 
@@ -148,22 +151,22 @@ Then use the output of the above command to define scope when creating a service
 Use the output of the above command to update your .env file according to the instructions in step 2 of [Connecting to Azure](#connecting-to-azure).
 
 <br />
-<b>2. What information do I need to provide to log in to Opal?</b>
+<b>2. What information do I need to provide to log in to Opal?</b><br />
 
 On initial login, users only to create a username and password. 
 
 <br />
-<b>3. What information will Opal store about me?</b>
+<b>3. What information will Opal store about me?</b><br />
 
 The only information Opal stores is an email address and a (hashed) password.
 
 <br />
-<b>4. Does Opal maintain any information about my Azure account?</b>
+<b>4. Does Opal maintain any information about my Azure account?</b><br />
 
 No. Opal stores no information about your account. Opal simply acts as a client for a variety of Azure SDKs and endpoints to allow you to retrieve data from your Azure subscriptions in a single location.
 
 <br />
-<b>5. Do I need to enter to use my real email?</b>
+<b>5. Do I need to enter to use my real email?</b><br />
 
 No. There are no consequences to creating a dummy email if you prefer not to be identified. But please avoid e-mail addresses that may legitimately be used by others.
 
