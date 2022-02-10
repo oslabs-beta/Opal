@@ -53,8 +53,9 @@ sdkController.fetchSubscriptionIds = async (req, res, next) => {
       console.log(res.locals.subscriptions[sub.subscriptionId].workSpaceArray);
     }
 
-    return next();
+    
   }
+  return next();
 };
 
 sdkController.fetchResourceGroups = async (req, res, next) => {
