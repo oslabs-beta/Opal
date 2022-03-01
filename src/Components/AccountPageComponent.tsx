@@ -1,11 +1,24 @@
 import React, { useRef } from "react";
 import { useAppSelector } from "../redux/hooks";
+import { useDispatch } from "react-redux";
+import { login } from "../redux/slices/userSlice";
 import { motion } from 'framer-motion';
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { refObj } from "../../Types";
+
+interface UserInfo {
+  Username: string,
+  Email: string,
+  FirstName: string,
+  LastName: string,
+  Password: string,
+  id: number
+}
 
 export const AccountPage = () => {
   const user = useAppSelector((state) => state.user.user);
+
+  const dispatch = useDispatch();
 
   const Firstname = useRef<refObj>(null);
   const Lastname = useRef<refObj>(null);
@@ -18,12 +31,10 @@ export const AccountPage = () => {
     try{
 
       //@ts-ignore
-      const response = axios.put('http://localhost:3000/user/update', {Firstname: Firstname.current.value, Lastname: Lastname.current.value, Username: Username.current.value, Email: Email.current.value, Password: Password.current.value, id: user.id});
-      console.log(response);
-      console.log(response.PromiseStatus);
+      axios.put<UserInfo[]>('http://localhost:3000/user/update', {Firstname: Firstname.current.value, Lastname: Lastname.current.value, Username: Username.current.value, Email: Email.current.value, Password: Password.current.value, id: user.id}).then(response => dispatch(login(response.data.userInfo)));
       //@ts-ignore
-      const updatedUser = axios.get('http://localhost:3000/user/sendBack', { id: user.id });
-      console.log(updatedUser);
+      // const updatedUser = axios.get('http://localhost:3000/user/sendBack', { id: user.id });
+      // console.log(updatedUser);
     } catch (err) { 
       console.log(err);
     }
