@@ -67,7 +67,7 @@ export const AccountPage = () => {
           <div className="flex justify-center items-center bg-white drop-shadow-xl p-5 w-full xl:w-2/3 border-2 rounded space-x-10">
             <div className="w-2/3">
               <h1 className="mb-6 text-xl">
-                Edit the fields you would like to change.
+                Please edit any the fields you would like to change.
               </h1>
             </div>
             <div className="w-full grid">
