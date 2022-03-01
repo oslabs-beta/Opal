@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import { motion } from "framer-motion";
-import { changeTab } from "../redux/slices/dashSlice";
 import {
   UserIcon,
   CloudIcon,
@@ -22,7 +21,7 @@ export const Sidebar = () => {
 
   const [sidebarActive, setSidebarActive] = useState<boolean>();
 
-  const Tab = useAppSelector((state) => state.dash.tab);
+  const disabled = useAppSelector((state) => state.dash.disabled);
 
   return (
     <div
@@ -55,19 +54,37 @@ export const Sidebar = () => {
       <div className="w-full">
         <div
           onClick={() => {
-            dispatch(changeTab("Overview"));
-            navigate("/azure/overview");
+            if (disabled === 'false') {
+              navigate("/azure/overview");
+            }
           }}
           className={`whitespace-nowrap flex items-center text-white p-5 w-full cursor-pointer hover:bg-gray-500 hover:bg-opacity-20 hover:border-l-4 hover:border-white ${
             sidebarActive ? "" : "justify-center"
           } `}
         >
-          <NavLink
-            to="/azure/overview"
-            className={({ isActive }) =>
-              isActive ? "bg-gray-500 bg-opacity-40 p-2 rounded-md w-full" : ""
-            }
-          >
+          {disabled === 'false' ? (
+            <NavLink
+              to="/azure/overview"
+              className={({ isActive }) =>
+                isActive
+                  ? "bg-gray-500 bg-opacity-40 p-2 rounded-md w-full z-0"
+                  : " z-0"
+              }
+            >
+              <div className={`flex items-center w-full`}>
+                <ChartBarIcon
+                  className={`text-white w-10 h-10 ${
+                    sidebarActive ? "mr-6" : ""
+                  }`}
+                />
+                {sidebarActive ? (
+                  <h1 className="hidden md:inline-block">Overview</h1>
+                ) : (
+                  ""
+                )}
+              </div>
+            </NavLink>
+          ) : (
             <div className={`flex items-center w-full`}>
               <ChartBarIcon
                 className={`text-white w-10 h-10 ${
@@ -80,24 +97,38 @@ export const Sidebar = () => {
                 ""
               )}
             </div>
-          </NavLink>
+          )}
         </div>
 
         <div
           onClick={() => {
-            dispatch(changeTab("Functions"));
-            navigate("/azure/functionApp");
+            if (disabled === 'false') {
+              navigate("/azure/functionApp");
+            }
           }}
           className={` focus:text-blue-500 whitespace-nowrap flex items-center text-white p-5 w-full cursor-pointer hover:bg-gray-500 hover:bg-opacity-20 hover:border-l-4 hover:border-white ${
             sidebarActive ? "" : "justify-center"
           }`}
         >
-          <NavLink
-            to="/azure/functionApp"
-            className={({ isActive }) =>
-              isActive ? "bg-gray-500 bg-opacity-40 p-2 rounded-md w-full" : ""
-            }
-          >
+          {disabled === 'false' ? (
+            <NavLink
+              to="/azure/functionApp"
+              className={({ isActive }) =>
+                isActive
+                  ? "bg-gray-500 bg-opacity-40 p-2 rounded-md w-full"
+                  : ""
+              }
+            >
+              <div className={`flex items-center w-full`}>
+                <CubeTransparentIcon
+                  className={`text-white w-10 h-10 ${
+                    sidebarActive ? "mr-6" : ""
+                  }`}
+                />
+                {sidebarActive ? <h1>FunctionApps</h1> : ""}
+              </div>
+            </NavLink>
+          ) : (
             <div className={`flex items-center w-full`}>
               <CubeTransparentIcon
                 className={`text-white w-10 h-10 ${
@@ -106,24 +137,38 @@ export const Sidebar = () => {
               />
               {sidebarActive ? <h1>Function Apps</h1> : ""}
             </div>
-          </NavLink>
+          )}
         </div>
 
         <div
           onClick={() => {
-            dispatch(changeTab("Func Details"));
-            navigate("/azure/functions");
+            if (!disabled) {
+              navigate("/azure/functions");
+            }
           }}
           className={`focus:text-blue-500 whitespace-nowrap flex items-center text-white p-5 w-full cursor-pointer hover:bg-gray-500 hover:bg-opacity-20 hover:border-l-4 hover:border-white ${
             sidebarActive ? "" : "justify-center"
           }`}
         >
-          <NavLink
-            to="/azure/functions"
-            className={({ isActive }) =>
-              isActive ? "bg-gray-500 bg-opacity-40 p-2 rounded-md w-full" : ""
-            }
-          >
+          {disabled === 'false' ? (
+            <NavLink
+              to="/azure/functions"
+              className={({ isActive }) =>
+                isActive
+                  ? "bg-gray-500 bg-opacity-40 p-2 rounded-md w-full"
+                  : ""
+              }
+            >
+              <div className={`flex items-center w-full`}>
+                <CloudIcon
+                  className={`text-white w-10 h-10 ${
+                    sidebarActive ? "mr-6" : ""
+                  }`}
+                />
+                {sidebarActive ? <h1>Functions</h1> : ""}
+              </div>
+            </NavLink>
+          ) : (
             <div className={`flex items-center w-full`}>
               <CloudIcon
                 className={`text-white w-10 h-10 ${
@@ -132,24 +177,38 @@ export const Sidebar = () => {
               />
               {sidebarActive ? <h1>Functions</h1> : ""}
             </div>
-          </NavLink>
+          )}
         </div>
 
         <div
           onClick={() => {
-            dispatch(changeTab("Summary"));
-            navigate("/azure/summary");
+            if (disabled === 'false') {
+              navigate("/azure/summary");
+            }
           }}
           className={`whitespace-nowrap flex items-center text-white p-5 w-full cursor-pointer hover:bg-gray-500 hover:bg-opacity-20 hover:border-l-4 hover:border-white ${
             sidebarActive ? "" : "justify-center"
           }`}
         >
-          <NavLink
-            to="/azure/summary"
-            className={({ isActive }) =>
-              isActive ? "bg-gray-500 bg-opacity-40 p-2 rounded-md w-full" : ""
-            }
-          >
+          {disabled === 'false' ? (
+            <NavLink
+              to="/azure/summary"
+              className={({ isActive }) =>
+                isActive
+                  ? "bg-gray-500 bg-opacity-40 p-2 rounded-md w-full"
+                  : ""
+              }
+            >
+              <div className={`flex items-center w-full`}>
+                <BookOpenIcon
+                  className={`text-white w-10 h-10 ${
+                    sidebarActive ? "mr-6" : ""
+                  }`}
+                />
+                {sidebarActive ? <h1>Summary</h1> : ""}
+              </div>
+            </NavLink>
+          ) : (
             <div className={`flex items-center w-full`}>
               <BookOpenIcon
                 className={`text-white w-10 h-10 ${
@@ -158,24 +217,38 @@ export const Sidebar = () => {
               />
               {sidebarActive ? <h1>Summary</h1> : ""}
             </div>
-          </NavLink>
+          )}
         </div>
 
         <div
           onClick={() => {
-            dispatch(changeTab("Account"));
-            navigate("/azure/account");
+            if (disabled === 'false') {
+              navigate("/azure/account");
+            }
           }}
           className={`whitespace-nowrap flex items-center text-white p-5 w-full cursor-pointer hover:bg-gray-500 hover:bg-opacity-20 hover:border-l-4 hover:border-white ${
             sidebarActive ? "" : "justify-center"
           }`}
         >
-          <NavLink
-            to="/azure/account"
-            className={({ isActive }) =>
-              isActive ? "bg-gray-500 bg-opacity-40 p-2 rounded-md w-full" : ""
-            }
-          >
+          {disabled === 'false' ? (
+            <NavLink
+              to="/azure/account"
+              className={({ isActive }) =>
+                isActive
+                  ? "bg-gray-500 bg-opacity-40 p-2 rounded-md w-full"
+                  : ""
+              }
+            >
+              <div className={`flex items-center w-full`}>
+                <UserIcon
+                  className={`text-white w-10 h-10 ${
+                    sidebarActive ? "mr-6" : ""
+                  }`}
+                />
+                {sidebarActive ? <h1>Account</h1> : ""}
+              </div>
+            </NavLink>
+          ) : (
             <div className={`flex items-center w-full`}>
               <UserIcon
                 className={`text-white w-10 h-10 ${
@@ -184,7 +257,7 @@ export const Sidebar = () => {
               />
               {sidebarActive ? <h1>Account</h1> : ""}
             </div>
-          </NavLink>
+          )}
         </div>
       </div>
       <br />

@@ -27,7 +27,6 @@ export const FunctionsPage = () => {
           {data.functions.length > 0 ?
             data.functions.map((func) => {
               if (func.shortname.toLowerCase().includes(searchQuery.toLowerCase())) {
-                console.log(func);
                 return <FuncListComponent key={func.shortname} data={func} />;
               } else {
                 return null;

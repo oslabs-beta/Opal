@@ -75,6 +75,8 @@ export const FunctionAppSpecificPage = () => {
           setFunctions(res.value);
         });
       });
+
+      return () => {}
   }, [location, resourceGroupName, submitClick]);
 
   function convertTimeSpan(num) {
