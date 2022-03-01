@@ -21,11 +21,13 @@ router.post('/login', userController.login, (req, res) => {
 });
 
 router.put('/update', userController.update, (req, res) => {
-  res.status(200).send({ mess: 'Account updated!' });
+  res
+    .status(200)
+    .send({ mess: 'Account updated!', userInfo: res.locals.updatedUser });
 });
 
-router.get('/sendBack', userController.sendBack, (req, res) => {
-  res.status(200).json({ user: res.locals.users });
-});
+// router.get('/sendBack', userController.sendBack, (req, res) => {
+//   res.status(200).json({ user: res.locals.users });
+// });
 
 export default router;
