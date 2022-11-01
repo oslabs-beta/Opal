@@ -25,27 +25,27 @@ app.use('/user', userRoutes);
 // Default route: On initial load, serve subscription, resource group, and functionApp data to the front end.
 // Object also includes function execution counts for the given time period for all function Apps in each subscription.
 app.get('/executionOnly', sdkController.executionOnly, sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, metricsController.getMSWebMetrics, sdkController.formatExecutions, (req, res) => {
-  res.status(200).json(res.locals.executionObj);
+  res.json(res.locals.executionObj);
 });
 
 // On selecting a specific function application, get more metrics.
 app.post('/getAppDetails', sdkController.setFunctionApp, metricsController.getMSWebMetrics, metricsController.getMSInsightsMetrics, sdkController.formatAppDetail, (req, res) => {
-  res.status(200).json(res.locals.appDetail);
+  res.json(res.locals.appDetail);
 });
 
 // Get all of the functions associated with a specific function application.
 app.post('/getFunctions', sdkController.setResource, tokenController.getToken, sdkController.getAllFunctions, (req, res) => {
-  res.status(200).json(res.locals.allFunctions);
+  res.json(res.locals.allFunctions);
 });
 
 // Get metrics associated with a specific function within a function application.
 app.post('/getSpecificFunctionMetrics', sdkController.setFunction, metricsController.retrieveFunctionLogs, (req, res) => {
-  res.status(200).json(res.locals.funcResponse);
+  res.json(res.locals.funcResponse);
 });
 
 // Get a list of all functions associated with the account.
 app.post('/getAllFunctions', tokenController.getToken, sdkController.setSub, sdkController.getFunctionList, (req, res) => {
-  res.status(200).json(res.locals.funcList);
+  res.json(res.locals.funcList);
 });
 
 // In development: get source code for a given function (REST API Route).
@@ -55,7 +55,7 @@ app.post('/getAllFunctions', tokenController.getToken, sdkController.setSub, sdk
 
 // DEBUGGING ONLY: Get a list of function applications.
 app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, (req, res) => {
-  res.status(200).json([res.locals.functionApps, res.locals.insights]);
+  res.json([res.locals.functionApps, res.locals.insights]);
   }
 );
 
@@ -63,12 +63,12 @@ app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchReso
 app.get('/getMetrics', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, metricsController.getMSWebMetrics, (req, res) => {
   console.log('completed getting MS Web metrics');
   console.log(res.locals.metrics);
-  res.status(200).json(res.locals.webMetrics);
+  res.json(res.locals.webMetrics);
 });
 
 // DEBUGGING ONLY: Get a list of all metrics for all function apps.
 app.post('/getInsightsOnly', sdkController.setFunctionApp, metricsController.getMSInsightsMetrics, sdkController.formatAppDetail, (req, res) => {
-  res.status(200).json(res.locals.insightsOnly);
+  res.json(res.locals.insightsOnly);
 });
 
 // Global error handler.

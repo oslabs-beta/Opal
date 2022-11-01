@@ -68,7 +68,7 @@ app.get('/getMetrics', sdkController.fetchSubscriptionIds, sdkController.fetchRe
 
 // DEBUGGING ONLY: Get a list of all metrics for all function apps.
 app.post('/getInsightsOnly', sdkController.setFunctionApp, metricsController.getMSInsightsMetrics, sdkController.formatAppDetail, (req, res) => {
-  res.status(200).json(res.locals.insightsOnly);
+  res.json(res.locals.insightsOnly);
 });
 
 // Global error handler.
