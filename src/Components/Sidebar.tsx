@@ -135,7 +135,7 @@ export const Sidebar = () => {
                   sidebarActive ? "mr-6" : ""
                 }`}
               />
-              {sidebarActive ? <h1>FunctionApps</h1> : ""}
+              {sidebarActive ? <h1>Function Apps</h1> : ""}
             </div>
           )}
         </div>
