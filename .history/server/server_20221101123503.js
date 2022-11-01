@@ -45,7 +45,7 @@ app.post('/getSpecificFunctionMetrics', sdkController.setFunction, metricsContro
 
 // Get a list of all functions associated with the account.
 app.post('/getAllFunctions', tokenController.getToken, sdkController.setSub, sdkController.getFunctionList, (req, res) => {
-  res.status(200).json(res.locals.funcList);
+  res.status(200)json(res.locals.funcList);
 });
 
 // In development: get source code for a given function (REST API Route).
@@ -55,7 +55,7 @@ app.post('/getAllFunctions', tokenController.getToken, sdkController.setSub, sdk
 
 // DEBUGGING ONLY: Get a list of function applications.
 app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, (req, res) => {
-  res.status(200).json([res.locals.functionApps, res.locals.insights]);
+  res.json([res.locals.functionApps, res.locals.insights]);
   }
 );
 
@@ -63,12 +63,12 @@ app.get('/getFuncs', sdkController.fetchSubscriptionIds, sdkController.fetchReso
 app.get('/getMetrics', sdkController.fetchSubscriptionIds, sdkController.fetchResourceGroups, sdkController.fetchResources, metricsController.getMSWebMetrics, (req, res) => {
   console.log('completed getting MS Web metrics');
   console.log(res.locals.metrics);
-  res.status(200).json(res.locals.webMetrics);
+  res.json(res.locals.webMetrics);
 });
 
 // DEBUGGING ONLY: Get a list of all metrics for all function apps.
 app.post('/getInsightsOnly', sdkController.setFunctionApp, metricsController.getMSInsightsMetrics, sdkController.formatAppDetail, (req, res) => {
-  res.status(200).json(res.locals.insightsOnly);
+  res.json(res.locals.insightsOnly);
 });
 
 // Global error handler.
