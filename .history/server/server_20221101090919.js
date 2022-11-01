@@ -74,7 +74,7 @@ app.post('/getInsightsOnly', sdkController.setFunctionApp, metricsController.get
 // Global error handler.
 app.use((err, req, res, next) => {
   const defaultErr = {
-    log: `Express error handler caught unknown middleware error ${JSON.stringify(err)}`,
+    log: `Express error handler caught unknown middleware error ${JSON.stringify(err}`,
     status: 500,
     message: { err: 'An error occurred. Please contact the Opal team.' },
   };
